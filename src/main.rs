@@ -1,5 +1,3 @@
-use std::io::ErrorKind::BrokenPipe;
-
 mod ninebyninecovermatrix;
 mod fourbyfourcovermatrix;
 
@@ -27,28 +25,17 @@ fn main() {
     let mut cover_matrix:[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
         = fourbyfourcovermatrix::four_by_four_cover_matrix();
 
-    cover_matrix = cell_constraint(cover_matrix);
-    cover_matrix = row_constraint(cover_matrix);
-    cover_matrix = column_constraint(cover_matrix);
+    cell_constraint(&mut cover_matrix);
+    row_constraint(&mut cover_matrix);
+    column_constraint(&mut cover_matrix);
+    region_constraint(&mut cover_matrix);
 
-    println!("---------------------------------------------------------------------");
-    for i in 0..cover_matrix.len() {
-        for j in 0..cover_matrix[1].len() {
-            if j % (BOARD_SIZE_SQUARED) as usize == 0 {
-                print!("|");
-            }
-            print!("{}", cover_matrix[i][j]);
-        }
-        print!("|");
-        println!();
-        println!("---------------------------------------------------------------------")
-    }
-
+    print_board(&mut cover_matrix);
 }
 fn cell_constraint
 (
-    mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-) -> [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+    cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+) -> ()
 {
     let mut row_index: u16 = BOARD_SIZE;
 
@@ -58,14 +45,12 @@ fn cell_constraint
         }
         row_index = row_index + BOARD_SIZE;
     }
-
-    return cover_matrix;
 }
 
 fn row_constraint
 (
-    mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-) -> [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+    cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+) -> ()
 {
     let mut pullback: u16 = BOARD_SIZE_SQUARED;
 
@@ -83,33 +68,78 @@ fn row_constraint
         cover_matrix[row as usize][column as usize] = 1;
         column += 1;
     }
-
-    return cover_matrix;
 }
 
 fn column_constraint
 (
-    mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-) -> [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+    cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+) -> ()
 {
-    let board_size_cubed: u16 = (BOARD_SIZE * BOARD_SIZE) + (BOARD_SIZE * BOARD_SIZE);
+    let board_size_squared_times_two: u16 = (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);
 
-    let mut column: u16 = board_size_cubed;
+    let mut column: u16 = board_size_squared_times_two;
     for row in 0..EXACT_COVER_MATRIX_ROWS {
         if row % BOARD_SIZE_SQUARED == 0 && row > 1{
-            column = board_size_cubed;
+            column = board_size_squared_times_two;
         }
         cover_matrix[row as usize][column as usize] = 1;
 
         column += 1;
     }
-    return cover_matrix
 }
 
 fn region_constraint
 (
-    mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-) -> [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+    mut cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+) -> ()
 {
-    return cover_matrix
+    let board_size_squared_times_three: u16 = (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);
+    let mut pullback: u16 = board_size_squared_times_three;
+    let mut column: u16 = board_size_squared_times_three;
+
+    let sqrt_board_size: u16 = (BOARD_SIZE as f32).sqrt() as u16;
+
+    for row in 0..EXACT_COVER_MATRIX_ROWS {
+        if row % (BOARD_SIZE_SQUARED * sqrt_board_size) == 0 && row > 1
+        {
+            pullback += BOARD_SIZE;
+        } else if row % BOARD_SIZE_SQUARED == 0 && row > 1
+        {
+            pullback -= BOARD_SIZE * (sqrt_board_size - 1);
+
+        } else if row % (BOARD_SIZE * sqrt_board_size) == 0 && row > 1
+        {
+            pullback += BOARD_SIZE;
+        }
+
+        if column % BOARD_SIZE == 0 {
+            column = pullback;
+        }
+
+        if column > 323
+        {
+            print_board(&mut cover_matrix);
+        }
+        cover_matrix[row as usize][column as usize] = 1;
+
+        column += 1;
+    }
+}
+
+fn print_board(
+    cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+)
+{
+    println!("---------------------------------------------------------------------");
+    for i in 0..cover_matrix.len() {
+        for j in 0..cover_matrix[1].len() {
+            if j % (BOARD_SIZE_SQUARED) as usize == 0 {
+                print!("|");
+            }
+            print!("{}", cover_matrix[i][j]);
+        }
+        print!("|");
+        println!();
+        println!("---------------------------------------------------------------------")
+    }
 }
