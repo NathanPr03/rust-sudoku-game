@@ -13,13 +13,13 @@ fn main() {
 
     println!("Columns: {}, Rows: {}", EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS);
 
-    // let _board: [[u8; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
-    // [
-    //     [0, 3, 4, 0],
-    //     [4, 0, 0, 2],
-    //     [1, 0, 0, 3],
-    //     [0, 2, 1, 0]
-    // ];
+    let _board: [[u8; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
+    [
+        [0, 3, 4, 0],
+        [4, 0, 0, 2],
+        [1, 0, 0, 3],
+        [0, 2, 1, 0]
+    ];
 
     //Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
     let mut cover_matrix:[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
