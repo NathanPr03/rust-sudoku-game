@@ -1,78 +1,3 @@
-// use std::rc::Rc;
-//
-// pub struct Node {
-//     left_link: Rc<Option<Node>>,
-//     right_link: Rc<Option<Node>>,
-//     up_link: Rc<Option<Node>>,
-//     down_link: Rc<Option<Node>>,
-//     column_header_node: ColumnHeaderNode,
-// }
-//
-// impl Node {
-//     pub fn new(column_header_node: ColumnHeaderNode) -> Node {
-//         return Node {
-//             left_link: Rc::new(None),
-//             right_link: Rc::new(None),
-//             up_link: Rc::new(None),
-//             down_link: Rc::new(None),
-//             column_header_node,
-//         }
-//     }
-// }
-//
-// pub struct ColumnHeaderNode {
-//     size: usize,
-//     index: usize,
-//     left_link: Rc<Option<ColumnHeaderNode>>,
-//     right_link: Rc<Option<ColumnHeaderNode>>,
-//     up_link: Rc<Option<ColumnHeaderNode>>,
-//     down_link: Rc<Option<ColumnHeaderNode>>,
-// }
-//
-// impl ColumnHeaderNode {
-//     pub fn new(size: usize, index: usize) -> ColumnHeaderNode {
-//         return ColumnHeaderNode {
-//             size,
-//             index,
-//             left_link: Rc::new(None),
-//             right_link: Rc::new(None),
-//             up_link: Rc::new(None),
-//             down_link: Rc::new(None),
-//         }
-//     }
-//
-//     pub fn link_right_and_left(&mut self, node: ColumnHeaderNode) -> ColumnHeaderNode
-//     {
-//         let mut raw_right_link = match node.right_link.as_ref() {
-//             Some(node) => node,
-//             None => panic!("Panic Stations"),
-//         };
-//
-//         let mut raw_right_left_link = match raw_right_link.right_link.as_ref() {
-//             Some(node) => node,
-//             None => panic!("Panic Stations"),
-//         };
-//
-//         let mut raw_self_right_link = match self.right_link.as_ref() {
-//             Some(node) => node,
-//             None => panic!("Panic Stations")
-//         };
-//
-//         raw_right_link = raw_self_right_link;
-//         raw_right_left_link = &node;
-//
-//         let mut raw_left_link = match node.left_link.as_ref() {
-//             Some(node) => node,
-//             None => panic!("Panic Stations"),
-//         };
-//
-//         raw_left_link = &node;
-//         raw_self_right_link = &node;
-//
-//         return node;
-//     }
-// }
-
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
@@ -151,54 +76,63 @@ impl Node {
         };
         self.extra = NodeExtra::Count(c+1);
     }
+
+    pub fn get_count(&self) -> usize {
+        let count = match self.extra {
+            NodeExtra::Count(i) => i,
+            _ => return 999999999
+        };
+
+        return count;
+    }
 }
 
 /**
- * Insert node in-between root and whatever is to the right of root
- * root<->x -----> root<->node<->x
+ * Insert node prepended to the left of root
+ * This will result in root being the last node in the link
+ * root<->x -----> x<->node<->root
 */
-pub fn link_right(root: &OwnedNode, node: &WeakNode) -> () {
+pub fn link_left(root: &OwnedNode, node: &WeakNode) -> () {
     let unwrapped_node = (*node).upgrade().unwrap();
-
     {
         //                   ↓--------------↰
         //root<->x -----> ↓<-root<-node->x->^
         //                ↳--------------^
         let mut node_ref = unwrapped_node.borrow_mut();
-        node_ref.left = Rc::downgrade(&root);
-        node_ref.right = root.borrow_mut().right.clone();
+        node_ref.right = Rc::downgrade(&root);
+        node_ref.left = root.borrow_mut().left.clone();
     }
     {
         //   ↓--------------↰         ↓--------------↰
         //↓<-root<-node->x->^ ------> root<->node->x-^
         //↳--------------^
         let mut mutable_root = root.borrow_mut();
-        mutable_root.right = (*node).clone();
+        mutable_root.left = (*node).clone();
     }
     {
         //↓---------------↰
         //root<->node->x->^ ------> root<->node<->x
         let node_ref = unwrapped_node.borrow_mut();
-        let x_node = node_ref.right.upgrade().unwrap();
-        x_node.borrow_mut().left = (*node).clone();
+        let x_node = node_ref.left.upgrade().unwrap();
+        x_node.borrow_mut().right = (*node).clone();
     }
 }
 
-pub fn prepend_up(root: &OwnedNode, node: &WeakNode) -> () {
-    let u = (*node).upgrade().unwrap();
+pub fn link_down(root: &OwnedNode, node: &WeakNode) -> () {
+    let unwrapped_node = (*node).upgrade().unwrap();
 
     {
-        let mut n = u.borrow_mut();
-        n.down = Rc::downgrade(&root);
-        n.up = root.borrow_mut().up.clone();
+        let mut node_ref = unwrapped_node.borrow_mut();
+        node_ref.down = Rc::downgrade(&root);
+        node_ref.up = root.borrow_mut().up.clone();
     }
     {
-        let mut head = root.borrow_mut();
-        head.up = (*node).clone();
+        let mut root_ref = root.borrow_mut();
+        root_ref.up = (*node).clone();
     }
     {
-        let pup = u.borrow_mut();
-        let prev_up  = pup.up.upgrade().unwrap();
-        prev_up.borrow_mut().down = (*node).clone();
+        let node_ref = unwrapped_node.borrow_mut();
+        let x_node = node_ref.up.upgrade().unwrap();
+        x_node.borrow_mut().down = (*node).clone();
     }
 }

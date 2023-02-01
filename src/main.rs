@@ -1,8 +1,5 @@
-use std::borrow::{Borrow, BorrowMut};
-use std::cell::{RefCell, RefMut};
-use std::ptr::null;
-use std::rc::{Rc, Weak};
-use crate::node::{Node, OwnedNode, link_right, prepend_up};
+use std::rc::{Rc};
+use crate::node::{Node, OwnedNode, link_left, link_down};
 
 mod ninebyninecovermatrix;
 mod fourbyfourcovermatrix;
@@ -179,25 +176,34 @@ fn array_of_arrays_to_nodes(
 
     for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
         let mut column_header: OwnedNode = Node::new_header(Some(column_index as usize));
-        link_right(&special_header, &Rc::downgrade(&column_header));
+        link_left(&special_header, &Rc::downgrade(&column_header));
         column_nodes.push(column_header);
     }
 
-    for row_index in 0..EXACT_COVER_MATRIX_ROWS {
-        for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+    for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+        let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
+        for row_index in 0..EXACT_COVER_MATRIX_ROWS {
             if cover_matrix[row_index as usize][column_index as usize] == 1 {
-                let mut header_node: &OwnedNode = &(column_nodes[column_index as usize]);
-
                 let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
-                prepend_up(header_node, &Rc::downgrade(&node));
 
-                let hi = header_node.borrow_mut();
-                let he = Rc::downgrade(hi);
-                // he.
+                link_down(&header_node, &Rc::downgrade(&node));
+                header_node.borrow_mut().inc_count();
             }
         }
     }
-    let hi = 2;
+
+    // for row_index in 0..EXACT_COVER_MATRIX_ROWS {
+    //     for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+    //         if cover_matrix[row_index as usize][column_index as usize] == 1 {
+    //             let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
+    //
+    //             let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
+    //
+    //             link_down(&header_node, &Rc::downgrade(&node));
+    //             header_node.borrow_mut().inc_count();
+    //         }
+    //     }
+    // }
 }
 
 // fn array_of_arrays_to_nodes(
