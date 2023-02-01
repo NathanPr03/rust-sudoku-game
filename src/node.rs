@@ -13,9 +13,9 @@ pub enum NodeExtra {
 
 #[derive(Debug)]
 pub struct Node {
-    up: Weak<RefCell<Node>>,
+    pub up: Weak<RefCell<Node>>,
     down: Weak<RefCell<Node>>,
-    left: Weak<RefCell<Node>>,
+    pub left: Weak<RefCell<Node>>,
     right: Weak<RefCell<Node>>,
     at_self: Weak<RefCell<Node>>,
 
@@ -119,8 +119,9 @@ pub fn link_left(root: &OwnedNode, node: &WeakNode) -> () {
 }
 
 pub fn link_down(root: &OwnedNode, node: &WeakNode) -> () {
-    let unwrapped_node = (*node).upgrade().unwrap();
+    dbg!(root.borrow_mut().up.upgrade());
 
+    let unwrapped_node = (*node).upgrade().unwrap();
     {
         let mut node_ref = unwrapped_node.borrow_mut();
         node_ref.down = Rc::downgrade(&root);

@@ -175,91 +175,27 @@ fn array_of_arrays_to_nodes(
     let mut column_nodes: Vec<OwnedNode> = Vec::new();
 
     for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
-        let mut column_header: OwnedNode = Node::new_header(Some(column_index as usize));
+        let column_header: OwnedNode = Node::new_header(Some(column_index as usize));
         link_left(&special_header, &Rc::downgrade(&column_header));
         column_nodes.push(column_header);
     }
 
-    for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
-        let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
-        for row_index in 0..EXACT_COVER_MATRIX_ROWS {
-            if cover_matrix[row_index as usize][column_index as usize] == 1 {
-                let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
+    // Only using this so the nodes are always pointed to probably unecessary but fails without
+    let mut some_nodes: Vec<OwnedNode> = Vec::new();
 
+    for row_index in 0..EXACT_COVER_MATRIX_ROWS {
+        for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+            if cover_matrix[row_index as usize][column_index as usize] == 1 {
+                let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
+
+                let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
                 link_down(&header_node, &Rc::downgrade(&node));
                 header_node.borrow_mut().inc_count();
+                some_nodes.push(node);
             }
         }
     }
-
-    // for row_index in 0..EXACT_COVER_MATRIX_ROWS {
-    //     for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
-    //         if cover_matrix[row_index as usize][column_index as usize] == 1 {
-    //             let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
-    //
-    //             let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
-    //
-    //             link_down(&header_node, &Rc::downgrade(&node));
-    //             header_node.borrow_mut().inc_count();
-    //         }
-    //     }
-    // }
 }
-
-// fn array_of_arrays_to_nodes(
-//     cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-// ) -> ()
-// {
-//     let mut special_header: ColumnHeaderNode = ColumnHeaderNode::new(
-//         0,
-//         999
-//     );
-//
-//     let mut column_nodes: Vec<ColumnHeaderNode> = Vec::new();
-//
-//     for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
-//         let mut column_header: ColumnHeaderNode = ColumnHeaderNode::new(
-//             0,
-//             column_index as usize
-//         );
-//
-//         column_header.link_right_and_left(&column_header);
-//         column_nodes.push(column_header);
-//     }
-//
-//     for row_index in 0..EXACT_COVER_MATRIX_ROWS {
-//
-//     }
-// }
-// fn array_of_arrays_to_nodes(
-//     cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-// ) -> ()
-// {
-//    for column in 0..EXACT_COVER_MATRIX_COLUMNS {
-//         let mut column_header_node: ColumnHeaderNode
-//         = ColumnHeaderNode::new();
-//
-//         let mut previous_node: Weak<RefCell<Node>> = Default::default();
-//
-//         for row in 0..EXACT_COVER_MATRIX_ROWS {
-//             if cover_matrix[row as usize][column as usize] == 1 {
-//                 let mut node: OwnedNode = Node::new(
-//                     column as usize,
-//                     row as usize
-//                 );
-//
-//                 let mut mutable_reference_to_owned_node: RefMut<Node> = (*node).borrow_mut();
-//
-//
-//                 if previous_node.upgrade().is_some() {
-//                     mutable_reference_to_owned_node.set_upward_link(previous_node)
-//                 }
-//
-//                 previous_node = Rc::downgrade(&node);
-//             }
-//         }
-//     }
-// }
 
 
 
