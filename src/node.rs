@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::fmt::{Debug, Formatter};
 use std::rc::{Rc, Weak};
 
 pub type ColumnIndex = usize;
@@ -14,16 +15,15 @@ pub enum NodeExtra {
 #[derive(Debug)]
 pub struct Node {
     pub up: Weak<RefCell<Node>>,
-    down: Weak<RefCell<Node>>,
+    pub down: Weak<RefCell<Node>>,
     pub left: Weak<RefCell<Node>>,
-    right: Weak<RefCell<Node>>,
+    pub right: Weak<RefCell<Node>>,
     at_self: Weak<RefCell<Node>>,
 
     pub column: Option<ColumnIndex>,
     header: Weak<RefCell<Node>>,
     extra: NodeExtra
 }
-
 
 pub type OwnedNode = Rc<RefCell<Node>>;
 pub type WeakNode = Weak<RefCell<Node>>;
@@ -85,8 +85,30 @@ impl Node {
 
         return count;
     }
+
+    pub fn pretty_print(&self) {
+        let node = self;
+
+        println!("Node {{ up: {:?}, down: {:?}, left: {:?}, right: {:?}, at_self: {:?}, column: {:?}, header: {:?}, extra: {:?} }}",
+               node.up.upgrade().unwrap(), node.down.upgrade().unwrap(), node.left.upgrade(), node.right.upgrade(), node.at_self.upgrade(),
+               node.column, node.header.upgrade(), node.extra)
+    }
+    
 }
 
+impl Drop for Node{
+    fn drop(&mut self) {
+        let row = match self.extra {
+            NodeExtra::Row(i) => i,
+            _ => return,
+        };
+
+        println!("We have a dropper!");
+        println!("Row: {}", row);
+        println!("Column: {}", self.column.unwrap());
+        dbg!(self);
+    }
+}
 /**
  * Insert node prepended to the left of root
  * This will result in root being the last node in the link
@@ -119,8 +141,6 @@ pub fn link_left(root: &OwnedNode, node: &WeakNode) -> () {
 }
 
 pub fn link_down(root: &OwnedNode, node: &WeakNode) -> () {
-    dbg!(root.borrow_mut().up.upgrade());
-
     let unwrapped_node = (*node).upgrade().unwrap();
     {
         let mut node_ref = unwrapped_node.borrow_mut();

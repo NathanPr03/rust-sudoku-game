@@ -180,10 +180,10 @@ fn array_of_arrays_to_nodes(
         column_nodes.push(column_header);
     }
 
-    // Only using this so the nodes are always pointed to probably unecessary but fails without
-    let mut some_nodes: Vec<OwnedNode> = Vec::new();
+    let mut all_rows: Vec<Vec<OwnedNode>> = Vec::new();
 
     for row_index in 0..EXACT_COVER_MATRIX_ROWS {
+        let mut a_row: Vec<OwnedNode> = Vec::new();
         for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
             if cover_matrix[row_index as usize][column_index as usize] == 1 {
                 let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
@@ -191,13 +191,41 @@ fn array_of_arrays_to_nodes(
                 let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
                 link_down(&header_node, &Rc::downgrade(&node));
                 header_node.borrow_mut().inc_count();
-                some_nodes.push(node);
+
+                a_row.push(node);
             }
+        }
+
+        all_rows.push(a_row);
+    }
+
+    for row in all_rows.clone() {
+        let length_of_vec: usize = row.len();
+        for i in 0..length_of_vec {
+            let previous_node = &row[get_previous_index(i, length_of_vec)];
+            let next_node = &row[get_next_index(i, length_of_vec)];
+
+            row[i].borrow_mut().left = Rc::downgrade(previous_node);
+            row[i].borrow_mut().right = Rc::downgrade(next_node);
         }
     }
 }
 
+// This will return a module index, giving us circular links
+pub fn get_previous_index(current_index: usize, length: usize) -> usize {
+    return if current_index == 0 {
+        // 0 indexed
+        length - 1
+    } else {
+        current_index
+    };
+}
 
-
-
-
+// This will return a module index, giving us circular links
+pub fn get_next_index(current_index: usize, length: usize) -> usize {
+    return if current_index == length {
+        0
+    } else {
+        current_index
+    }
+}
