@@ -3,17 +3,15 @@ use std::rc::Rc;
 use crate::{EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, get_next_index, get_previous_index};
 use crate::node::{link_down, link_left, Node, OwnedNode};
 
-pub mod matrix{
 
-}
-pub struct Matrix {
+pub struct NodeMatrix {
     column_nodes: Vec<OwnedNode>,
     rows: Vec<Vec<OwnedNode>> // Dont really want this property but nodes will be dropped if we dont have it :(
 }
 
-impl Matrix {
-    pub fn new() -> Matrix {
-        return Matrix {
+impl NodeMatrix {
+    pub fn new() -> NodeMatrix {
+        return NodeMatrix {
             column_nodes: Vec::new(),
             rows: Vec::new()
         }
