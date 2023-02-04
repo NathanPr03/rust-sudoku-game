@@ -106,7 +106,7 @@ impl Drop for Node{
         println!("We have a dropper!");
         println!("Row: {}", row);
         println!("Column: {}", self.column.unwrap());
-        dbg!(self);
+        // dbg!(self);
     }
 }
 /**

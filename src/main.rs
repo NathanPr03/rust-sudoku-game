@@ -1,9 +1,12 @@
 use std::rc::{Rc};
+use crate::matrix::Matrix;
 use crate::node::{Node, OwnedNode, link_left, link_down};
 
 mod ninebyninecovermatrix;
 mod fourbyfourcovermatrix;
 mod node;
+mod matrix;
+mod test;
 
 const BOARD_SIZE: u16 = 9;
 const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;
@@ -17,13 +20,6 @@ fn main() {
 
     println!("Columns: {}, Rows: {}", EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS);
 
-    // let _board: [[u8; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
-    // [
-    //     [0, 3, 4, 0],
-    //     [4, 0, 0, 2],
-    //     [1, 0, 0, 3],
-    //     [0, 2, 1, 0]
-    // ];
 
     //Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
     let mut cover_matrix:[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
@@ -32,15 +28,27 @@ fn main() {
     println!("1st: {}", cover_matrix.len());
     println!("2nd: {}", cover_matrix[1].len());
 
+    generate_array_matrix(&mut cover_matrix);
+
+    let mut nodes_matrix: Matrix = Matrix::new();
+    nodes_matrix.arrange_matrix(&cover_matrix);
+
+    let headers = nodes_matrix.get_column_nodes();
+    let first_header = &headers[1];
+    dbg!(first_header.borrow_mut().down.upgrade().unwrap());
+    print_board(&mut cover_matrix);
+    // clue_to_exact_cover(&_board, &mut cover_matrix);
+    // print_board(&mut cover_matrix);
+}
+
+pub fn generate_array_matrix(
+    mut cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+) -> ()
+{
     cell_constraint(&mut cover_matrix);
     row_constraint(&mut cover_matrix);
     column_constraint(&mut cover_matrix);
     region_constraint(&mut cover_matrix);
-
-    array_of_arrays_to_nodes(&cover_matrix);
-    print_board(&mut cover_matrix);
-    // clue_to_exact_cover(&_board, &mut cover_matrix);
-    // print_board(&mut cover_matrix);
 }
 
 fn cell_constraint
@@ -164,51 +172,6 @@ fn board_cell_to_exact_cover_row(board_row: usize, board_column: usize, cell_val
     exact_cover_row += cell_value as usize;
 
     return exact_cover_row;
-}
-
-fn array_of_arrays_to_nodes(
-    cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-) -> ()
-{
-    let mut special_header: OwnedNode = Node::new_root();
-
-    let mut column_nodes: Vec<OwnedNode> = Vec::new();
-
-    for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
-        let column_header: OwnedNode = Node::new_header(Some(column_index as usize));
-        link_left(&special_header, &Rc::downgrade(&column_header));
-        column_nodes.push(column_header);
-    }
-
-    let mut all_rows: Vec<Vec<OwnedNode>> = Vec::new();
-
-    for row_index in 0..EXACT_COVER_MATRIX_ROWS {
-        let mut a_row: Vec<OwnedNode> = Vec::new();
-        for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
-            if cover_matrix[row_index as usize][column_index as usize] == 1 {
-                let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
-
-                let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
-                link_down(&header_node, &Rc::downgrade(&node));
-                header_node.borrow_mut().inc_count();
-
-                a_row.push(node);
-            }
-        }
-
-        all_rows.push(a_row);
-    }
-
-    for row in all_rows.clone() {
-        let length_of_vec: usize = row.len();
-        for i in 0..length_of_vec {
-            let previous_node = &row[get_previous_index(i, length_of_vec)];
-            let next_node = &row[get_next_index(i, length_of_vec)];
-
-            row[i].borrow_mut().left = Rc::downgrade(previous_node);
-            row[i].borrow_mut().right = Rc::downgrade(next_node);
-        }
-    }
 }
 
 // This will return a module index, giving us circular links
