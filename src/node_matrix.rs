@@ -1,11 +1,11 @@
 use std::rc::Rc;
 use crate::{EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
 
-use crate::node::{link_down, link_left, Node, OwnedNode};
+use crate::node::{link_left, Node, StrongNode};
 
 pub struct NodeMatrix {
-    column_nodes: Vec<OwnedNode>,
-    rows: Vec<Vec<OwnedNode>> // Dont really want this property but nodes will be dropped if we dont have it :(
+    column_nodes: Vec<StrongNode>,
+    rows: Vec<Vec<StrongNode>> // Dont really want this property but nodes will be dropped if we dont have it :(
 }
 
 impl NodeMatrix {
@@ -16,12 +16,12 @@ impl NodeMatrix {
         }
     }
 
-    pub fn get_column_nodes(&self) -> &Vec<OwnedNode>
+    pub fn get_column_nodes(&self) -> &Vec<StrongNode>
     {
         return &self.column_nodes;
     }
 
-    pub fn get_rows(&self) -> &Vec<Vec<OwnedNode>>
+    pub fn get_rows(&self) -> &Vec<Vec<StrongNode>>
     {
         return &self.rows;
     }
@@ -31,26 +31,28 @@ impl NodeMatrix {
         cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
     ) -> ()
     {
-        let mut special_header: OwnedNode = Node::new_root();
+        let mut special_header: StrongNode = Node::new_root();
 
-        let mut column_nodes: Vec<OwnedNode> = Vec::new();
+        let mut column_nodes: Vec<StrongNode> = Vec::new();
 
         for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
-            let column_header: OwnedNode = Node::new_header(Some(column_index as usize));
+            let column_header: StrongNode = Node::new_header(Some(column_index as usize));
             link_left(&special_header, &Rc::downgrade(&column_header));
             column_nodes.push(column_header);
         }
 
-        let mut all_rows: Vec<Vec<OwnedNode>> = Vec::new();
+        let mut all_rows: Vec<Vec<StrongNode>> = Vec::new();
 
         for row_index in 0..EXACT_COVER_MATRIX_ROWS {
-            let mut a_row: Vec<OwnedNode> = Vec::new();
+            let mut a_row: Vec<StrongNode> = Vec::new();
             for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
                 if cover_matrix[row_index as usize][column_index as usize] == 1 {
-                    let header_node: &OwnedNode = &(column_nodes[column_index as usize]);
+                    let header_node: &StrongNode = &(column_nodes[column_index as usize]);
 
-                    let node: OwnedNode = Node::new_inner(header_node, row_index as usize);
-                    link_down(&header_node, &Rc::downgrade(&node));
+                    let node: StrongNode = Node::new_inner(header_node, row_index as usize);
+
+                    node.borrow_mut().link_down(&Rc::downgrade(&node));
+
                     header_node.borrow_mut().inc_count();
 
                     a_row.push(node);

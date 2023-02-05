@@ -1,4 +1,4 @@
-use rust_sudoku_game::{ColumnIterator, Node, NodeMatrix, OwnedNode};
+use rust_sudoku_game::{ColumnIterator, Node, NodeMatrix, StrongNode};
 use crate::complete_nine_by_nine_matrix::completed_nine_by_nine_cover_matrix;
 
 mod complete_nine_by_nine_matrix;
@@ -13,19 +13,19 @@ pub fn test_node_matrix_columns()
 
     nodes_matrix.arrange_matrix(&completed_cover_matrix);
 
-    let columns: &Vec<OwnedNode> = nodes_matrix.get_column_nodes();
+    let columns: &Vec<StrongNode> = nodes_matrix.get_column_nodes();
 
     for i in 0..columns.len() {
-        let header_node: &OwnedNode = &columns[i];
+        let header_node: &StrongNode = &columns[i];
         let column_iterator = ColumnIterator::new(header_node);
 
-        let column_number = header_node.borrow_mut().column.unwrap();
+        let column_number = header_node.borrow_mut().column_index.unwrap();
         let mut last_row_number = 0;
 
         for node in column_iterator {
             let raw_node = node.upgrade().unwrap();
 
-            let current_column = raw_node.borrow_mut().column.unwrap();
+            let current_column = raw_node.borrow_mut().column_index.unwrap();
             let current_row_number = raw_node.borrow_mut().get_row().unwrap();
 
             if current_row_number != 0 {
@@ -47,7 +47,7 @@ pub fn test_node_matrix_rows()
 
     nodes_matrix.arrange_matrix(&completed_cover_matrix);
 
-    let rows: &Vec<Vec<OwnedNode>> = nodes_matrix.get_rows();
+    let rows: &Vec<Vec<StrongNode>> = nodes_matrix.get_rows();
 
     for row_index in 0..rows.clone().len() {
         let row = &rows[row_index];
@@ -57,7 +57,7 @@ pub fn test_node_matrix_rows()
         for node in row {
             let raw_node = node.borrow_mut();
 
-            let current_column_number = raw_node.column.unwrap();
+            let current_column_number = raw_node.column_index.unwrap();
             let current_row_number = raw_node.get_row().unwrap();
 
             if last_column_number != 0 {

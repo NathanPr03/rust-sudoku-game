@@ -6,7 +6,7 @@ mod array_matrix;
 mod iter;
 
 pub use node::Node;
-pub use node::OwnedNode;
+pub use node::StrongNode;
 pub use node_matrix::NodeMatrix;
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;

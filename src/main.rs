@@ -20,7 +20,7 @@ fn main() {
     array_matrix.generate_array_matrix();
 
     let mut nodes_matrix: NodeMatrix = NodeMatrix::new();
-    nodes_matrix.arrange_matrix(&cover_matrix);
+    nodes_matrix.arrange_matrix(array_matrix.get_cover_matrix());
 
     let headers = nodes_matrix.get_column_nodes();
     let first_header = &headers[1];

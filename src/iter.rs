@@ -1,15 +1,15 @@
 use crate::node::WeakNode;
-use crate::OwnedNode;
+use crate::StrongNode;
 
 #[derive(Debug)]
 pub struct ColumnIterator {
-    next_up: OwnedNode,
-    next_down: OwnedNode
+    next_up: StrongNode,
+    next_down: StrongNode
 }
 
 
 impl ColumnIterator {
-    pub fn new(c: &OwnedNode) -> ColumnIterator {
+    pub fn new(c: &StrongNode) -> ColumnIterator {
         ColumnIterator {
             next_up: c.clone(),
             next_down: c.clone()
