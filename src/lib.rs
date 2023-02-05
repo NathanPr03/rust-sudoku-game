@@ -3,12 +3,14 @@ pub mod fourbyfourcovermatrix;
 mod node;
 mod node_matrix;
 mod array_matrix;
+mod iter;
 
 pub use node::Node;
 pub use node::OwnedNode;
 pub use node_matrix::NodeMatrix;
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;
+pub use iter::ColumnIterator;
 
 pub const BOARD_SIZE: u16 = 9;
 pub const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;

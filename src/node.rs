@@ -86,6 +86,13 @@ impl Node {
         return count;
     }
 
+    pub fn get_row(&self) -> Option<usize> {
+        match self.extra {
+            NodeExtra::Row(i) => Some(i),
+            _ => None
+        }
+    }
+
     pub fn pretty_print(&self) {
         let node = self;
 
@@ -106,7 +113,6 @@ impl Drop for Node{
         println!("We have a dropper!");
         println!("Row: {}", row);
         println!("Column: {}", self.column.unwrap());
-        // dbg!(self);
     }
 }
 /**

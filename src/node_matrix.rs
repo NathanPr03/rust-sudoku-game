@@ -21,6 +21,11 @@ impl NodeMatrix {
         return &self.column_nodes;
     }
 
+    pub fn get_rows(&self) -> &Vec<Vec<OwnedNode>>
+    {
+        return &self.rows;
+    }
+
     pub fn arrange_matrix(
         &mut self,
         cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
