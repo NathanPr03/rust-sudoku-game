@@ -98,6 +98,28 @@ impl Node {
                  node.column_index, node.header.upgrade(), node.extra)
     }
 
+    /**
+     * Insert node prepended to the left of root
+     * This will result in root being the last node in the link
+     * root<->x -----> x<->node<->root
+     */
+    pub fn link_left(&mut self, root: &StrongNode, node: &WeakNode) -> () {
+        let node_ref = self;
+        {
+            node_ref.right = Rc::downgrade(&root);
+            node_ref.left = root.borrow_mut().left.clone();
+        }
+        {
+            let mut mutable_root = root.borrow_mut();
+            mutable_root.left = (*node).clone();
+        }
+        {
+
+            let x_node = node_ref.left.upgrade().unwrap();
+            x_node.borrow_mut().right = (*node).clone();
+        }
+    }
+
     pub fn link_down(&mut self, node: &WeakNode) -> () {
         let root: &StrongNode = &self.header.upgrade().unwrap();
         let node_ref = self;
@@ -128,30 +150,6 @@ impl Drop for Node{
         println!("We have a dropper!");
         println!("Row: {}", row);
         println!("Column: {}", self.column_index.unwrap());
-    }
-}
-
-/**
- * Insert node prepended to the left of root
- * This will result in root being the last node in the link
- * root<->x -----> x<->node<->root
-*/
-pub fn link_left(root: &StrongNode, node: &WeakNode) -> () {
-    let unwrapped_node = (*node).upgrade().unwrap();
-    {
-        let mut node_ref = unwrapped_node.borrow_mut();
-        node_ref.right = Rc::downgrade(&root);
-        node_ref.left = root.borrow_mut().left.clone();
-    }
-    {
-        let mut mutable_root = root.borrow_mut();
-        mutable_root.left = (*node).clone();
-    }
-    {
-
-        let node_ref = unwrapped_node.borrow_mut();
-        let x_node = node_ref.left.upgrade().unwrap();
-        x_node.borrow_mut().right = (*node).clone();
     }
 }
 

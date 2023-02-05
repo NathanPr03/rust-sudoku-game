@@ -1,7 +1,7 @@
 use std::rc::Rc;
 use crate::{EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
 
-use crate::node::{link_left, Node, StrongNode};
+use crate::node::{Node, StrongNode};
 
 pub struct NodeMatrix {
     column_nodes: Vec<StrongNode>,
@@ -31,13 +31,13 @@ impl NodeMatrix {
         cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
     ) -> ()
     {
-        let mut special_header: StrongNode = Node::new_root();
+        let special_header: StrongNode = Node::new_root();
 
         let mut column_nodes: Vec<StrongNode> = Vec::new();
 
         for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
             let column_header: StrongNode = Node::new_header(Some(column_index as usize));
-            link_left(&special_header, &Rc::downgrade(&column_header));
+            column_header.borrow_mut().link_left(&special_header, &Rc::downgrade(&column_header));
             column_nodes.push(column_header);
         }
 
