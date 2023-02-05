@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use std::fmt::{Debug, Formatter};
+use std::fmt::{Debug};
 use std::rc::{Rc, Weak};
 
 pub type ColumnIndex = usize;

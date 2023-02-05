@@ -1,29 +1,16 @@
-use std::rc::{Rc};
-use crate::array_matrix::ArrayMatrix;
-use crate::node_matrix::NodeMatrix;
-use crate::node::{Node, OwnedNode, link_left, link_down};
+use rust_sudoku_game::{EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
 
-mod ninebyninecovermatrix;
-mod fourbyfourcovermatrix;
-mod node;
-mod node_matrix;
-mod array_matrix;
-
-const BOARD_SIZE: u16 = 9;
-const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;
-
-const CONSTRAINTS: [&str; 4] = ["Position", "Row", "Column", "Square"];
-const NUM_OF_CONSTRAINTS: u16 = CONSTRAINTS.len() as u16;
-const EXACT_COVER_MATRIX_COLUMNS: u16 = BOARD_SIZE_SQUARED * NUM_OF_CONSTRAINTS;
-const EXACT_COVER_MATRIX_ROWS: u16 = BOARD_SIZE_SQUARED * BOARD_SIZE;
+use rust_sudoku_game::ArrayMatrix;
+use rust_sudoku_game::NodeMatrix;
+use rust_sudoku_game::ninebyninecovermatrix;
+use rust_sudoku_game::fourbyfourcovermatrix;
 
 fn main() {
-
     println!("Columns: {}, Rows: {}", EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS);
 
 
     //Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
-    let mut cover_matrix:[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+    let cover_matrix:[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
         = ninebyninecovermatrix::nine_by_nine_cover_matrix();
 
     println!("1st: {}", cover_matrix.len());
@@ -55,23 +42,4 @@ fn board_cell_to_exact_cover_row(board_row: usize, board_column: usize, cell_val
     exact_cover_row += cell_value as usize;
 
     return exact_cover_row;
-}
-
-// This will return a module index, giving us circular links
-pub fn get_previous_index(current_index: usize, length: usize) -> usize {
-    return if current_index == 0 {
-        // 0 indexed
-        length - 1
-    } else {
-        current_index
-    };
-}
-
-// This will return a module index, giving us circular links
-pub fn get_next_index(current_index: usize, length: usize) -> usize {
-    return if current_index == length {
-        0
-    } else {
-        current_index
-    }
 }

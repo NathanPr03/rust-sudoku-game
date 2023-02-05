@@ -1,8 +1,7 @@
-use std::os::fd::OwnedFd;
 use std::rc::Rc;
-use crate::{EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, get_next_index, get_previous_index};
-use crate::node::{link_down, link_left, Node, OwnedNode};
+use crate::{EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
 
+use crate::node::{link_down, link_left, Node, OwnedNode};
 
 pub struct NodeMatrix {
     column_nodes: Vec<OwnedNode>,
@@ -73,5 +72,24 @@ impl NodeMatrix {
         let headers = self.get_column_nodes();
         let first_header = &headers[1];
         dbg!(first_header.borrow_mut().down.upgrade().unwrap());
+    }
+}
+
+// This will return a module index, giving us circular links
+fn get_previous_index(current_index: usize, length: usize) -> usize {
+    return if current_index == 0 {
+        // 0 indexed
+        length - 1
+    } else {
+        current_index
+    };
+}
+
+// This will return a module index, giving us circular links
+fn get_next_index(current_index: usize, length: usize) -> usize {
+    return if current_index == length {
+        0
+    } else {
+        current_index
     }
 }
