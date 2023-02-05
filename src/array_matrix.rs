@@ -5,10 +5,7 @@ pub struct ArrayMatrix {
 }
 
 impl ArrayMatrix {
-    pub fn new
-    (
-        cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-    )-> ArrayMatrix
+    pub fn new(cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize])-> ArrayMatrix
     {
         return ArrayMatrix{
             cover_matrix

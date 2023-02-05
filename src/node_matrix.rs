@@ -75,10 +75,6 @@ impl NodeMatrix {
 
         self.rows = all_rows;
         self.column_nodes = column_nodes;
-
-        let headers = self.get_column_nodes();
-        let first_header = &headers[1];
-        dbg!(first_header.borrow_mut().down.upgrade().unwrap());
     }
 }
 
