@@ -1,4 +1,3 @@
-use std::os::unix::thread;
 use std::thread::Builder;
 use rust_sudoku_game::{ArrayMatrix, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, ninebyninecovermatrix};
 use crate::complete_nine_by_nine_matrix::completed_nine_by_nine_cover_matrix;
