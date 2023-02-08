@@ -4,6 +4,7 @@ mod node;
 mod node_matrix;
 mod array_matrix;
 mod iter;
+mod sparse_array_matrix;
 
 pub use node::Node;
 pub use node::StrongNode;
@@ -18,4 +19,4 @@ pub const CONSTRAINTS: [&str; 4] = ["Position", "Row", "Column", "Square"];
 pub const NUM_OF_CONSTRAINTS: u16 = CONSTRAINTS.len() as u16;
 pub const EXACT_COVER_MATRIX_COLUMNS: u16 = BOARD_SIZE_SQUARED * NUM_OF_CONSTRAINTS;
 pub const EXACT_COVER_MATRIX_ROWS: u16 = BOARD_SIZE_SQUARED * BOARD_SIZE;
-pub const SOME_NEW: u16 = BOARD_SIZE;
+pub const SQRT_BOARD_SIZE: u16 = BOARD_SIZE / BOARD_SIZE;
