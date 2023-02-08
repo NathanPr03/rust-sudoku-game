@@ -1,5 +1,6 @@
 use std::rc::Rc;
-use crate::{EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
+use crate::{ColumnIterator, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
+use crate::iter::RowIterator;
 
 use crate::node::{Node, StrongNode};
 
@@ -37,7 +38,7 @@ impl NodeMatrix {
 
         for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
             let column_header: StrongNode = Node::new_header(Some(column_index as usize));
-            column_header.borrow_mut().link_left(&special_header, &Rc::downgrade(&column_header));
+            column_header.borrow_mut().link_left(&special_header);
             column_nodes.push(column_header);
         }
 
@@ -51,9 +52,9 @@ impl NodeMatrix {
 
                     let node: StrongNode = Node::new_inner(header_node, row_index as usize);
 
-                    node.borrow_mut().link_down(&Rc::downgrade(&node));
+                    node.borrow_mut().link_down();
 
-                    header_node.borrow_mut().inc_count();
+                    header_node.borrow_mut().increment_count();
 
                     a_row.push(node);
                 }
@@ -76,9 +77,52 @@ impl NodeMatrix {
         self.rows = all_rows;
         self.column_nodes = column_nodes;
     }
+
+    pub fn cover(column_header: StrongNode) -> ()
+    {
+        column_header.borrow_mut().left.upgrade().unwrap().borrow_mut().right = column_header.borrow_mut().right.clone();
+        column_header.borrow_mut().right.upgrade().unwrap().borrow_mut().left = column_header.borrow_mut().left.clone();
+
+
+        let column_iterator = ColumnIterator::new(&column_header);
+
+        for node in column_iterator {
+            let row_iterator = RowIterator::new(&node);
+
+            for node_from_row in row_iterator {
+                let raw_node_from_row = node_from_row.upgrade().unwrap();
+                raw_node_from_row.borrow_mut().remove_node_from_column();
+
+                let column_header_of_given_node = raw_node_from_row.borrow_mut().header.clone();
+
+                column_header_of_given_node.upgrade().unwrap().borrow_mut().decrement_count();
+            }
+        }
+    }
+
+    pub fn uncover(column_header: &StrongNode) -> ()
+    {
+        let column_iterator = ColumnIterator::new(&column_header);
+
+        for node in column_iterator {
+            let row_iterator = RowIterator::new(&node);
+
+            for node_from_row in row_iterator {
+                let raw_node_from_row = node_from_row.upgrade().unwrap();
+
+                raw_node_from_row.borrow_mut().reinsert_node_into_column();
+
+                let column_header_of_given_node = raw_node_from_row.borrow_mut().header.clone();
+
+                column_header_of_given_node.upgrade().unwrap().borrow_mut().increment_count();
+            }
+        }
+        column_header.borrow_mut().left.upgrade().unwrap().borrow_mut().right = Rc::downgrade(column_header);
+        column_header.borrow_mut().right.upgrade().unwrap().borrow_mut().left = Rc::downgrade(column_header);
+    }
 }
 
-// This will return a module index, giving us circular links
+// This will return a modular index, giving us circular links
 fn get_previous_index(current_index: usize, length: usize) -> usize {
     return if current_index == 0 {
         // 0 indexed
@@ -88,7 +132,7 @@ fn get_previous_index(current_index: usize, length: usize) -> usize {
     };
 }
 
-// This will return a module index, giving us circular links
+// This will return a modular index, giving us circular links
 fn get_next_index(current_index: usize, length: usize) -> usize {
     return if current_index == length {
         0

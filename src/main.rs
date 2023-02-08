@@ -30,7 +30,7 @@ fn main() {
     // print_board(&mut cover_matrix);
 }
 
-fn board_cell_to_exact_cover_row(board_row: usize, board_column: usize, cell_value: u8) -> usize
+fn _board_cell_to_exact_cover_row(board_row: usize, board_column: usize, cell_value: u8) -> usize
 {
     let mut exact_cover_row: usize = 0;
     if board_row > 1 {

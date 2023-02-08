@@ -15,10 +15,10 @@ pub struct Node {
     pub down: Weak<RefCell<Node>>,
     pub left: Weak<RefCell<Node>>,
     pub right: Weak<RefCell<Node>>,
-    at_self: Weak<RefCell<Node>>, //Probably dont need this
+    pointer_to_self: Weak<RefCell<Node>>, //Probably dont need this
 
     pub column_index: Option<usize>,
-    header: Weak<RefCell<Node>>,
+    pub header: Weak<RefCell<Node>>,
     extra: NodeExtra
 }
 
@@ -42,7 +42,7 @@ impl Node {
         let an_owned_node = Rc::new(RefCell::new(Node {
             up: Weak::new(), down: Weak::new(),
             left: Weak::new(), right: Weak::new(),
-            at_self: Weak::new(),
+            pointer_to_self: Weak::new(),
             header: Weak::new(),
             column_index: col, extra: e
         }));
@@ -55,7 +55,7 @@ impl Node {
             mutable_reference_to_owned_node.down = a_weak_node.clone();
             mutable_reference_to_owned_node.left = a_weak_node.clone();
             mutable_reference_to_owned_node.right = a_weak_node.clone();
-            mutable_reference_to_owned_node.at_self = a_weak_node.clone();
+            mutable_reference_to_owned_node.pointer_to_self = a_weak_node.clone();
 
             mutable_reference_to_owned_node.header = match header {
                 Some(node) => node.clone(),
@@ -66,12 +66,22 @@ impl Node {
         return an_owned_node
     }
 
-    pub fn inc_count(&mut self) {
-        let c = match self.extra {
+    pub fn increment_count(&mut self) -> ()
+    {
+        let count = match self.extra {
             NodeExtra::Count(i) => i,
             _ => return
         };
-        self.extra = NodeExtra::Count(c+1);
+        self.extra = NodeExtra::Count(count+1);
+    }
+
+    pub fn decrement_count(&mut self) -> ()
+    {
+        let count = match self.extra {
+            NodeExtra::Count(i) => i,
+            _ => return
+        };
+        self.extra = NodeExtra::Count(count-1);
     }
 
     pub fn get_count(&self) -> usize {
@@ -94,7 +104,7 @@ impl Node {
         let node = self;
 
         println!("Node {{ up: {:?}, down: {:?}, left: {:?}, right: {:?}, at_self: {:?}, column: {:?}, header: {:?}, extra: {:?} }}",
-                 node.up.upgrade().unwrap(), node.down.upgrade().unwrap(), node.left.upgrade(), node.right.upgrade(), node.at_self.upgrade(),
+                 node.up.upgrade().unwrap(), node.down.upgrade().unwrap(), node.left.upgrade(), node.right.upgrade(), node.pointer_to_self.upgrade(),
                  node.column_index, node.header.upgrade(), node.extra)
     }
 
@@ -103,41 +113,51 @@ impl Node {
      * This will result in root being the last node in the link
      * root<->x -----> x<->node<->root
      */
-    pub fn link_left(&mut self, root: &StrongNode, node: &WeakNode) -> () {
-        let node_ref = self;
+    pub fn link_left(&mut self, root: &StrongNode) -> () {
         {
-            node_ref.right = Rc::downgrade(&root);
-            node_ref.left = root.borrow_mut().left.clone();
+            self.right = Rc::downgrade(&root);
+            self.left = root.borrow_mut().left.clone();
         }
         {
             let mut mutable_root = root.borrow_mut();
-            mutable_root.left = (*node).clone();
+            mutable_root.left = self.pointer_to_self.clone();
         }
         {
-
-            let x_node = node_ref.left.upgrade().unwrap();
-            x_node.borrow_mut().right = (*node).clone();
+            //Un certain as to whether this code is even required
+            let up_node = self.left.upgrade().unwrap();
+            up_node.borrow_mut().right = self.pointer_to_self.clone();
         }
     }
 
-    pub fn link_down(&mut self, node: &WeakNode) -> () {
+    pub fn link_down(&mut self) -> () {
         let root: &StrongNode = &self.header.upgrade().unwrap();
-        let node_ref = self;
 
         {
-            node_ref.down = Rc::downgrade(&root);
-            node_ref.up = root.borrow_mut().up.clone();
+            self.down = Rc::downgrade(&root);
+            self.up = root.borrow_mut().up.clone();
         }
         {
             let mut root_ref = root.borrow_mut();
-            root_ref.up = (*node).clone();
+            root_ref.up = self.pointer_to_self.clone();
         }
         {
-            let x_node = node_ref.up.upgrade().unwrap();
-            x_node.borrow_mut().down = (*node).clone();
+            //Un certain as to whether this code is even required
+            let up_node = self.up.upgrade().unwrap();
+            up_node.borrow_mut().down = self.pointer_to_self.clone();
         }
     }
 
+    pub fn remove_node_from_column(&mut self) -> ()
+    {
+        self.up.upgrade().unwrap().borrow_mut().down = self.down.clone();
+        self.down.upgrade().unwrap().borrow_mut().up = self.up.clone();
+    }
+
+    pub fn reinsert_node_into_column(&mut self) -> ()
+    {
+        self.up.upgrade().unwrap().borrow_mut().down = self.pointer_to_self.clone();
+        self.down.upgrade().unwrap().borrow_mut().up = self.pointer_to_self.clone();
+    }
 }
 
 impl Drop for Node{

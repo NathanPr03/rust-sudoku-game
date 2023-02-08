@@ -9,10 +9,10 @@ pub struct ColumnIterator {
 
 
 impl ColumnIterator {
-    pub fn new(c: &StrongNode) -> ColumnIterator {
+    pub fn new(column_header: &StrongNode) -> ColumnIterator {
         ColumnIterator {
-            next_up: c.clone(),
-            next_down: c.clone()
+            next_up: column_header.clone(),
+            next_down: column_header.clone()
         }
     }
 }
@@ -25,6 +25,38 @@ impl Iterator for ColumnIterator {
         self.next_down = weak_next.upgrade().unwrap();
 
         if self.next_down.borrow().get_row() != self.next_up.borrow().get_row() {
+            Some(weak_next.clone())
+        } else {
+            None
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct RowIterator {
+    next_left: StrongNode,
+    next_right: StrongNode
+}
+
+
+impl RowIterator {
+    pub fn new(node: &WeakNode) -> RowIterator {
+        let raw_node = node.upgrade().unwrap();
+        RowIterator {
+            next_left: raw_node.clone(),
+            next_right: raw_node.clone()
+        }
+    }
+}
+
+impl Iterator for RowIterator {
+    type Item = WeakNode;
+
+    fn next(&mut self) -> Option<WeakNode> {
+        let ref weak_next: WeakNode = self.next_right.borrow().down.clone();
+        self.next_right = weak_next.upgrade().unwrap();
+
+        if self.next_right.borrow().column_index != self.next_left.borrow().column_index {
             Some(weak_next.clone())
         } else {
             None
