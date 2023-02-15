@@ -19,16 +19,13 @@ impl ArrayMatrix {
 
     pub fn create_sparse_matrix
     (
-        &self,
+        &mut self,
         sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
         cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
     ) -> ()
     {
         for row_index in 0..BOARD_SIZE {
             for column_index in 0..BOARD_SIZE {
-                if column_index > 7 && row_index > 7 {
-                    let hi = 2;
-                }
                 let value_of_cell = sudoku_board[row_index as usize][column_index as usize];
                 if value_of_cell == 0 {
                     self.create_rows_for_non_clue
@@ -38,12 +35,13 @@ impl ArrayMatrix {
                         row_index
                     );
                 } else {
+                    count += 1;
                     self.create_rows_for_clue
                     (
                         cover_matrix,
                         column_index,
                         row_index,
-                        value_of_cell as u16
+                        (value_of_cell - 1) as u16
                     );
                 }
             }
@@ -52,7 +50,7 @@ impl ArrayMatrix {
 
     fn create_rows_for_non_clue
     (
-        &self,
+        &mut self,
         cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
         column_index: u16,
         row_index: u16
@@ -65,7 +63,7 @@ impl ArrayMatrix {
 
     fn create_rows_for_clue
     (
-        &self,
+        &mut self,
         cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
         column_index: u16,
         row_index: u16,
@@ -77,22 +75,24 @@ impl ArrayMatrix {
 
     fn fill_in_array_matrix
     (
-        &self,
+        &mut self,
         cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
         column_index: u16,
         row_index: u16,
         value: u16
     )
     {
-        if column_index == 8 && row_index == 8 && value == 8 {
-            let hi = 2;
-        }
         // These calculate which exact cover row the cell and value in the sudoku grid correspond to
         let matrix_row_index =
             column_index
                 + (BOARD_SIZE * row_index)
                 + (BOARD_SIZE_SQUARED * value);
 
+        let x = column_index + (BOARD_SIZE * row_index) + (BOARD_SIZE_SQUARED * value);
+        let x_min_column = (BOARD_SIZE * row_index) + (BOARD_SIZE_SQUARED * value);
+        if matrix_row_index == 0 {
+            let hi = 2;
+        }
         let matrix_block_index =
             (column_index / SQRT_BOARD_SIZE)
                 + ((row_index / SQRT_BOARD_SIZE)
@@ -117,21 +117,29 @@ impl ArrayMatrix {
                 + matrix_block_index;
 
         let matrix_column_index_value =
-            SQRT_BOARD_SIZE * BOARD_SIZE_SQUARED
+            BOARD_SIZE_SQUARED
+                +SQRT_BOARD_SIZE * BOARD_SIZE_SQUARED
                 + (column_index as u16 + BOARD_SIZE * row_index as u16);
 
         cover_matrix[matrix_row_index as usize][matrix_column_index_row as usize] = 1;
         // cover_matrix[matrix_row_index as usize][matrix_column_index_column as usize] = 1;
         // cover_matrix[matrix_row_index as usize][matrix_column_index_block as usize] = 1;
         cover_matrix[matrix_row_index as usize][matrix_column_index_value as usize] = 1;
+
+        self.generate_array_matrix(cover_matrix, matrix_row_index);
     }
 
-    pub fn generate_array_matrix(&mut self)-> ()
+    pub fn generate_array_matrix
+    (
+        &mut self,
+        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
+        row_index: u16,
+    )-> ()
     {
-        self.cell_constraint();
-        self.row_constraint();
-        self.column_constraint();
-        self.region_constraint();
+        // self.cell_constraint(cover_matrix);
+        self.row_constraint(cover_matrix, row_index);
+        // self.column_constraint(cover_matrix, row_index);
+        self.region_constraint(cover_matrix, row_index);
     }
 
     pub fn print_board(
@@ -152,19 +160,23 @@ impl ArrayMatrix {
         }
     }
 
-    fn cell_constraint(&mut self) -> ()
+    fn cell_constraint(&mut self, cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],) -> ()
     {
         let mut row_index: u16 = BOARD_SIZE;
 
         for column in 0..BOARD_SIZE_SQUARED {
             for row in row_index - BOARD_SIZE..row_index {
-                self.cover_matrix[row as usize][column as usize] = 1;
+                cover_matrix[row as usize][column as usize] = 1;
             }
             row_index = row_index + BOARD_SIZE;
         }
     }
 
-    fn row_constraint(&mut self) -> ()
+    fn row_constraint(
+        &mut self,
+        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
+        row_index: u16,
+    ) -> ()
     {
         let mut pullback: u16 = BOARD_SIZE_SQUARED;
 
@@ -179,12 +191,18 @@ impl ArrayMatrix {
                 column = pullback
             }
 
-            self.cover_matrix[row as usize][column as usize] = 1;
+            if row == row_index {
+                cover_matrix[row as usize][column as usize] = 1;
+            }
             column += 1;
         }
     }
 
-    fn column_constraint(&mut self) -> ()
+    fn column_constraint(
+        &mut self,
+        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
+        row_index: u16,
+    ) -> ()
     {
         let board_size_squared_times_two: u16 = (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);
 
@@ -193,13 +211,20 @@ impl ArrayMatrix {
             if row % BOARD_SIZE_SQUARED == 0 && row > 1{
                 column = board_size_squared_times_two;
             }
-            self.cover_matrix[row as usize][column as usize] = 1;
+            if row == row_index {
+                cover_matrix[row as usize][column as usize] = 1;
+            }
 
             column += 1;
         }
     }
 
-    fn region_constraint(&mut self) -> ()
+    fn region_constraint
+    (
+        &mut self,
+        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
+        row_index: u16,
+    ) -> ()
     {
         let board_size_squared_times_three: u16 = (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);
         let mut pullback: u16 = board_size_squared_times_three;
@@ -224,7 +249,9 @@ impl ArrayMatrix {
                 column = pullback;
             }
 
-            self.cover_matrix[row as usize][column as usize] = 1;
+            if row == row_index {
+                cover_matrix[row as usize][column as usize] = 1;
+            }
 
             column += 1;
         }
