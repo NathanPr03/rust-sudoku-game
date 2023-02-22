@@ -35,7 +35,6 @@ impl ArrayMatrix {
                         row_index
                     );
                 } else {
-                    count += 1;
                     self.create_rows_for_clue
                     (
                         cover_matrix,
@@ -88,11 +87,6 @@ impl ArrayMatrix {
                 + (BOARD_SIZE * row_index)
                 + (BOARD_SIZE_SQUARED * value);
 
-        let x = column_index + (BOARD_SIZE * row_index) + (BOARD_SIZE_SQUARED * value);
-        let x_min_column = (BOARD_SIZE * row_index) + (BOARD_SIZE_SQUARED * value);
-        if matrix_row_index == 0 {
-            let hi = 2;
-        }
         let matrix_block_index =
             (column_index / SQRT_BOARD_SIZE)
                 + ((row_index / SQRT_BOARD_SIZE)

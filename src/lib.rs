@@ -4,7 +4,6 @@ mod node;
 mod node_matrix;
 mod array_matrix;
 mod iter;
-mod sparse_array_matrix;
 
 pub use node::Node;
 pub use node::StrongNode;

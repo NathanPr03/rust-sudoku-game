@@ -81,6 +81,10 @@ impl Node {
             NodeExtra::Count(i) => i,
             _ => return
         };
+
+        if count == 0 {
+            let hi =2;
+        }
         self.extra = NodeExtra::Count(count-1);
     }
 
@@ -167,9 +171,9 @@ impl Drop for Node{
             _ => return,
         };
 
-        println!("We have a dropper!");
-        println!("Row: {}", row);
-        println!("Column: {}", self.column_index.unwrap());
+        // println!("We have a dropper!");
+        // println!("Row: {}", row);
+        // println!("Column: {}", self.column_index.unwrap());
     }
 }
 

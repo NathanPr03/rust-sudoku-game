@@ -53,12 +53,26 @@ impl Iterator for RowIterator {
     type Item = WeakNode;
 
     fn next(&mut self) -> Option<WeakNode> {
-        let ref weak_next: WeakNode = self.next_right.borrow().down.clone();
+        let ref weak_next: WeakNode = self.next_right.borrow().right.clone();
         self.next_right = weak_next.upgrade().unwrap();
 
         if self.next_right.borrow().column_index != self.next_left.borrow().column_index {
             Some(weak_next.clone())
         } else {
+            None
+        }
+    }
+}
+
+impl DoubleEndedIterator for RowIterator {
+    fn next_back(&mut self) -> Option<WeakNode> {
+        let ref weak_next = self.next_left.borrow().left.clone();
+        self.next_left = weak_next.upgrade().unwrap();
+
+        if self.next_right.borrow().column_index != self.next_left.borrow().column_index {
+            Some(weak_next.clone())
+        }
+        else {
             None
         }
     }
