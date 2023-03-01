@@ -87,7 +87,6 @@ pub fn test_cover()
     let column_nodes = nodes_matrix.get_column_nodes();
     let first_column_node = &column_nodes[0].clone();
 
-
     // This gets the amount of nodes in a column, where one of the nodes shares a row with a node from the column we are covering
     let first_node_in_col = first_column_node.borrow_mut().down.clone();
     let node_in_same_row_of_first_node = first_node_in_col.upgrade().unwrap().borrow_mut().right.clone();
@@ -101,7 +100,6 @@ pub fn test_cover()
     let index_of_first_column_after_cover = first_column_node.borrow_mut().left.upgrade().unwrap().borrow_mut().right.upgrade().unwrap().borrow_mut().column_index.unwrap();
     let index_of_column_node_to_the_right = first_column_node.borrow_mut().right.upgrade().unwrap().borrow_mut().column_index.unwrap();
 
-
     // This gets the amount of nodes in a column, where one of the nodes shares a row with a node from the column we are covering
     let after_cover_count_of_column_for_node_in_same_row = column_for_node_in_same_row.upgrade().unwrap().borrow_mut().get_count();
 
@@ -110,4 +108,24 @@ pub fn test_cover()
     // This asserts the column we have covered is no longer being pointed to
     assert!(index_of_first_column_after_cover > index_of_first_column);
     assert_eq!(index_of_column_node_to_the_right, index_of_first_column_after_cover);
+}
+
+#[test]
+pub fn test_cover_removes_column_from_node_matrix()
+{
+    let completed_cover_matrix = completed_nine_by_nine_cover_matrix();
+    let mut nodes_matrix = NodeMatrix::new();
+    nodes_matrix.arrange_matrix(&completed_cover_matrix);
+
+    let column_nodes = nodes_matrix.get_column_nodes();
+    let first_column_node = &column_nodes[0].clone();
+
+    let root_node = nodes_matrix.root_node;
+    let mut index_of_right_of_root = root_node.borrow_mut().right.upgrade().unwrap().borrow_mut().column_index.unwrap();
+
+    assert_eq!(index_of_right_of_root, 0);
+    NodeMatrix::cover(first_column_node);
+
+    index_of_right_of_root = root_node.borrow_mut().right.upgrade().unwrap().borrow_mut().column_index.unwrap();
+    assert_eq!(index_of_right_of_root, 1);
 }

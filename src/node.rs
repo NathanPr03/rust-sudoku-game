@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::fmt::{Debug};
 use std::rc::{Rc, Weak};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum NodeExtra {
     RowIndex(usize), // The node is an inner node, representing part of an action.
     Count(usize),  // The node is a header for a constraints.
@@ -19,7 +19,7 @@ pub struct Node {
 
     pub column_index: Option<usize>,
     pub header: Weak<RefCell<Node>>,
-    extra: NodeExtra
+    pub extra: NodeExtra
 }
 
 pub type StrongNode = Rc<RefCell<Node>>;
@@ -83,6 +83,7 @@ impl Node {
         };
 
         if count == 0 {
+            dbg!(&self);
             let hi =2;
         }
         self.extra = NodeExtra::Count(count-1);
@@ -155,12 +156,30 @@ impl Node {
     {
         self.up.upgrade().unwrap().borrow_mut().down = self.down.clone();
         self.down.upgrade().unwrap().borrow_mut().up = self.up.clone();
+
+        let column_header_of_given_node = self.header.clone().upgrade().unwrap();
+        {
+            let mut borrowed_header = column_header_of_given_node.borrow_mut();
+            borrowed_header.decrement_count();
+            if borrowed_header.get_count() == 0 {
+                dbg!(borrowed_header.left.upgrade().unwrap());
+                dbg!(borrowed_header.left.upgrade().unwrap().borrow_mut().right.upgrade().unwrap().clone());
+                borrowed_header.left.upgrade().unwrap().borrow_mut().right = borrowed_header.right.clone();
+                borrowed_header.right.upgrade().unwrap().borrow_mut().left = borrowed_header.left.clone();
+
+                dbg!(borrowed_header.left.upgrade().unwrap().borrow_mut().right.upgrade().unwrap());
+            }
+        }
     }
 
     pub fn reinsert_node_into_column(&mut self) -> ()
     {
         self.up.upgrade().unwrap().borrow_mut().down = self.pointer_to_self.clone();
         self.down.upgrade().unwrap().borrow_mut().up = self.pointer_to_self.clone();
+
+        let column_header_of_given_node = self.header.clone();
+
+        column_header_of_given_node.upgrade().unwrap().borrow_mut().increment_count();
     }
 }
 

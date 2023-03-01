@@ -1,4 +1,3 @@
-use std::env::current_exe;
 use std::rc::Rc;
 use crate::{ColumnIterator, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
 use crate::iter::RowIterator;
@@ -6,7 +5,7 @@ use crate::iter::RowIterator;
 use crate::node::{Node, StrongNode};
 
 pub struct NodeMatrix {
-    root_node: StrongNode,
+    pub root_node: StrongNode,
     column_nodes: Vec<StrongNode>,
     rows: Vec<Vec<StrongNode>>
 }
@@ -80,11 +79,18 @@ impl NodeMatrix {
     }
 
     pub fn solve(&mut self, count: u32) {
+        println!("Count is: {}", count);
         let mut solution: Vec<StrongNode> = Vec::new();
         {
-            let borrowed_root = self.root_node.borrow_mut();
-            if borrowed_root.right.upgrade().unwrap().borrow_mut().column_index
-                == borrowed_root.column_index {
+            let borrowed_root = &self.root_node.borrow_mut();
+
+            dbg!(&borrowed_root.right.upgrade().unwrap().borrow_mut().column_index);
+            dbg!(&borrowed_root.right.upgrade().unwrap().borrow_mut().extra);
+            dbg!(&borrowed_root.extra);
+
+            let breakpoint = 2;
+
+            if borrowed_root.right.upgrade().unwrap().borrow_mut().extra == borrowed_root.extra {
                 //Print solution
                 let hi = 2;
                 println!("FOUND!");
@@ -97,31 +103,39 @@ impl NodeMatrix {
             dbg!(column_node.clone());
         }
         let column_iterator = ColumnIterator::new(&column_node);
-        NodeMatrix::cover(&column_node);
 
-        println!("{}", count);
-
-        for node in column_iterator {
-            let mut temp_node = node.clone();
-            solution.push(temp_node.upgrade().unwrap());
+        for mut node in column_iterator {
+            solution.push(node.upgrade().unwrap());
 
             let row_iterator = RowIterator::new(&node);
             for row_node in row_iterator {
-                temp_node = row_node.clone();
+                dbg!(row_node.upgrade().unwrap());
+                let header = row_node.upgrade().unwrap().borrow_mut().header.upgrade().unwrap();
+                dbg!(header.clone());
+                NodeMatrix::cover(&header);
             }
-
+            let borrowed_root = self.root_node.borrow_mut().right.upgrade().unwrap().borrow_mut().column_index.unwrap();
+            if borrowed_root == 247 {
+                dbg!(self.root_node.borrow_mut().right.upgrade().unwrap().borrow_mut().column_index.unwrap());
+                dbg!(self.root_node.borrow_mut().right.upgrade().unwrap().borrow_mut().right.upgrade().unwrap().borrow_mut().column_index.unwrap());
+                let breake = 2;
+            }
             self.solve(count + 1);
 
-            column_node = temp_node.upgrade().unwrap().borrow_mut().header.upgrade().unwrap();
+            node = Rc::downgrade(&solution[count as usize]);
+            column_node = node.upgrade().unwrap().borrow_mut().header.clone().upgrade().unwrap();
 
-            let row_iterator_reverse = RowIterator::new(&temp_node);
-            for node_from_row in row_iterator_reverse.rev() {
-                NodeMatrix::uncover(&node_from_row.upgrade().unwrap());
-                solution.pop();
+            let row_iterator_reverse = RowIterator::new(&node);
+            for new_node in row_iterator_reverse.rev() {
+                let header = &new_node.upgrade().unwrap().borrow_mut().header.upgrade().unwrap();
+                NodeMatrix::uncover(header);
             }
-
         }
+
         NodeMatrix::uncover(&column_node);
+
+        dbg!(solution);
+        return;
     }
 
 
@@ -133,7 +147,7 @@ impl NodeMatrix {
         for i in 0..self.column_nodes.len() {
             let node = self.column_nodes[i].clone();
             let current_nodes_count = node.borrow_mut().get_count();
-            if current_nodes_count < lowest_count {
+            if current_nodes_count < lowest_count && current_nodes_count > 0 {
                 lowest_count = current_nodes_count;
                 index_of_populus_column = i;
             }
@@ -146,6 +160,9 @@ impl NodeMatrix {
     {
         {
             let borrowed_column_header = column_header.borrow_mut();
+            {
+                dbg!(&borrowed_column_header);
+            }
             borrowed_column_header.left.upgrade().unwrap().borrow_mut().right = borrowed_column_header.right.clone();
             borrowed_column_header.right.upgrade().unwrap().borrow_mut().left = borrowed_column_header.left.clone();
         }
@@ -157,12 +174,14 @@ impl NodeMatrix {
 
             for node_from_row in row_iterator {
                 let raw_node_from_row = node_from_row.upgrade().unwrap();
-                raw_node_from_row.borrow_mut().remove_node_from_column();
 
-                let column_header_of_given_node = raw_node_from_row.borrow_mut().header.clone();
-                println!("prev {}", column_header_of_given_node.upgrade().unwrap().borrow_mut().get_count());
-                column_header_of_given_node.upgrade().unwrap().borrow_mut().decrement_count();
-                println!("after {}", column_header_of_given_node.upgrade().unwrap().borrow_mut().get_count());
+                let header = raw_node_from_row.borrow_mut().header.upgrade().unwrap();
+                if raw_node_from_row.borrow_mut().column_index.unwrap() == 247
+                {
+                    let bpoint = 3;
+                }
+
+                raw_node_from_row.borrow_mut().remove_node_from_column();
             }
         }
     }
@@ -178,10 +197,6 @@ impl NodeMatrix {
                 let raw_node_from_row = node_from_row.upgrade().unwrap();
 
                 raw_node_from_row.borrow_mut().reinsert_node_into_column();
-
-                let column_header_of_given_node = raw_node_from_row.borrow_mut().header.clone();
-
-                column_header_of_given_node.upgrade().unwrap().borrow_mut().increment_count();
             }
         }
         column_header.borrow_mut().left.upgrade().unwrap().borrow_mut().right = Rc::downgrade(column_header);
