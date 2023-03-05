@@ -36,19 +36,40 @@ fn main() {
             [2, 8, 7, 4, 1, 9, 6, 3, 5],
             [3, 4, 5, 2, 8, 6, 1, 7, 9]];
         // Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
-        let mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-            = ninebyninecovermatrix::nine_by_nine_cover_matrix();
+        // let mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
+        //     = ninebyninecovermatrix::nine_by_nine_cover_matrix();
+        //
+        // println!("1st: {}", cover_matrix.len());
+        // println!("2nd: {}", cover_matrix[1].len());
+        //
+        // let mut array_matrix = ArrayMatrix::new(cover_matrix);
+        // array_matrix.create_sparse_matrix(&board, &mut cover_matrix);
+        // ArrayMatrix::print_board(&mut cover_matrix);
+        
+        
+        
+        let cover_matrix = [
+            [0,0,1,0,1,1,0],
+            [1,0,0,1,0,0,1],
+            [0,1,1,0,0,1,0],
+            [1,0,0,1,0,0,0],
+            [0,1,0,0,0,0,1],
+            [0,0,0,1,1,0,1]
+        ];
 
-        println!("1st: {}", cover_matrix.len());
-        println!("2nd: {}", cover_matrix[1].len());
-
-        let mut array_matrix = ArrayMatrix::new(cover_matrix);
-        array_matrix.create_sparse_matrix(&board, &mut cover_matrix);
-        ArrayMatrix::print_board(&mut cover_matrix);
-
+        let cover_matrix = [
+            [1,1,0,0,1,0,0],
+            [0,0,1,0,0,1,0],
+            [0,0,1,0,0,1,1],
+            [1,0,0,1,0,0,1],
+            [0,1,1,0,0,1,0],
+            [0,1,0,0,1,0,0]
+        ];
+        
         let mut nodes_matrix: NodeMatrix = NodeMatrix::new();
         nodes_matrix.arrange_matrix(&cover_matrix);
         nodes_matrix.solve(0);
+        nodes_matrix.print_matrix_solution();
     }).unwrap();
 
     handler.join().unwrap();

@@ -162,12 +162,8 @@ impl Node {
             let mut borrowed_header = column_header_of_given_node.borrow_mut();
             borrowed_header.decrement_count();
             if borrowed_header.get_count() == 0 {
-                dbg!(borrowed_header.left.upgrade().unwrap());
-                dbg!(borrowed_header.left.upgrade().unwrap().borrow_mut().right.upgrade().unwrap().clone());
                 borrowed_header.left.upgrade().unwrap().borrow_mut().right = borrowed_header.right.clone();
                 borrowed_header.right.upgrade().unwrap().borrow_mut().left = borrowed_header.left.clone();
-
-                dbg!(borrowed_header.left.upgrade().unwrap().borrow_mut().right.upgrade().unwrap());
             }
         }
     }

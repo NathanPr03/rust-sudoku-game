@@ -7,6 +7,11 @@ pub struct ColumnIterator {
     next_down: StrongNode
 }
 
+#[derive(Debug)]
+pub struct ColumnIteratorInclusive {
+    next_up: StrongNode,
+    next_down: StrongNode
+}
 
 impl ColumnIterator {
     pub fn new(column_header: &StrongNode) -> ColumnIterator {
@@ -32,6 +37,22 @@ impl Iterator for ColumnIterator {
     }
 }
 
+impl Iterator for ColumnIteratorInclusive {
+    type Item = WeakNode;
+
+    fn next(&mut self) -> Option<WeakNode> {
+        let ref weak_next: WeakNode = self.next_down.borrow().down.clone();
+        self.next_down = weak_next.upgrade().unwrap();
+
+        if self.next_down.borrow().get_row() != self.next_up.borrow().get_row() {
+            Some(weak_next.clone())
+        } else if self.next_down.borrow().get_row() == self.next_up.borrow().get_row() {
+            Some(self.next_down.borrow().up.clone())
+        } else {
+            None
+        }
+    }
+}
 #[derive(Debug)]
 pub struct RowIterator {
     next_left: StrongNode,
