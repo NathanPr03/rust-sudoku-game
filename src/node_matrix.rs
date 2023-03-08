@@ -1,7 +1,8 @@
 use std::cell::{BorrowError, RefCell};
 use std::rc::{Rc, Weak};
-use crate::{ColumnIterator, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS};
+use crate::{BOARD_SIZE, BOARD_SIZE_SQUARED, ColumnIterator, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, four_by_four_cover_matrix, ninebyninecovermatrix};
 use crate::iter::RowIterator;
+use crate::ninebyninecovermatrix::nine_by_nine_cover_matrix;
 
 use crate::node::{Node, StrongNode, WeakNode};
 
@@ -9,7 +10,7 @@ pub struct NodeMatrix {
     pub root_node: StrongNode,
     column_nodes: Vec<StrongNode>,
     rows: Vec<Vec<StrongNode>>,
-    solution: Vec<StrongNode>
+    pub solution: Vec<StrongNode>
 }
 
 impl NodeMatrix {
@@ -82,87 +83,126 @@ impl NodeMatrix {
     }
 
     pub fn solve(&mut self, count: u32) {
-        self.print_matrix_at_given_point();
+        // self.print_matrix_at_given_point();
 
         println!("Count is: {}", count);
         {
-            let borrowed_root = &mut self.root_node.borrow_mut();
+            let borrowed_root = &mut self.root_node.borrow();
 
-            let is_already_borrowed: bool = match borrowed_root.right.upgrade().unwrap().try_borrow() {
-                Ok(_not_borrowed) => false,
-                Err(_error) => true
-            };
-
-            // If it is already borrowed, then there are no columns left in the matrix
-            if is_already_borrowed {
-                //Print solution
-                let hi = 2;
+            if borrowed_root.right.upgrade().unwrap().borrow().extra == borrowed_root.extra {
                 println!("SOLUTION FOUND!!!");
-                self.print_matrix_solution();
+                self.convert_matrix_to_sudoku_grid();
+                // self.print_matrix_solution();
                 return;
             }
         }
 
         let mut column_node = self.choose_column();
-        dbg!(&column_node);
+        // dbg!(&column_node);
 
         NodeMatrix::cover(&column_node);
         let column_iterator = ColumnIterator::new(&column_node);
 
-        self.print_matrix_at_given_point();
+        // self.print_matrix_at_given_point();
 
         for mut node in column_iterator {
             let row_iterator = RowIterator::new(&node);
             self.solution.push(node.upgrade().unwrap());
 
             for row_node in row_iterator {
-                dbg!(&row_node.upgrade().unwrap());
+                // dbg!(&row_node.upgrade().unwrap());
                 let header = row_node.upgrade().unwrap().borrow_mut().header.upgrade().unwrap();
                 NodeMatrix::cover(&header);
 
-                self.print_matrix_at_given_point();
+                // self.print_matrix_at_given_point();
             }
 
-            self.print_matrix_solution();
+            // self.print_matrix_solution();
             self.solve(count + 1);
 
             self.solution.pop();
 
-            dbg!(node.upgrade().unwrap());
+            // dbg!(node.upgrade().unwrap());
             let row_iterator_reverse = RowIterator::new(&node);
 
             for new_node in row_iterator_reverse.rev() {
                 let header = &new_node.upgrade().unwrap().borrow_mut().header.upgrade().unwrap();
 
-                dbg!(header.clone());
+                // dbg!(header.clone());
                 NodeMatrix::uncover(header);
 
-                self.print_matrix_at_given_point();
+                // self.print_matrix_at_given_point();
             }
         }
 
         NodeMatrix::uncover(&column_node);
-        self.print_matrix_at_given_point();
-        // dbg!(&self.solution);
+        // self.print_matrix_at_given_point();
+        // // dbg!(&self.solution);
 
         return;
     }
 
+    fn convert_matrix_to_sudoku_grid(&self)
+    {
+        let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
+            [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
+        for node in self.solution.clone() {
+            let exact_cover_row_index = node.borrow().get_row().unwrap();
+            let row = (exact_cover_row_index) / BOARD_SIZE_SQUARED as usize;
+            let column = ((exact_cover_row_index) % BOARD_SIZE_SQUARED as usize ) / BOARD_SIZE as usize;
+            let mut value = (exact_cover_row_index) % BOARD_SIZE as usize;
+
+            if value == 0 {
+                value = BOARD_SIZE as usize;
+            }
+
+            board[row][column] = value;
+        }
+
+        for i in 0..BOARD_SIZE * 2 + 1 {
+            print!("-");
+        }
+        println!();
+        for i in 0..board.len() {
+            for j in 0..board[1].len() {
+                print!("|");
+                print!("{}", board[i][j]);
+            }
+            print!("|");
+            println!();
+            for i in 0..BOARD_SIZE * 2 + 1 {
+                print!("-");
+            }
+            println!();
+        }
+
+    }
+
     fn print_matrix_at_given_point(&self)
     {
-        let mut cover_matrix = [
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0]
-        ];
+        // let mut cover_matrix = [
+        //     [0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0]
+        // ];
 
+        let mut cover_matrix = nine_by_nine_cover_matrix();
         let row_iterator = RowIterator::new(&Rc::downgrade(&self.root_node));
 
         for column_node in row_iterator {
-            dbg!(column_node.upgrade().unwrap());
+            // dbg!(column_node.upgrade().unwrap());
             let column_iterator = ColumnIterator::new(&column_node.upgrade().unwrap());
             for node in column_iterator {
                 let upgraded_node = node.upgrade().unwrap();
@@ -187,14 +227,7 @@ impl NodeMatrix {
 
     pub fn print_matrix_solution(&self)
     {
-        let mut cover_matrix = [
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0]
-        ];
+        let mut cover_matrix = four_by_four_cover_matrix();
 
         for node in self.solution.clone() {
             let col_index = node.borrow_mut().column_index.unwrap();
@@ -271,10 +304,10 @@ impl NodeMatrix {
             }
 
         }
-        dbg!(column_header.borrow_mut().left.upgrade().unwrap());
+        // dbg!(column_header.borrow_mut().left.upgrade().unwrap());
         column_header.borrow_mut().left.upgrade().unwrap().borrow_mut().right = Rc::downgrade(column_header);
         column_header.borrow_mut().right.upgrade().unwrap().borrow_mut().left = Rc::downgrade(column_header);
-        dbg!(column_header.borrow_mut().right.upgrade().unwrap());
+        // dbg!(column_header.borrow_mut().right.upgrade().unwrap());
     }
 }
 

@@ -82,10 +82,6 @@ impl Node {
             _ => return
         };
 
-        if count == 0 {
-            dbg!(&self);
-            let hi =2;
-        }
         self.extra = NodeExtra::Count(count-1);
     }
 
@@ -161,10 +157,6 @@ impl Node {
         {
             let mut borrowed_header = column_header_of_given_node.borrow_mut();
             borrowed_header.decrement_count();
-            if borrowed_header.get_count() == 0 {
-                borrowed_header.left.upgrade().unwrap().borrow_mut().right = borrowed_header.right.clone();
-                borrowed_header.right.upgrade().unwrap().borrow_mut().left = borrowed_header.left.clone();
-            }
         }
     }
 
