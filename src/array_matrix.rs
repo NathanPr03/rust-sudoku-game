@@ -29,7 +29,7 @@ impl ArrayMatrix {
         return self.remove_clues_from_matrix(cover_matrix, sudoku_board);
     }
 
-    pub fn generate_array_matrix
+    fn generate_array_matrix
     (
         &mut self,
         cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
@@ -53,13 +53,25 @@ impl ArrayMatrix {
                 let value_of_cell = sudoku_board[row_index as usize][column_index as usize];
                 if value_of_cell != 0 {
                     for i in 0..BOARD_SIZE {
-                        let matrix_row_index =
-                            column_index
-                                + (BOARD_SIZE * row_index)
-                                + (BOARD_SIZE_SQUARED * i);
+                        if value_of_cell-1 != i as usize {
+                            let mut hack = 0;
+                            if i == BOARD_SIZE {
+                                hack = 1;
+                            }
+                            let matrix_row_index =
+                            (row_index * BOARD_SIZE_SQUARED) + column_index * BOARD_SIZE + i;
 
-                        for column in 0..EXACT_COVER_MATRIX_COLUMNS {
-                            cover_matrix[matrix_row_index as usize][column as usize] = 0;
+                            if matrix_row_index >=27 && matrix_row_index <= 35
+                            {
+                                let hey = "hi";
+                            }
+
+                            for column in 0..EXACT_COVER_MATRIX_COLUMNS {
+                                if cover_matrix[matrix_row_index as usize][column as usize] == 1 && column == 3 {
+                                    let hey = "hi";
+                                }
+                                cover_matrix[matrix_row_index as usize][column as usize] = 0;
+                            }
                         }
                     }
                 }

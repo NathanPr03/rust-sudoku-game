@@ -15,16 +15,29 @@ fn main() {
         .stack_size(64 * 1024 * 1024); // 64MB of stack space
 
     let handler = builder.spawn(|| {
-        let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
-            [[0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+        // let board = [
+        //     [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        //     [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        //     [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        //     [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        //     [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        //     [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        //     [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        //     [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        //     [0, 0, 0, 0, 8, 0, 0, 7, 9],
+        // ];
+
+        // let board = [
+        //     [0, 0, 0, 6, 0, 0, 1, 0, 7],
+        //     [6, 8, 0, 9, 5, 1, 3, 0, 0],
+        //     [0, 0, 3, 0, 0, 2, 5, 6, 8],
+        //     [0, 4, 0, 8, 1, 0, 0, 2, 0],
+        //     [0, 0, 0, 4, 0, 0, 8, 5, 0],
+        //     [0, 9, 0, 0, 6, 5, 0, 7, 3],
+        //     [4, 0, 9, 0, 0, 3, 0, 8, 5],
+        //     [2, 6, 2, 0, 0, 9, 0, 3, 0],
+        //     [5, 0, 0, 7, 0, 6, 0, 0, 0],
+        // ];
 
         // let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
         //     [[5, 3, 4, 6, 7, 8, 9, 1, 2],
@@ -37,30 +50,42 @@ fn main() {
         //     [2, 8, 7, 4, 1, 9, 6, 3, 5],
         //     [3, 4, 5, 2, 8, 6, 1, 7, 9]];
 
-        // let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
-        //     [3, 1, 0, 0],
-        //     [0, 2, 0, 0],
-        //     [0, 4, 0, 0],
-        //     [0, 0, 0, 4]
+        // let board = [
+        //     [9, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
         // ];
+        let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
+            [3, 2, 1, 4],
+            [1, 4, 3, 2],
+            [2, 3, 4, 1],
+            [4, 1, 2, 0]
+        ];
+
         // Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
         let mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-        = nine_by_nine_cover_matrix();
+            = four_by_four_cover_matrix();
         if BOARD_SIZE == 4 {
-            // cover_matrix = four_by_four_cover_matrix();
+            // = four_by_four_cover_matrix();
         }else {
-            cover_matrix = nine_by_nine_cover_matrix();
+            // = nine_by_nine_cover_matrix();
         }
-
 
         println!("1st: {}", cover_matrix.len());
         println!("2nd: {}", cover_matrix[1].len());
 
         let mut array_matrix = ArrayMatrix::new(cover_matrix);
         array_matrix.create_sparse_matrix(&mut cover_matrix, &board);
+        // array_matrix.create_sparse_matrix(&mut cover_matrix, &board);
         ArrayMatrix::print_board(&mut cover_matrix);
 
-        // check_matrix_formed_properly(&cover_matrix);
+        check_matrix_formed_properly(&cover_matrix);
 
         //
         // let cover_matrix = [
@@ -96,7 +121,6 @@ fn check_matrix_formed_properly(cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS
     for column in 0..EXACT_COVER_MATRIX_COLUMNS {
         let mut one_found = false;
         for i in 0..cover_matrix.len() {
-            println!("{}", cover_matrix[i][column as usize]);
             if cover_matrix[i][column as usize] == 1 {
                 one_found = true;
             }
