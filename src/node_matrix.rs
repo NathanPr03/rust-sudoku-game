@@ -144,29 +144,29 @@ impl NodeMatrix {
 
     fn convert_matrix_to_sudoku_grid(&self)
     {
-        // let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
-        //     [[0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //         [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+        let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
+            [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
-        let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0]
-        ];
+        // let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
+        //     [0, 0, 0, 0],
+        //     [0, 0, 0, 0],
+        //     [0, 0, 0, 0],
+        //     [0, 0, 0, 0]
+        // ];
         for node in self.solution.clone() {
             let exact_cover_row_index = node.borrow().get_row().unwrap();
             let row = (exact_cover_row_index) / BOARD_SIZE_SQUARED as usize;
             let column = ((exact_cover_row_index) % BOARD_SIZE_SQUARED as usize ) / BOARD_SIZE as usize;
             let mut value = (exact_cover_row_index) % BOARD_SIZE as usize;
-
+            value = value + 1;
             if value == 0 {
                 value = BOARD_SIZE as usize;
             }
