@@ -4,20 +4,20 @@ use crate::StrongNode;
 #[derive(Debug)]
 pub struct ColumnIterator {
     next_up: StrongNode,
-    next_down: StrongNode
+    next_down: StrongNode,
 }
 
 #[derive(Debug)]
 pub struct ColumnIteratorInclusive {
     next_up: StrongNode,
-    next_down: StrongNode
+    next_down: StrongNode,
 }
 
 impl ColumnIterator {
     pub fn new(column_header: &StrongNode) -> ColumnIterator {
         ColumnIterator {
             next_up: column_header.clone(),
-            next_down: column_header.clone()
+            next_down: column_header.clone(),
         }
     }
 }
@@ -56,16 +56,15 @@ impl Iterator for ColumnIteratorInclusive {
 #[derive(Debug)]
 pub struct RowIterator {
     next_left: StrongNode,
-    next_right: StrongNode
+    next_right: StrongNode,
 }
-
 
 impl RowIterator {
     pub fn new(node: &WeakNode) -> RowIterator {
         let raw_node = node.upgrade().unwrap();
         RowIterator {
             next_left: raw_node.clone(),
-            next_right: raw_node.clone()
+            next_right: raw_node.clone(),
         }
     }
 }
@@ -92,8 +91,7 @@ impl DoubleEndedIterator for RowIterator {
 
         if self.next_right.borrow().column_index != self.next_left.borrow().column_index {
             Some(weak_next.clone())
-        }
-        else {
+        } else {
             None
         }
     }

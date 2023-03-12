@@ -1,7 +1,9 @@
-use std::rc::{Rc};
-use crate::{ColumnIterator, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, four_by_four_cover_matrix, ninebyninecovermatrix};
 use crate::iter::RowIterator;
-
+use crate::{
+    four_by_four_cover_matrix, ninebyninecovermatrix, ColumnIterator, EXACT_COVER_MATRIX_COLUMNS,
+    EXACT_COVER_MATRIX_ROWS,
+};
+use std::rc::Rc;
 
 use crate::node::{Node, StrongNode};
 
@@ -10,7 +12,7 @@ pub struct NodeMatrix {
     column_nodes: Vec<StrongNode>,
     rows: Vec<Vec<StrongNode>>,
     pub actual_solution: Vec<StrongNode>,
-    potential_solution: Vec<StrongNode>
+    potential_solution: Vec<StrongNode>,
 }
 
 impl NodeMatrix {
@@ -20,25 +22,23 @@ impl NodeMatrix {
             column_nodes: Vec::new(),
             rows: Vec::new(),
             actual_solution: Vec::new(),
-            potential_solution: Vec::new()
-        }
+            potential_solution: Vec::new(),
+        };
     }
 
-    pub fn get_column_nodes(&self) -> &Vec<StrongNode>
-    {
+    pub fn get_column_nodes(&self) -> &Vec<StrongNode> {
         return &self.column_nodes;
     }
 
-    pub fn get_rows(&self) -> &Vec<Vec<StrongNode>>
-    {
+    pub fn get_rows(&self) -> &Vec<Vec<StrongNode>> {
         return &self.rows;
     }
 
     pub fn arrange_matrix(
         &mut self,
-        cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-    ) -> ()
-    {
+        cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
+             EXACT_COVER_MATRIX_ROWS as usize],
+    ) -> () {
         let mut column_nodes: Vec<StrongNode> = Vec::new();
 
         for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
@@ -104,7 +104,13 @@ impl NodeMatrix {
             self.potential_solution.push(node.upgrade().unwrap());
 
             for row_node in row_iterator {
-                let header = row_node.upgrade().unwrap().borrow_mut().header.upgrade().unwrap();
+                let header = row_node
+                    .upgrade()
+                    .unwrap()
+                    .borrow_mut()
+                    .header
+                    .upgrade()
+                    .unwrap();
                 NodeMatrix::cover(&header);
             }
             self.search(k + 1);
@@ -114,7 +120,13 @@ impl NodeMatrix {
             let row_iterator_reverse = RowIterator::new(&node);
 
             for new_node in row_iterator_reverse.rev() {
-                let header = &new_node.upgrade().unwrap().borrow_mut().header.upgrade().unwrap();
+                let header = &new_node
+                    .upgrade()
+                    .unwrap()
+                    .borrow_mut()
+                    .header
+                    .upgrade()
+                    .unwrap();
 
                 NodeMatrix::uncover(header);
             }
@@ -124,8 +136,7 @@ impl NodeMatrix {
         return;
     }
 
-    fn print_matrix_at_given_point(&self)
-    {
+    fn print_matrix_at_given_point(&self) {
         // let mut cover_matrix = [
         //     [0,0,0,0,0,0,0],
         //     [0,0,0,0,0,0,0],
@@ -156,14 +167,12 @@ impl NodeMatrix {
             }
             print!("|");
             println!();
-
         }
 
         println!("--------------");
     }
 
-    pub fn choose_column(&mut self) -> StrongNode
-    {
+    pub fn choose_column(&mut self) -> StrongNode {
         let mut lowest_count = EXACT_COVER_MATRIX_ROWS as usize;
 
         let downgraded_root = Rc::downgrade(&self.root_node);
@@ -182,14 +191,22 @@ impl NodeMatrix {
         return column_with_least_nodes.upgrade().unwrap();
     }
 
-
-    pub fn cover(column_header: &StrongNode) -> ()
-    {
+    pub fn cover(column_header: &StrongNode) -> () {
         {
             let borrowed_column_header = column_header.borrow_mut();
 
-            borrowed_column_header.left.upgrade().unwrap().borrow_mut().right = borrowed_column_header.right.clone();
-            borrowed_column_header.right.upgrade().unwrap().borrow_mut().left = borrowed_column_header.left.clone();
+            borrowed_column_header
+                .left
+                .upgrade()
+                .unwrap()
+                .borrow_mut()
+                .right = borrowed_column_header.right.clone();
+            borrowed_column_header
+                .right
+                .upgrade()
+                .unwrap()
+                .borrow_mut()
+                .left = borrowed_column_header.left.clone();
         }
 
         let column_iterator = ColumnIterator::new(&column_header);
@@ -205,8 +222,7 @@ impl NodeMatrix {
         }
     }
 
-    pub fn uncover(column_header: &StrongNode) -> ()
-    {
+    pub fn uncover(column_header: &StrongNode) -> () {
         let column_iterator = ColumnIterator::new(&column_header);
 
         for node in column_iterator {
@@ -217,11 +233,22 @@ impl NodeMatrix {
 
                 raw_node_from_row.borrow_mut().reinsert_node_into_column();
             }
-
         }
         // dbg!(column_header.borrow_mut().left.upgrade().unwrap());
-        column_header.borrow_mut().left.upgrade().unwrap().borrow_mut().right = Rc::downgrade(column_header);
-        column_header.borrow_mut().right.upgrade().unwrap().borrow_mut().left = Rc::downgrade(column_header);
+        column_header
+            .borrow_mut()
+            .left
+            .upgrade()
+            .unwrap()
+            .borrow_mut()
+            .right = Rc::downgrade(column_header);
+        column_header
+            .borrow_mut()
+            .right
+            .upgrade()
+            .unwrap()
+            .borrow_mut()
+            .left = Rc::downgrade(column_header);
         // dbg!(column_header.borrow_mut().right.upgrade().unwrap());
     }
 }
@@ -242,5 +269,5 @@ fn get_next_index(current_index: usize, length: usize) -> usize {
         0
     } else {
         current_index + 1
-    }
+    };
 }

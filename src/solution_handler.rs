@@ -1,16 +1,16 @@
-use crate::{ArrayMatrix, BOARD_SIZE, BOARD_SIZE_SQUARED, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, NodeMatrix, StrongNode};
 use crate::ninebyninecovermatrix::nine_by_nine_cover_matrix;
+use crate::{
+    ArrayMatrix, NodeMatrix, StrongNode, BOARD_SIZE, BOARD_SIZE_SQUARED,
+    EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS,
+};
 
-pub fn find_solution
-(
-    sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
-) {
+pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
     use std::time::Instant;
     let now = Instant::now();
 
     // Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
-    let mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize]
-        = nine_by_nine_cover_matrix();
+    let mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
+        EXACT_COVER_MATRIX_ROWS as usize] = nine_by_nine_cover_matrix();
     if BOARD_SIZE == 4 {
         // = four_by_four_cover_matrix();
     } else {
@@ -34,12 +34,10 @@ pub fn find_solution
     println!("Elapsed: {:.2?}", elapsed);
 }
 
-fn convert_matrix_to_sudoku_grid
-(
+fn convert_matrix_to_sudoku_grid(
     sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
-    solution: Vec<StrongNode>
-)
-{
+    solution: Vec<StrongNode>,
+) {
     for node in solution.clone() {
         let exact_cover_row_index = node.borrow().get_row().unwrap();
         let row = (exact_cover_row_index) / BOARD_SIZE_SQUARED as usize;
@@ -54,8 +52,7 @@ fn convert_matrix_to_sudoku_grid
     }
 }
 
-fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
-{
+fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
     for i in 0..BOARD_SIZE * 2 + 1 {
         print!("-");
     }
@@ -74,8 +71,9 @@ fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE a
     }
 }
 
-fn check_matrix_formed_properly(cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize])
-{
+fn check_matrix_formed_properly(
+    cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize],
+) {
     for column in 0..EXACT_COVER_MATRIX_COLUMNS {
         let mut one_found = false;
         for i in 0..cover_matrix.len() {

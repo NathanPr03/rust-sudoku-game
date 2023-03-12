@@ -1,12 +1,12 @@
 use std::cell::RefCell;
-use std::fmt::{Debug};
+use std::fmt::Debug;
 use std::rc::{Rc, Weak};
 
 #[derive(Debug, PartialEq)]
 pub enum NodeExtra {
     RowIndex(usize), // The node is an inner node, representing part of an action.
-    Count(usize),  // The node is a header for a constraints.
-    Root           // Root node.
+    Count(usize),    // The node is a header for a constraints.
+    Root,            // Root node.
 }
 
 #[derive(Debug)]
@@ -19,7 +19,7 @@ pub struct Node {
 
     pub column_index: Option<usize>,
     pub header: Weak<RefCell<Node>>,
-    pub extra: NodeExtra
+    pub extra: NodeExtra,
 }
 
 pub type StrongNode = Rc<RefCell<Node>>;
@@ -31,7 +31,11 @@ impl Node {
     }
 
     pub fn new_inner(header: &StrongNode, row: usize) -> StrongNode {
-        Self::new(header.borrow().column_index, Some(&Rc::downgrade(&header)), NodeExtra::RowIndex(row))
+        Self::new(
+            header.borrow().column_index,
+            Some(&Rc::downgrade(&header)),
+            NodeExtra::RowIndex(row),
+        )
     }
 
     pub fn new_root() -> StrongNode {
@@ -40,11 +44,14 @@ impl Node {
 
     fn new(col: Option<usize>, header: Option<&WeakNode>, e: NodeExtra) -> StrongNode {
         let an_owned_node = Rc::new(RefCell::new(Node {
-            up: Weak::new(), down: Weak::new(),
-            left: Weak::new(), right: Weak::new(),
+            up: Weak::new(),
+            down: Weak::new(),
+            left: Weak::new(),
+            right: Weak::new(),
             pointer_to_self: Weak::new(),
             header: Weak::new(),
-            column_index: col, extra: e
+            column_index: col,
+            extra: e,
         }));
 
         {
@@ -59,36 +66,34 @@ impl Node {
 
             mutable_reference_to_owned_node.header = match header {
                 Some(node) => node.clone(),
-                None => a_weak_node.clone()
+                None => a_weak_node.clone(),
             }
         }
 
-        return an_owned_node
+        return an_owned_node;
     }
 
-    pub fn increment_count(&mut self) -> ()
-    {
+    pub fn increment_count(&mut self) -> () {
         let count = match self.extra {
             NodeExtra::Count(i) => i,
-            _ => return
+            _ => return,
         };
-        self.extra = NodeExtra::Count(count+1);
+        self.extra = NodeExtra::Count(count + 1);
     }
 
-    pub fn decrement_count(&mut self) -> ()
-    {
+    pub fn decrement_count(&mut self) -> () {
         let count = match self.extra {
             NodeExtra::Count(i) => i,
-            _ => return
+            _ => return,
         };
 
-        self.extra = NodeExtra::Count(count-1);
+        self.extra = NodeExtra::Count(count - 1);
     }
 
     pub fn get_count(&self) -> usize {
         let count = match self.extra {
             NodeExtra::Count(i) => i,
-            _ => return 999999999
+            _ => return 999999999,
         };
 
         return count;
@@ -97,7 +102,7 @@ impl Node {
     pub fn get_row(&self) -> Option<usize> {
         match self.extra {
             NodeExtra::RowIndex(i) => Some(i),
-            _ => None
+            _ => None,
         }
     }
 
@@ -148,8 +153,7 @@ impl Node {
         }
     }
 
-    pub fn remove_node_from_column(&mut self) -> ()
-    {
+    pub fn remove_node_from_column(&mut self) -> () {
         self.up.upgrade().unwrap().borrow_mut().down = self.down.clone();
         self.down.upgrade().unwrap().borrow_mut().up = self.up.clone();
 
@@ -160,18 +164,21 @@ impl Node {
         }
     }
 
-    pub fn reinsert_node_into_column(&mut self) -> ()
-    {
+    pub fn reinsert_node_into_column(&mut self) -> () {
         self.up.upgrade().unwrap().borrow_mut().down = self.pointer_to_self.clone();
         self.down.upgrade().unwrap().borrow_mut().up = self.pointer_to_self.clone();
 
         let column_header_of_given_node = self.header.clone();
 
-        column_header_of_given_node.upgrade().unwrap().borrow_mut().increment_count();
+        column_header_of_given_node
+            .upgrade()
+            .unwrap()
+            .borrow_mut()
+            .increment_count();
     }
 }
 
-impl Drop for Node{
+impl Drop for Node {
     fn drop(&mut self) {
         let row = match self.extra {
             NodeExtra::RowIndex(i) => i,
@@ -183,4 +190,3 @@ impl Drop for Node{
         // println!("Column: {}", self.column_index.unwrap());
     }
 }
-
