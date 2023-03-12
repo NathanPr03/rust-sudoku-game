@@ -1,9 +1,12 @@
+extern crate core;
+
 pub mod ninebyninecovermatrix;
 pub mod fourbyfourcovermatrix;
 mod node;
 mod node_matrix;
 mod array_matrix;
 mod iter;
+mod solution_handler;
 
 pub use node::Node;
 pub use node::StrongNode;
@@ -11,6 +14,7 @@ pub use node_matrix::NodeMatrix;
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;
 pub use iter::ColumnIterator;
+pub use solution_handler::find_solution;
 
 pub const BOARD_SIZE: u16 = 9;
 pub const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;
