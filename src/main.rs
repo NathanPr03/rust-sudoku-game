@@ -1,14 +1,6 @@
-use rust_sudoku_game::{
-    find_solution, four_by_four_cover_matrix, BOARD_SIZE, BOARD_SIZE_SQUARED,
-    EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS,
-};
+use rust_sudoku_game::{BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty};
+use rust_sudoku_game::EXACT_COVER_MATRIX_ROWS;
 use std::thread::Builder;
-
-use rust_sudoku_game::fourbyfourcovermatrix;
-use rust_sudoku_game::ninebyninecovermatrix;
-use rust_sudoku_game::ninebyninecovermatrix::nine_by_nine_cover_matrix;
-use rust_sudoku_game::ArrayMatrix;
-use rust_sudoku_game::NodeMatrix;
 
 fn main() {
     println!(
@@ -22,17 +14,17 @@ fn main() {
 
     let handler = builder
         .spawn(|| {
-            let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] = [
-                [5, 3, 0, 0, 7, 0, 0, 0, 0],
-                [6, 0, 0, 1, 9, 5, 0, 0, 0],
-                [0, 9, 8, 0, 0, 0, 0, 6, 0],
-                [8, 0, 0, 0, 6, 0, 0, 0, 3],
-                [4, 0, 0, 8, 0, 3, 0, 0, 1],
-                [7, 0, 0, 0, 2, 0, 0, 0, 6],
-                [0, 6, 0, 0, 0, 0, 2, 8, 0],
-                [0, 0, 0, 4, 1, 9, 0, 0, 5],
-                [0, 0, 0, 0, 8, 0, 0, 7, 9],
-            ];
+            // let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] = [
+            //     [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            //     [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            //     [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            //     [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            //     [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            //     [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            //     [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            //     [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            //     [0, 0, 0, 0, 8, 0, 0, 7, 9],
+            // ];
 
             // let mut board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =
             //     [[5, 3, 4, 6, 7, 8, 9, 1, 2],
@@ -45,17 +37,17 @@ fn main() {
             //     [2, 8, 7, 4, 1, 9, 6, 3, 5],
             //     [3, 4, 5, 2, 8, 6, 1, 7, 9]];
 
-            // let mut board = [
-            //     [9, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            // ];
+            let mut board = [
+                [1, 2, 3, 0, 0, 0, 0, 0, 0],
+                [4, 5, 6, 0, 0, 0, 0, 0, 0],
+                [7, 8, 0, 0, 0, 0, 0, 0, 9],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ];
             // let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
             //     [3, 2, 1, 4],
             //     [1, 4, 3, 2],
@@ -63,6 +55,12 @@ fn main() {
             //     [4, 1, 2, 0]
             // ];
             find_solution(&mut board);
+
+            // let gd = GameDifficulty::Easy;
+            // let bg = BoardGenerator::new(gd);
+            //
+            // bg.generate_random_board(&mut board);
+
         })
         .unwrap();
 

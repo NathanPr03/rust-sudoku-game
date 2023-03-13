@@ -7,6 +7,7 @@ pub mod ninebyninecovermatrix;
 mod node;
 mod node_matrix;
 mod solution_handler;
+mod board_generator;
 
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;
@@ -15,6 +16,8 @@ pub use node::Node;
 pub use node::StrongNode;
 pub use node_matrix::NodeMatrix;
 pub use solution_handler::find_solution;
+pub use board_generator::BoardGenerator;
+pub use board_generator::GameDifficulty;
 
 pub const BOARD_SIZE: u16 = 9;
 pub const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;
