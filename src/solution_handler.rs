@@ -4,9 +4,11 @@ use crate::{
     EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS,
 };
 
-pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
+pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])-> bool {
     use std::time::Instant;
     let now = Instant::now();
+
+    let mut is_solution_found = false;
 
     // Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
     let mut cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
@@ -27,11 +29,19 @@ pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZ
     nodes_matrix.arrange_matrix(&cover_matrix);
     nodes_matrix.search(0);
 
+    if nodes_matrix.actual_solution.len() == 0
+    {
+        return is_solution_found;
+    }else {
+        is_solution_found = true;
+    }
     convert_matrix_to_sudoku_grid(sudoku_board, nodes_matrix.actual_solution);
     pretty_print_board(&sudoku_board);
 
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
+
+    return is_solution_found;
 }
 
 fn convert_matrix_to_sudoku_grid(
