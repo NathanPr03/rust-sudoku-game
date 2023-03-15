@@ -40,6 +40,7 @@ impl BoardGenerator {
                 let random_row: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
                 let random_value: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
 
+                //  If the cell has already been filled we dont want to fill it again, will fuck up the matrix
                 if sudoku_board[random_column][random_row] != 0
                 {
                     continue;
@@ -53,12 +54,12 @@ impl BoardGenerator {
                     break;
                 }
 
+                // If no solution is found reset cell
                 if !find_solution(sudoku_board) {
                     sudoku_board[random_column][random_row] = 0;
                 }
 
                 break;
-
             }
         }
         pretty_print_board(&sudoku_board);
