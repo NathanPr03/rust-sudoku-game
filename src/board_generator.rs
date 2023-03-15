@@ -62,11 +62,9 @@ impl BoardGenerator {
                 break;
             }
         }
-        pretty_print_board(&sudoku_board);
 
         self.remove_given_numbers_from_sudoku(sudoku_board);
 
-        pretty_print_board(&sudoku_board);
         let elapsed = now.elapsed();
         println!("Board generated in: {:.2?}", elapsed);
     }
