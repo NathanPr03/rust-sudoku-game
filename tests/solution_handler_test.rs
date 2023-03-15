@@ -84,3 +84,45 @@ pub fn test_almost_empty_9x9_sudoku()
 
     handler.join().unwrap();
 }
+
+#[test]
+pub fn test_almost_complete_9x9_sudoku()
+{
+    let builder = Builder::new()
+        .name("reductor".into())
+        .stack_size(64 * 1024 * 1024); // 64MB of stack space
+
+    let handler = builder
+        .spawn(|| {
+
+            let mut board = [
+                [9, 1, 2, 3, 4, 5, 6, 7, 8],
+                [6, 7, 8, 9, 1, 2, 3, 4, 5],
+                [3, 4, 5, 6, 7, 8, 9, 1, 2],
+                [2, 9, 1, 7, 3, 4, 8, 5, 6],
+                [5, 8, 6, 2, 9, 1, 7, 3, 4],
+                [7, 3, 4, 5, 8, 6, 2, 9, 1],
+                [1, 2, 9, 4, 6, 3, 5, 8, 7],
+                [8, 5, 7, 1, 2, 9, 4, 6, 3],
+                [4, 6, 3, 8, 5, 7, 1, 2, 0],
+            ];
+            find_solution(&mut board);
+
+            let result_board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] = [
+                [9,1,2,3,4,5,6,7,8],
+                [6,7,8,9,1,2,3,4,5],
+                [3,4,5,6,7,8,9,1,2],
+                [2,9,1,7,3,4,8,5,6],
+                [5,8,6,2,9,1,7,3,4],
+                [7,3,4,5,8,6,2,9,1],
+                [1,2,9,4,6,3,5,8,7],
+                [8,5,7,1,2,9,4,6,3],
+                [4,6,3,8,5,7,1,2,9],
+            ];
+
+            assert_eq!(&board, &result_board);
+        })
+        .unwrap();
+
+    handler.join().unwrap();
+}
