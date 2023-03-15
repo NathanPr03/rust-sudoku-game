@@ -1,8 +1,5 @@
 use crate::ninebyninecovermatrix::nine_by_nine_cover_matrix;
-use crate::{
-    ArrayMatrix, NodeMatrix, StrongNode, BOARD_SIZE, BOARD_SIZE_SQUARED,
-    EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS,
-};
+use crate::{ArrayMatrix, NodeMatrix, StrongNode, BOARD_SIZE, BOARD_SIZE_SQUARED, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, pretty_print_board};
 
 pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])-> bool {
     use std::time::Instant;
@@ -21,7 +18,7 @@ pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZ
 
     let mut array_matrix = ArrayMatrix::new(cover_matrix);
     array_matrix.create_sparse_matrix(&mut cover_matrix, &sudoku_board);
-    ArrayMatrix::print_board(&mut cover_matrix);
+    // ArrayMatrix::print_board(&mut cover_matrix);
 
     check_matrix_formed_properly(&cover_matrix);
 
@@ -35,11 +32,11 @@ pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZ
     }else {
         is_solution_found = true;
     }
+
     convert_matrix_to_sudoku_grid(sudoku_board, nodes_matrix.actual_solution);
-    pretty_print_board(&sudoku_board);
 
     let elapsed = now.elapsed();
-    println!("Elapsed: {:.2?}", elapsed);
+    println!("Sudoku solved in: {:.2?}", elapsed);
 
     return is_solution_found;
 }
@@ -59,25 +56,6 @@ fn convert_matrix_to_sudoku_grid(
         }
 
         sudoku_board[row][column] = value;
-    }
-}
-
-fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
-    for i in 0..BOARD_SIZE * 2 + 1 {
-        print!("-");
-    }
-    println!();
-    for i in 0..sudoku_board.len() {
-        for j in 0..sudoku_board[1].len() {
-            print!("|");
-            print!("{}", sudoku_board[i][j]);
-        }
-        print!("|");
-        println!();
-        for i in 0..BOARD_SIZE * 2 + 1 {
-            print!("-");
-        }
-        println!();
     }
 }
 
