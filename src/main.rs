@@ -1,3 +1,4 @@
+use std::io::{stdin, stdout, Write};
 use rust_sudoku_game::{BOARD_SIZE, BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty, pretty_print_board};
 use rust_sudoku_game::EXACT_COVER_MATRIX_ROWS;
 use std::thread::Builder;
@@ -14,17 +15,23 @@ fn main() {
 
     let handler = builder
         .spawn(|| {
-            let mut sudoku_board = [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            ];
+            let mut sudoku_board = Vec::new();
+
+            print!("Please enter some text: ");
+            let _=stdout().flush();
+            let mut board_size_raw = String::new();
+
+            stdin().read_line(&mut board_size_raw).expect("failed to readline");
+
+            let real_string = board_size_raw.to_string().replace("\n", "");  // `parse()` works with `&str` and `String`!
+            let board_size = real_string.parse::<i32>().unwrap();
+
+            for _i in 0..board_size {
+                sudoku_board.push([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+            }
+
+            let d = 2;
+
             // let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
             //     [3, 2, 1, 4],
             //     [1, 4, 3, 2],
