@@ -13,6 +13,8 @@ pub struct NodeMatrix {
     rows: Vec<Vec<StrongNode>>,
     pub actual_solution: Vec<StrongNode>,
     potential_solution: Vec<StrongNode>,
+    solution_found: bool,
+    eighty_recursion_times: usize,
 }
 
 impl NodeMatrix {
@@ -23,6 +25,8 @@ impl NodeMatrix {
             rows: Vec::new(),
             actual_solution: Vec::new(),
             potential_solution: Vec::new(),
+            solution_found: false,
+            eighty_recursion_times: 0
         };
     }
 
@@ -84,12 +88,16 @@ impl NodeMatrix {
     }
 
     pub fn search(&mut self, k: u32) {
-        println!("Count is: {}", k);
+        if self.solution_found {
+            return;
+        }
+        // println!("Count is: {}", k);
         {
             let borrowed_root = &mut self.root_node.borrow();
 
             if borrowed_root.right.upgrade().unwrap().borrow().extra == borrowed_root.extra {
                 self.actual_solution = self.potential_solution.clone();
+                self.solution_found = true;
                 return;
             }
         }
@@ -133,6 +141,19 @@ impl NodeMatrix {
         }
 
         NodeMatrix::uncover(&column_node);
+        {
+            // TODO: This shit is a horrible hack, hope I dont need it
+            if k >= 80
+            {
+                self.eighty_recursion_times += 1;
+            }
+
+            if self.eighty_recursion_times > 2
+            {
+                self.solution_found = true;
+            }
+        }
+
         return;
     }
 

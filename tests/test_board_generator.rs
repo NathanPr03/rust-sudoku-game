@@ -1,19 +1,17 @@
-use rust_sudoku_game::{BOARD_SIZE, BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty, pretty_print_board};
-use rust_sudoku_game::EXACT_COVER_MATRIX_ROWS;
 use std::thread::Builder;
+use rust_sudoku_game::{BOARD_SIZE, BoardGenerator, GameDifficulty};
 
-fn main() {
-    println!(
-        "Columns: {}, Rows: {}",
-        EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS
-    );
-
+#[test]
+pub fn test_board_generation_is_random()
+{
     let builder = Builder::new()
         .name("reductor".into())
         .stack_size(64 * 1024 * 1024); // 64MB of stack space
 
-    let handler = builder
-        .spawn(|| {
+    let handler = builder.spawn(|| {
+        let mut sudoku_boards: Vec<[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]> = Vec::new();
+
+        for _i in 0..10 {
             let mut sudoku_board = [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -25,22 +23,22 @@ fn main() {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
             ];
-            // let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
-            //     [3, 2, 1, 4],
-            //     [1, 4, 3, 2],
-            //     [2, 3, 4, 1],
-            //     [4, 1, 2, 0]
-            // ];
-            // find_solution(&mut board);
 
             let game_difficulty = GameDifficulty::Hard;
             let board_generator = BoardGenerator::new(game_difficulty);
 
             board_generator.generate_random_board(&mut sudoku_board);
-            pretty_print_board(&sudoku_board);
+            sudoku_boards.push(sudoku_board);
+        }
+        for _i in 0..sudoku_boards.len()
+        {
+            let current_board = sudoku_boards.pop().unwrap();
 
-        })
-        .unwrap();
+            for sudoku_board in sudoku_boards.clone() {
+                assert_ne!(sudoku_board, current_board);
+            }
+        }
+    }).unwrap();
 
     handler.join().unwrap();
 }
