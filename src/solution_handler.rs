@@ -1,5 +1,5 @@
-use crate::ninebyninecovermatrix::nine_by_nine_cover_matrix;
-use crate::{ArrayMatrix, NodeMatrix, StrongNode, pretty_print_board, four_by_four_cover_matrix};
+use crate::nine_by_nine_cover_matrix::nine_by_nine_cover_matrix;
+use crate::{ArrayMatrix, NodeMatrix, StrongNode, pretty_print_board, four_by_four_cover_matrix, sixteen_by_sixteen_cover_matrix};
 
 pub fn find_solution(sudoku_board: &mut Vec<Vec<usize>>) -> bool {
     let board_size: usize  = sudoku_board.len();
@@ -12,6 +12,8 @@ pub fn find_solution(sudoku_board: &mut Vec<Vec<usize>>) -> bool {
     let mut cover_matrix: Vec<Vec<usize>> = nine_by_nine_cover_matrix();
     if board_size == 4 {
         cover_matrix = four_by_four_cover_matrix();
+    } else if board_size == 16 {
+        cover_matrix = sixteen_by_sixteen_cover_matrix();
     }
 
     let mut array_matrix = ArrayMatrix::new(board_size);

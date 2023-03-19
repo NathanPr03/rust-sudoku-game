@@ -32,7 +32,6 @@ fn main() {
             let board_generator = BoardGenerator::new(game_difficulty, board_size);
 
             board_generator.generate_random_board(&mut sudoku_board);
-            print!("here");
             pretty_print_board(&sudoku_board);
 
         })
