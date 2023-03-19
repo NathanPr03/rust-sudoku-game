@@ -1,25 +1,27 @@
-use crate::{BOARD_SIZE, BOARD_SIZE_SQUARED, find_solution, pretty_print_board};
+use crate::{find_solution, pretty_print_board};
 use rand::Rng;
 
 #[derive(Copy, Clone)]
 pub enum GameDifficulty {
-    //These values are the number of clues that should be present in a 9x9 board
-    Easy = 46,
-    Medium = 32,
-    Hard = 20,
+    //These values are the percentage of clues that should be present in a Sudoku board
+    Easy = 55,
+    Medium = 40,
+    Hard = 25,
 }
 
 pub struct BoardGenerator {
     game_difficulty: GameDifficulty,
     number_of_random_nums_to_insert: usize,
+    board_size: usize
 }
 
 impl BoardGenerator {
-    pub fn new(game_difficulty: GameDifficulty) -> BoardGenerator
+    pub fn new(game_difficulty: GameDifficulty, board_size: usize) -> BoardGenerator
     {
         return BoardGenerator {
             game_difficulty,
             number_of_random_nums_to_insert: 2, //This number seems low but it actually gives us 729 * 721 (525,609) potential boards
+            board_size
         };
     }
 
@@ -36,9 +38,9 @@ impl BoardGenerator {
             loop {
                 let mut random_num_generator = rand::thread_rng();
 
-                let random_column: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_row: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_value: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
+                let random_column: usize = random_num_generator.gen_range(0..self.board_size) as usize;
+                let random_row: usize = random_num_generator.gen_range(0..self.board_size) as usize;
+                let random_value: usize = random_num_generator.gen_range(0..self.board_size) as usize;
 
                 //  If the cell has already been filled we dont want to fill it again, will fuck up the matrix
                 if sudoku_board[random_column][random_row] != 0
@@ -71,12 +73,17 @@ impl BoardGenerator {
 
     fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut Vec<Vec<usize>>)
     {
-        for _clue in 0..(BOARD_SIZE_SQUARED as usize - self.game_difficulty as usize) {
+        let avoid_rounding = 1000;
+        let one_percent = avoid_rounding * (self.board_size * self.board_size) / 100;
+        let clues_left = (one_percent * self.game_difficulty as usize) / avoid_rounding;
+
+        let clues_to_remove = self.board_size * self.board_size - clues_left;
+        for _clue in 0..(clues_to_remove) {
             loop {
                 let mut random_num_generator = rand::thread_rng();
 
-                let random_column: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_row: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
+                let random_column: usize = random_num_generator.gen_range(0..self.board_size);
+                let random_row: usize = random_num_generator.gen_range(0..self.board_size);
 
                 if sudoku_board[random_column][random_row] == 0
                 {

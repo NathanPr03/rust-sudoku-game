@@ -1,7 +1,6 @@
 use crate::iter::RowIterator;
 use crate::{
-    four_by_four_cover_matrix, ninebyninecovermatrix, ColumnIterator, EXACT_COVER_MATRIX_COLUMNS,
-    EXACT_COVER_MATRIX_ROWS,
+    ColumnIterator
 };
 use std::rc::Rc;
 
@@ -15,10 +14,12 @@ pub struct NodeMatrix {
     potential_solution: Vec<StrongNode>,
     solution_found: bool,
     eighty_recursion_times: usize,
+    exact_cover_matrix_columns: usize,
+    exact_cover_matrix_rows: usize
 }
 
 impl NodeMatrix {
-    pub fn new() -> NodeMatrix {
+    pub fn new(board_size: usize) -> NodeMatrix {
         return NodeMatrix {
             root_node: Node::new_root(),
             column_nodes: Vec::new(),
@@ -26,7 +27,9 @@ impl NodeMatrix {
             actual_solution: Vec::new(),
             potential_solution: Vec::new(),
             solution_found: false,
-            eighty_recursion_times: 0
+            eighty_recursion_times: 0,
+            exact_cover_matrix_columns: board_size * board_size * 4,
+            exact_cover_matrix_rows: board_size * board_size * board_size
         };
     }
 
@@ -44,7 +47,7 @@ impl NodeMatrix {
     ) -> () {
         let mut column_nodes: Vec<StrongNode> = Vec::new();
 
-        for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+        for column_index in 0..self.exact_cover_matrix_columns {
             let column_header: StrongNode = Node::new_header(Some(column_index as usize));
             column_header.borrow_mut().link_left(&self.root_node);
             column_nodes.push(column_header);
@@ -52,9 +55,9 @@ impl NodeMatrix {
 
         let mut all_rows: Vec<Vec<StrongNode>> = Vec::new();
 
-        for row_index in 0..EXACT_COVER_MATRIX_ROWS {
+        for row_index in 0..self.exact_cover_matrix_rows {
             let mut a_row: Vec<StrongNode> = Vec::new();
-            for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+            for column_index in 0..self.exact_cover_matrix_columns {
                 if cover_matrix[row_index as usize][column_index as usize] == 1 {
                     let header_node: &StrongNode = &(column_nodes[column_index as usize]);
 
@@ -90,7 +93,6 @@ impl NodeMatrix {
         if self.solution_found {
             return;
         }
-        // println!("Count is: {}", k);
         {
             let borrowed_root = &mut self.root_node.borrow();
 
@@ -157,7 +159,7 @@ impl NodeMatrix {
     }
 
     pub fn choose_column(&mut self) -> StrongNode {
-        let mut lowest_count = EXACT_COVER_MATRIX_ROWS as usize;
+        let mut lowest_count = self.exact_cover_matrix_rows as usize;
 
         let downgraded_root = Rc::downgrade(&self.root_node);
         let row_iterator = RowIterator::new(&downgraded_root);
