@@ -3,29 +3,18 @@ use crate::{
     EXACT_COVER_MATRIX_ROWS, SQRT_BOARD_SIZE,
 };
 
-pub struct ArrayMatrix {
-    cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize], //This should really take a reference
-}
+pub struct ArrayMatrix {}
 
 impl ArrayMatrix {
     pub fn new(
-        cover_matrix: [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-            EXACT_COVER_MATRIX_ROWS as usize],
     ) -> ArrayMatrix {
-        return ArrayMatrix { cover_matrix };
-    }
-
-    pub fn get_cover_matrix(
-        &self,
-    ) -> &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize]; EXACT_COVER_MATRIX_ROWS as usize] {
-        return &self.cover_matrix;
+        return ArrayMatrix {  };
     }
 
     pub fn create_sparse_matrix(
         &mut self,
-        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-                 EXACT_COVER_MATRIX_ROWS as usize],
-        sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
+        sudoku_board: &mut Vec<Vec<usize>>
     ) -> () {
         self.generate_array_matrix(cover_matrix);
 
@@ -34,8 +23,7 @@ impl ArrayMatrix {
 
     fn generate_array_matrix(
         &mut self,
-        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-                 EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
         self.cell_constraint(cover_matrix);
         self.row_constraint(cover_matrix);
@@ -45,9 +33,8 @@ impl ArrayMatrix {
 
     fn remove_clues_from_matrix(
         &mut self,
-        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-                 EXACT_COVER_MATRIX_ROWS as usize],
-        sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
+        sudoku_board: &mut Vec<Vec<usize>>,
     ) {
         for row_index in 0..BOARD_SIZE {
             for column_index in 0..BOARD_SIZE {
@@ -55,10 +42,6 @@ impl ArrayMatrix {
                 if value_of_cell != 0 {
                     for i in 0..BOARD_SIZE {
                         if value_of_cell - 1 != i as usize {
-                            let mut hack = 0;
-                            if i == BOARD_SIZE {
-                                hack = 1;
-                            }
                             let matrix_row_index =
                                 (row_index * BOARD_SIZE_SQUARED) + column_index * BOARD_SIZE + i;
 
@@ -92,8 +75,7 @@ impl ArrayMatrix {
 
     fn cell_constraint(
         &mut self,
-        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-                 EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
         let mut row_index: u16 = BOARD_SIZE;
 
@@ -107,8 +89,7 @@ impl ArrayMatrix {
 
     fn row_constraint(
         &mut self,
-        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-                 EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
         let mut pullback: u16 = BOARD_SIZE_SQUARED;
 
@@ -130,8 +111,7 @@ impl ArrayMatrix {
 
     fn column_constraint(
         &mut self,
-        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-                 EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
         let board_size_squared_times_two: u16 = (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);
 
@@ -149,8 +129,7 @@ impl ArrayMatrix {
 
     fn region_constraint(
         &mut self,
-        cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-                 EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
         let board_size_squared_times_three: u16 =
             (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);

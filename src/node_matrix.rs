@@ -40,8 +40,7 @@ impl NodeMatrix {
 
     pub fn arrange_matrix(
         &mut self,
-        cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-             EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
         let mut column_nodes: Vec<StrongNode> = Vec::new();
 
@@ -157,42 +156,6 @@ impl NodeMatrix {
         return;
     }
 
-    fn print_matrix_at_given_point(&self) {
-        // let mut cover_matrix = [
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0]
-        // ];
-
-        let mut cover_matrix = four_by_four_cover_matrix();
-        let row_iterator = RowIterator::new(&Rc::downgrade(&self.root_node));
-
-        for column_node in row_iterator {
-            // dbg!(column_node.upgrade().unwrap());
-            let column_iterator = ColumnIterator::new(&column_node.upgrade().unwrap());
-            for node in column_iterator {
-                let upgraded_node = node.upgrade().unwrap();
-                let column = upgraded_node.borrow_mut().column_index.unwrap();
-                let row = upgraded_node.borrow_mut().get_row().unwrap();
-
-                cover_matrix[row][column] = 1;
-            }
-        }
-
-        for i in 0..cover_matrix.len() {
-            for j in 0..cover_matrix[1].len() {
-                print!("|{}", cover_matrix[i][j]);
-            }
-            print!("|");
-            println!();
-        }
-
-        println!("--------------");
-    }
-
     pub fn choose_column(&mut self) -> StrongNode {
         let mut lowest_count = EXACT_COVER_MATRIX_ROWS as usize;
 
@@ -255,7 +218,6 @@ impl NodeMatrix {
                 raw_node_from_row.borrow_mut().reinsert_node_into_column();
             }
         }
-        // dbg!(column_header.borrow_mut().left.upgrade().unwrap());
         column_header
             .borrow_mut()
             .left
@@ -270,7 +232,6 @@ impl NodeMatrix {
             .unwrap()
             .borrow_mut()
             .left = Rc::downgrade(column_header);
-        // dbg!(column_header.borrow_mut().right.upgrade().unwrap());
     }
 }
 

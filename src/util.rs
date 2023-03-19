@@ -1,6 +1,4 @@
-use crate::BOARD_SIZE;
-
-pub fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
+pub fn pretty_print_board(sudoku_board: &Vec<Vec<usize>>) {
     //TODO: Probably remove this and use one defined in lib.rs
     let sqrt_board_size = ((sudoku_board.len() as f32).sqrt()) as usize;
     println!("-------------------------");

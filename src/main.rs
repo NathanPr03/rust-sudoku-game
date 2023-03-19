@@ -15,7 +15,7 @@ fn main() {
 
     let handler = builder
         .spawn(|| {
-            let mut sudoku_board = Vec::new();
+            let mut sudoku_board: Vec<Vec<usize>> = Vec::new();
 
             print!("Please enter some text: ");
             let _=stdout().flush();
@@ -27,10 +27,13 @@ fn main() {
             let board_size = real_string.parse::<i32>().unwrap();
 
             for _i in 0..board_size {
-                sudoku_board.push([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                let mut one_row = Vec::new();
+                for _j in 0..board_size {
+                    one_row.push(0);
+                }
+                sudoku_board.push(one_row);
             }
 
-            let d = 2;
 
             // let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
             //     [3, 2, 1, 4],
@@ -38,7 +41,6 @@ fn main() {
             //     [2, 3, 4, 1],
             //     [4, 1, 2, 0]
             // ];
-            // find_solution(&mut board);
 
             let game_difficulty = GameDifficulty::Hard;
             let board_generator = BoardGenerator::new(game_difficulty);
