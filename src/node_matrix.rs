@@ -144,7 +144,7 @@ impl NodeMatrix {
         NodeMatrix::uncover(&column_node);
         {
             // TODO: This shit is a horrible hack, hope I dont need it
-            if k >= 80
+            if k >= 70
             {
                 self.eighty_recursion_times += 1;
             }

@@ -1,15 +1,16 @@
 use crate::complete_nine_by_nine_matrix::completed_nine_by_nine_cover_matrix;
-use rust_sudoku_game::{ColumnIterator, NodeMatrix, StrongNode, BOARD_SIZE_SQUARED};
+use rust_sudoku_game::{ColumnIterator, NodeMatrix, StrongNode};
 
 mod complete_nine_by_nine_matrix;
 
 #[test]
 pub fn test_node_matrix_columns() {
-    let completed_cover_matrix = completed_nine_by_nine_cover_matrix();
+    let mut completed_cover_matrix = completed_nine_by_nine_cover_matrix();
+    let board_size = 9;
 
-    let mut nodes_matrix = NodeMatrix::new();
+    let mut nodes_matrix = NodeMatrix::new(board_size);
 
-    nodes_matrix.arrange_matrix(&completed_cover_matrix);
+    nodes_matrix.arrange_matrix(&mut completed_cover_matrix);
 
     let columns: &Vec<StrongNode> = nodes_matrix.get_column_nodes();
 
@@ -38,11 +39,12 @@ pub fn test_node_matrix_columns() {
 
 #[test]
 pub fn test_node_matrix_rows() {
-    let completed_cover_matrix = completed_nine_by_nine_cover_matrix();
+    let mut completed_cover_matrix = completed_nine_by_nine_cover_matrix();
+    let board_size = 9;
 
-    let mut nodes_matrix = NodeMatrix::new();
+    let mut nodes_matrix = NodeMatrix::new(board_size);
 
-    nodes_matrix.arrange_matrix(&completed_cover_matrix);
+    nodes_matrix.arrange_matrix(&mut completed_cover_matrix);
 
     let rows: &Vec<Vec<StrongNode>> = nodes_matrix.get_rows();
 
@@ -62,7 +64,7 @@ pub fn test_node_matrix_rows() {
 
             // Since the list is circular, node pointers can 'wrap around' the list and point to nodes before the current one.
             // Nodes should only point to nodes behind them if the node behind them is in the first constraint (= to a board size squared)
-            if right_node_col_number < BOARD_SIZE_SQUARED as usize {
+            if right_node_col_number < board_size*board_size as usize {
                 assert!(current_node_col_number > right_node_col_number);
             } else {
                 assert!(right_node_col_number > current_node_col_number);
@@ -75,9 +77,12 @@ pub fn test_node_matrix_rows() {
 
 #[test]
 pub fn test_cover() {
-    let completed_cover_matrix = completed_nine_by_nine_cover_matrix();
-    let mut nodes_matrix = NodeMatrix::new();
-    nodes_matrix.arrange_matrix(&completed_cover_matrix);
+    let mut completed_cover_matrix = completed_nine_by_nine_cover_matrix();
+    let board_size = 9;
+
+    let mut nodes_matrix = NodeMatrix::new(board_size);
+
+    nodes_matrix.arrange_matrix(&mut completed_cover_matrix);
 
     let column_nodes = nodes_matrix.get_column_nodes();
     let first_column_node = &column_nodes[0].clone();
@@ -149,9 +154,12 @@ pub fn test_cover() {
 
 #[test]
 pub fn test_cover_removes_column_from_node_matrix() {
-    let completed_cover_matrix = completed_nine_by_nine_cover_matrix();
-    let mut nodes_matrix = NodeMatrix::new();
-    nodes_matrix.arrange_matrix(&completed_cover_matrix);
+    let mut completed_cover_matrix = completed_nine_by_nine_cover_matrix();
+    let board_size = 9;
+
+    let mut nodes_matrix = NodeMatrix::new(board_size);
+
+    nodes_matrix.arrange_matrix(&mut completed_cover_matrix);
 
     let column_nodes = nodes_matrix.get_column_nodes();
     let first_column_node = &column_nodes[0].clone();
