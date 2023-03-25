@@ -11,28 +11,41 @@ fn main() {
         .spawn(|| {
             let mut sudoku_board: Vec<Vec<usize>> = Vec::new();
 
-            print!("Please enter some text: ");
-            let _=stdout().flush();
-            let mut board_size_raw = String::new();
+            // print!("Please enter some text: ");
+            // let _=stdout().flush();
+            // let mut board_size_raw = String::new();
+            //
+            // stdin().read_line(&mut board_size_raw).expect("failed to readline");
 
-            stdin().read_line(&mut board_size_raw).expect("failed to readline");
+            // let real_string = board_size_raw.to_string().replace("\n", "");
+            // let board_size: usize = real_string.parse::<i32>().unwrap() as usize;
 
-            let real_string = board_size_raw.to_string().replace("\n", "");
-            let board_size: usize = real_string.parse::<i32>().unwrap() as usize;
+            // for _i in 0..board_size {
+            //     let mut one_row = Vec::new();
+            //     for _j in 0..board_size {
+            //         one_row.push(0);
+            //     }
+            //     sudoku_board.push(one_row);
+            // }
 
-            for _i in 0..board_size {
-                let mut one_row = Vec::new();
-                for _j in 0..board_size {
-                    one_row.push(0);
-                }
-                sudoku_board.push(one_row);
-            }
-
-            let game_difficulty = GameDifficulty::Hard;
-            let board_generator = BoardGenerator::new(game_difficulty, board_size);
-
-            board_generator.generate_random_board(&mut sudoku_board);
-            pretty_print_board(&sudoku_board);
+            let mut board: Vec<Vec<usize>> = vec![
+                vec![5, 3, 0, 0, 7, 0, 0, 0, 0],
+                vec![6, 0, 0, 1, 9, 5, 0, 0, 0],
+                vec![0, 9, 8, 0, 0, 0, 0, 6, 0],
+                vec![8, 0, 0, 0, 6, 0, 0, 0, 3],
+                vec![4, 0, 0, 8, 0, 3, 0, 0, 1],
+                vec![7, 0, 0, 0, 2, 0, 0, 0, 6],
+                vec![0, 6, 0, 0, 0, 0, 2, 8, 0],
+                vec![0, 0, 0, 4, 1, 9, 0, 0, 5],
+                vec![0, 0, 0, 0, 8, 0, 0, 7, 9],
+            ];
+            find_solution(&mut board);
+            pretty_print_board(&board);
+            // let game_difficulty = GameDifficulty::Hard;
+            // let board_generator = BoardGenerator::new(game_difficulty, board_size);
+            //
+            // board_generator.generate_random_board(&mut sudoku_board);
+            // pretty_print_board(&sudoku_board);
 
         })
         .unwrap();

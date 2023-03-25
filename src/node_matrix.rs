@@ -91,6 +91,7 @@ impl NodeMatrix {
     }
 
     pub fn search(&mut self, k: u32, now: Instant) {
+        println!("Count {}", k);
         if self.solution_found {
             return;
         }
@@ -143,18 +144,18 @@ impl NodeMatrix {
         }
 
         NodeMatrix::uncover(&column_node);
-        {
-            // TODO: This shit is a horrible hack, hope I dont need it
-            if k >= 80
-            {
-                self.eighty_recursion_times += 1;
-            }
-
-            if self.eighty_recursion_times > 2
-            {
-                self.solution_found = true;
-            }
-        }
+        // {
+        //     // TODO: This shit is a horrible hack, hope I dont need it
+        //     if k >= 80
+        //     {
+        //         self.eighty_recursion_times += 1;
+        //     }
+        //
+        //     if self.eighty_recursion_times > 2
+        //     {
+        //         self.solution_found = true;
+        //     }
+        // }
 
         return;
     }
