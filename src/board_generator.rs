@@ -28,7 +28,7 @@ impl BoardGenerator {
     pub fn generate_random_board(
         &self,
         sudoku_board: &mut Vec<Vec<usize>>,
-    )
+    )-> bool
     {
         // This code is extremely performant :)
         use std::time::Instant;
@@ -36,6 +36,13 @@ impl BoardGenerator {
 
         for i in 0..self.number_of_random_nums_to_insert as usize {
             loop {
+                let elapsed_time = now.elapsed().as_millis();
+
+                if elapsed_time > 100 {
+                    println!("BOARD GEN {}", elapsed_time);
+
+                    // return false;
+                }
                 let mut random_num_generator = rand::thread_rng();
 
                 let random_column: usize = random_num_generator.gen_range(0..self.board_size) as usize;
@@ -59,9 +66,10 @@ impl BoardGenerator {
                 // If no solution is found reset cell
                 if !find_solution(sudoku_board) {
                     sudoku_board[random_column][random_row] = 0;
+                }else{
+                    pretty_print_board(sudoku_board);
+                    break;
                 }
-
-                break;
             }
         }
 
@@ -69,6 +77,8 @@ impl BoardGenerator {
 
         let elapsed = now.elapsed();
         println!("Board generated in: {:.2?}", elapsed);
+
+        return true
     }
 
     fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut Vec<Vec<usize>>)

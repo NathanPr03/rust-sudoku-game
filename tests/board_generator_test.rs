@@ -11,7 +11,7 @@ pub fn test_board_generation_is_random()
     let handler = builder.spawn(|| {
         let mut sudoku_boards: Vec<Vec<Vec<usize>>> = Vec::new();
 
-        for _i in 0..5 {
+        for _i in 0..10 {
             let mut sudoku_board = vec![
                 vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
                 vec![0, 0, 0, 0, 0, 0, 0, 0, 0],

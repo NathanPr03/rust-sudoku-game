@@ -18,18 +18,18 @@ pub fn find_solution(sudoku_board: &mut Vec<Vec<usize>>) -> bool {
 
     let mut array_matrix = ArrayMatrix::new(board_size);
     array_matrix.create_sparse_matrix(&mut cover_matrix, sudoku_board);
-    // ArrayMatrix::print_board(&mut cover_matrix);
 
     check_matrix_formed_properly(&cover_matrix);
 
     let mut nodes_matrix: NodeMatrix = NodeMatrix::new(board_size);
     nodes_matrix.arrange_matrix(&mut cover_matrix);
-    nodes_matrix.search(0);
+    nodes_matrix.search(0, now);
 
     if nodes_matrix.actual_solution.len() == 0
     {
         return is_solution_found;
     }else {
+        println!("Solution length {}", nodes_matrix.actual_solution.len());
         is_solution_found = true;
     }
 
@@ -38,6 +38,8 @@ pub fn find_solution(sudoku_board: &mut Vec<Vec<usize>>) -> bool {
     let elapsed = now.elapsed();
     println!("Sudoku solved in: {:.2?}", elapsed);
 
+    println!("BOARD FROM SOLUTION HANDLER");
+    pretty_print_board(sudoku_board);
     return is_solution_found;
 }
 

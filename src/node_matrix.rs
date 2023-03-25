@@ -3,6 +3,7 @@ use crate::{
     ColumnIterator
 };
 use std::rc::Rc;
+use std::time::Instant;
 
 use crate::node::{Node, StrongNode};
 
@@ -89,7 +90,7 @@ impl NodeMatrix {
         self.column_nodes = column_nodes;
     }
 
-    pub fn search(&mut self, k: u32) {
+    pub fn search(&mut self, k: u32, now: Instant) {
         if self.solution_found {
             return;
         }
@@ -122,7 +123,7 @@ impl NodeMatrix {
                     .unwrap();
                 NodeMatrix::cover(&header);
             }
-            self.search(k + 1);
+            self.search(k + 1, now);
 
             self.potential_solution.pop();
 
@@ -144,7 +145,7 @@ impl NodeMatrix {
         NodeMatrix::uncover(&column_node);
         {
             // TODO: This shit is a horrible hack, hope I dont need it
-            if k >= 70
+            if k >= 80
             {
                 self.eighty_recursion_times += 1;
             }
