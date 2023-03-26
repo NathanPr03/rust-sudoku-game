@@ -1,7 +1,8 @@
 use std::io::{stdin, stdout, Write};
 use regex::Regex;
+use crate::user_input_command::UserInputCommand;
 
-pub fn take_user_input_for_cell(board_size: usize)
+pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 {
     print!("Please enter a cell you want to change. For example 1,5 denotes row 1 column 5: ");
 
@@ -13,7 +14,7 @@ pub fn take_user_input_for_cell(board_size: usize)
     {
         println!("Invalid coordinates supplied, please make sure to enter them in format: number,number. \
         Also make sure the number is between one and {board_size}");
-        return;
+        return None;
     }
 
     let mut iter = coordinates.splitn(2, ',');
@@ -34,27 +35,24 @@ pub fn take_user_input_for_cell(board_size: usize)
     }
 
     if !valid {
-        return;
+        return None;
     }
-
-    println!("{}", x);
-    println!("{}", y);
 
     print!("Please enter the value you want to enter into the cell: ");
 
-    let value = take_user_input_generic();
+    let string_value = take_user_input_generic();
 
     let regex_string_two = format!(r"\b[1-{board_size}]\b");
     let valid_value = Regex::new(&*regex_string_two).unwrap();
-    if !valid_value.is_match(&value)
+    if !valid_value.is_match(&string_value)
     {
         println!("Invalid value supplied, please make sure to enter a value between 1 and {board_size}");
-        return;
+        return None;
     }
 
-    let integer_rep = value.parse::<i32>().unwrap() as usize;
+    let value = string_value.parse::<i32>().unwrap() as usize;
 
-    println!("{}", value);
+    return Some(UserInputCommand::new(x, y, value));
 }
 
 fn take_user_input_generic() -> String

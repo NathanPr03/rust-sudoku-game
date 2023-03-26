@@ -1,3 +1,6 @@
+use crate::BOARD_SIZE;
+
+#[derive(Debug, Clone, Copy)]
 pub struct UserInputCommand {
     x_coordinate: usize,
     y_coordinate: usize,
@@ -17,8 +20,23 @@ impl UserInputCommand {
         }
     }
 
-    pub fn execute()
+    pub fn execute(
+        &mut self,
+        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    )
     {
+        let zero_index_offset = 1;
+        self.previous_value = sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset];
 
+        sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset] = self.new_value;
+    }
+
+    pub fn undo(
+        &self,
+        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    )
+    {
+        let zero_index_offset = 1;
+        sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset] = self.previous_value;
     }
 }

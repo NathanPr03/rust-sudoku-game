@@ -23,6 +23,7 @@ pub use board_generator::BoardGenerator;
 pub use board_generator::GameDifficulty;
 pub use util::pretty_print_board;
 pub use user_input::take_user_input_for_cell;
+pub use user_input_command::UserInputCommand;
 
 pub const BOARD_SIZE: u16 = 9;
 pub const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;
