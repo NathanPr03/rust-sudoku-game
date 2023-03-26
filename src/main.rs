@@ -1,4 +1,5 @@
-use rust_sudoku_game::{BOARD_SIZE, BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty, pretty_print_board};
+use std::io::{stdin, stdout, Write};
+use rust_sudoku_game::{BOARD_SIZE, BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty, pretty_print_board, take_user_input_for_cell};
 use rust_sudoku_game::EXACT_COVER_MATRIX_ROWS;
 use std::thread::Builder;
 
@@ -25,20 +26,13 @@ fn main() {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
             ];
-            // let board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize] =[
-            //     [3, 2, 1, 4],
-            //     [1, 4, 3, 2],
-            //     [2, 3, 4, 1],
-            //     [4, 1, 2, 0]
-            // ];
-            // find_solution(&mut board);
-
             let game_difficulty = GameDifficulty::Hard;
             let board_generator = BoardGenerator::new(game_difficulty);
 
             board_generator.generate_random_board(&mut sudoku_board);
             pretty_print_board(&sudoku_board);
 
+            take_user_input_for_cell(9);
         })
         .unwrap();
 
