@@ -63,11 +63,11 @@ impl UserInputCommand {
 
     pub fn get_target_cell_and_value(&self) -> (usize, usize, usize)
     {
-        return (self.x_coordinate, self.y_coordinate, self.new_value);
+        return (self.x_coordinate -1 , self.y_coordinate - 1, self.new_value);
     }
 
     pub fn get_target_cell_and_undo_value(&self) -> (usize, usize, usize)
     {
-        return (self.x_coordinate, self.y_coordinate, self.previous_value);
+        return (self.x_coordinate - 1, self.y_coordinate - 1, self.previous_value);
     }
 }

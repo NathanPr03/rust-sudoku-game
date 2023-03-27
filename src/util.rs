@@ -1,4 +1,4 @@
-use crate::{BOARD_SIZE, UserInputCommand};
+use crate::{BOARD_SIZE};
 
 pub fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
     //TODO: Probably remove this and use one defined in lib.rs
@@ -26,12 +26,12 @@ pub fn check_if_move_is_valid
     command: (usize, usize, usize)
 ) -> bool
 {
-    return check_row_constraint(sudoku_board, command)
-        && check_col_constraint(sudoku_board, command)
+    return check_column_constraint(sudoku_board, command)
+        && check_row_constraint(sudoku_board, command)
         && check_region_constraint(sudoku_board, command);
 }
 
-fn check_row_constraint
+fn check_column_constraint
 (
     sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
     command: (usize, usize, usize)
@@ -42,14 +42,15 @@ fn check_row_constraint
         if i == column {
             continue;
         }
-        if sudoku_board[row][i] == value {
+        if sudoku_board[row][i] == value && value != 0 {
+            println!("Invalid move, a cell in the same column already has that value");
             return false;
         }
     }
     return true;
 }
 
-fn check_col_constraint
+fn check_row_constraint
 (
     sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
     command: (usize, usize, usize)
@@ -60,7 +61,8 @@ fn check_col_constraint
         if i == row {
             continue;
         }
-        if sudoku_board[i][column] == value {
+        if sudoku_board[i][column] == value && value != 0 {
+            println!("Invalid move, a cell in the same row already has that value");
             return false;
         }
     }
@@ -82,7 +84,8 @@ fn check_region_constraint(
             if r == row && c == column {
                 continue;
             }
-            if sudoku_board[r][c] == value {
+            if sudoku_board[r][c] == value && value != 0 {
+                println!("Invalid move, a cell in the same region already has that value");
                 return false;
             }
         }

@@ -1,13 +1,6 @@
 use crate::{BOARD_SIZE, BOARD_SIZE_SQUARED, find_solution, pretty_print_board};
 use rand::Rng;
-
-#[derive(Copy, Clone)]
-pub enum GameDifficulty {
-    //These values are the number of clues that should be present in a 9x9 board
-    Easy = 46,
-    Medium = 32,
-    Hard = 20,
-}
+use crate::game_handler::GameDifficulty;
 
 pub struct BoardGenerator {
     game_difficulty: GameDifficulty,

@@ -2,6 +2,25 @@ use std::io::{stdin, stdout, Write};
 use regex::Regex;
 use crate::user_input_command::UserInputCommand;
 
+pub fn get_users_move() -> String
+{
+    print!("Please enter what move you would like to make: \
+    change a cell (c), \
+    undo last move (u), \
+    redo last move (r), \
+    get a hint (not yet implemented) (h). Do not include the brackets in your input: ");
+
+    let users_move = take_user_input_generic();
+
+    let viable_moves: [&str; 4] = ["c", "u", "r", "h"];
+
+    if !viable_moves.contains(&&*users_move) {
+        println!("Invalid move supplied. Please select one of (c), (u), (r), (h)");
+        return "Invalid".to_string();
+    }
+
+    return users_move;
+}
 pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 {
     print!("Please enter a cell you want to change. For example 1,5 denotes column 1 row 5: ");
