@@ -57,9 +57,9 @@ impl BoardGenerator {
                 // If no solution is found reset cell
                 if !find_solution(sudoku_board) {
                     sudoku_board[random_column][random_row] = 0;
+                }else {
+                    break;
                 }
-
-                break;
             }
         }
 

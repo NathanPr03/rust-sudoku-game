@@ -1,5 +1,5 @@
 use std::io::{stdin, stdout, Write};
-§use rust_sudoku_game::{UserInputCommand, BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty, pretty_print_board, take_user_input_for_cell};
+use rust_sudoku_game::{UserInputCommand, BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty, pretty_print_board, take_user_input_for_cell};
 use rust_sudoku_game::EXACT_COVER_MATRIX_ROWS;
 use std::thread::Builder;
 

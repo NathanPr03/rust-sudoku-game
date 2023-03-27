@@ -1,9 +1,9 @@
-use crate::BOARD_SIZE;
+use crate::{BOARD_SIZE, check_if_move_is_valid};
 
 #[derive(Debug, Clone, Copy)]
 pub struct UserInputCommand {
-    x_coordinate: usize,
-    y_coordinate: usize,
+    x_coordinate: usize, // Column co-ordinate
+    y_coordinate: usize, // Row co-ordinate
     new_value: usize,
     previous_value: usize
 }
@@ -25,6 +25,10 @@ impl UserInputCommand {
         sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     )
     {
+        if !check_if_move_is_valid(sudoku_board, self.get_target_cell_and_value()) {
+            return;
+        }
+
         let zero_index_offset = 1;
         self.previous_value = sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset];
 
@@ -36,7 +40,34 @@ impl UserInputCommand {
         sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     )
     {
+        if !check_if_move_is_valid(sudoku_board, self.get_target_cell_and_undo_value())
+        {
+            return;
+        }
+
         let zero_index_offset = 1;
         sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset] = self.previous_value;
+    }
+
+    pub fn get_x_coordinate(&self) -> usize {
+        self.x_coordinate
+    }
+
+    pub fn get_y_coordinate(&self) -> usize {
+        self.y_coordinate
+    }
+
+    pub fn get_new_value(&self) -> usize {
+        self.new_value
+    }
+
+    pub fn get_target_cell_and_value(&self) -> (usize, usize, usize)
+    {
+        return (self.x_coordinate, self.y_coordinate, self.new_value);
+    }
+
+    pub fn get_target_cell_and_undo_value(&self) -> (usize, usize, usize)
+    {
+        return (self.x_coordinate, self.y_coordinate, self.previous_value);
     }
 }

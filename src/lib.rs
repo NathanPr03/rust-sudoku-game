@@ -11,6 +11,7 @@ mod board_generator;
 mod util;
 mod user_input;
 mod user_input_command;
+mod undo_handler;
 
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;
@@ -22,8 +23,10 @@ pub use solution_handler::find_solution;
 pub use board_generator::BoardGenerator;
 pub use board_generator::GameDifficulty;
 pub use util::pretty_print_board;
+pub use util::check_if_move_is_valid;
 pub use user_input::take_user_input_for_cell;
 pub use user_input_command::UserInputCommand;
+pub use undo_handler::UndoHandler;
 
 pub const BOARD_SIZE: u16 = 9;
 pub const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;

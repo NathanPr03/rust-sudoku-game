@@ -4,7 +4,7 @@ use crate::user_input_command::UserInputCommand;
 
 pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 {
-    print!("Please enter a cell you want to change. For example 1,5 denotes row 1 column 5: ");
+    print!("Please enter a cell you want to change. For example 1,5 denotes column 1 row 5: ");
 
     let coordinates = take_user_input_generic();
 
