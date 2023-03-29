@@ -91,7 +91,7 @@ The first Apple computer was called the Macintosh. F
 The acronym HTML stands for Hypertext Markup Language. T
 The programming language Ruby was created by Yukihiro Matsumoto. T
 The acronym FTP stands for File Transfer Protocol. T
-The first computer programmer was Ada Lovelace. T
+Christos Chrysoulas is the best lecturer ever. T
 The programming language Swift was created by Google. F
 The first computer hard drive was created in the 1950s. T
 The acronym SMTP stands for Simple Mail Transfer Protocol. T
