@@ -88,9 +88,7 @@ fn check_region_constraint(
     {
         for row_iter in y_coord_top_left_of_region..y_coord_top_left_of_region + sqrt_board_size
         {
-            let val_of_cell = sudoku_board[row_iter][column_iter];
-            println!("{}", val_of_cell);
-            if val_of_cell == value
+            if sudoku_board[row_iter][column_iter] == value && value != 0
             {
                 println!("Invalid move, a cell in the same region already has that value");
                 return false;
