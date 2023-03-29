@@ -5,14 +5,16 @@ use crate::game_handler::GameDifficulty;
 pub struct BoardGenerator {
     game_difficulty: GameDifficulty,
     number_of_random_nums_to_insert: usize,
+    correct_trivia_answers: usize
 }
 
 impl BoardGenerator {
-    pub fn new(game_difficulty: GameDifficulty) -> BoardGenerator
+    pub fn new(game_difficulty: GameDifficulty, correct_trivia_answers: usize) -> BoardGenerator
     {
         return BoardGenerator {
             game_difficulty,
             number_of_random_nums_to_insert: 2, //This number seems low but it actually gives us 729 * 721 (525,609) potential boards
+            correct_trivia_answers,
         };
     }
 
@@ -64,7 +66,9 @@ impl BoardGenerator {
 
     fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
     {
-        for _clue in 0..(BOARD_SIZE_SQUARED as usize - self.game_difficulty as usize) {
+        let board_size = sudoku_board.len();
+        let clues_to_remove = board_size * board_size - self.game_difficulty as usize - self.correct_trivia_answers;
+        for _clue in 0..clues_to_remove {
             loop {
                 let mut random_num_generator = rand::thread_rng();
 

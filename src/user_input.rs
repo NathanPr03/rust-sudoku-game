@@ -1,6 +1,45 @@
 use std::io::{stdin, stdout, Write};
 use regex::Regex;
+use crate::user_input;
 use crate::user_input_command::UserInputCommand;
+
+
+pub fn get_game_mode() -> String
+{
+    print!("Please enter which game mode you would like to play, easy, (e), medium (m), hard (h) or trivia (t): ");
+
+    let mut user_input = "".to_string();
+
+    loop
+    {
+        user_input = get_user_input_generic();
+
+        if user_input == "e" || user_input == "m" || user_input == "h" || user_input == "t" {
+            break;
+        }
+        print!("Invalid input, please enter either T or F: ");
+    }
+
+    return user_input;
+}
+pub fn get_trivia_input(question: String) -> String
+{
+    print!("Is the following trivia question true (T) or false (F): {question}: ");
+
+    let mut user_input = "".to_string();
+
+    loop
+    {
+        user_input = get_user_input_generic();
+
+        if user_input == "T" || user_input == "F" {
+            break;
+        }
+        print!("Invalid input, please enter either T or F: ");
+    }
+
+    return user_input;
+}
 
 pub fn get_users_move() -> String
 {
@@ -10,7 +49,7 @@ pub fn get_users_move() -> String
     redo last move (r), \
     get a hint (not yet implemented) (h). Do not include the brackets in your input: ");
 
-    let users_move = take_user_input_generic();
+    let users_move = get_user_input_generic();
 
     let viable_moves: [&str; 4] = ["c", "u", "r", "h"];
 
@@ -25,7 +64,7 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 {
     print!("Please enter a cell you want to change. For example 1,5 denotes column 1 row 5: ");
 
-    let coordinates = take_user_input_generic();
+    let coordinates = get_user_input_generic();
 
     let regex_string = format!(r"^(?:[1-9]|{board_size}),(?:[1-9]|{board_size})$");
     let valid_coordinates_regex = Regex::new(&*regex_string).unwrap();
@@ -59,7 +98,7 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 
     print!("Please enter the value you want to enter into the cell: ");
 
-    let string_value = take_user_input_generic();
+    let string_value = get_user_input_generic();
 
     let regex_string_two = format!(r"\b[1-{board_size}]\b");
     let valid_value = Regex::new(&*regex_string_two).unwrap();
@@ -74,7 +113,7 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
     return Some(UserInputCommand::new(x, y, value));
 }
 
-fn take_user_input_generic() -> String
+fn get_user_input_generic() -> String
 {
     let _=stdout().flush();
     let mut user_input = String::new();

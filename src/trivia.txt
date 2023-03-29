@@ -1,0 +1,100 @@
+A switch statement can only be used with integers or characters. F
+The first computer programmer was a woman named Ada Lovelace. T
+In computer science, a hash table is a data structure used to implement associative arrays. T
+The acronym "CPU" stands for Central Processing Unit. T
+The first computer bug was actually a real insect found inside a computer. T
+The acronym "HTML" stands for Hyperlinks and Text Markup Language. F
+The first programming language was Fortran. T
+The first computer was the ENIAC. T
+Linux was created by Linus Torvalds. T
+In computer science, a compiler translates source code into machine code. T
+A programming language can be both interpreted and compiled. T
+The first commercial computer was the UNIVAC I. T
+Object-oriented programming is a programming paradigm that emphasizes the use of objects. T
+In computer science, a stack is a data structure used to implement depth-first search. F
+The first computer mouse was invented by Douglas Engelbart. T
+JavaScript is a compiled programming language. F
+The acronym "WWW" stands for World Wide Web. T
+The first computer game was Pong. T
+The first programming language was machine code. F
+In computer science, recursion is a technique where a function calls itself. T
+The first computer virus was called the Creeper virus. T
+In computer science, a semaphore is a variable used to control access to shared resources. T
+The first computer network was called ARPANET. T
+The acronym "GUI" stands for Graphical User Interface. T
+The first graphical web browser was called Mosaic. T
+A bit is a binary digit, either 0 or 1. T
+Moore's law predicts that the number of transistors in a dense integrated circuit doubles every 18 months. T
+A firewall is a software or hardware system that filters network traffic based on a set of rules. T
+The Internet was invented by Tim Berners-Lee in the early 1990s. F
+The first computer mouse was invented by Douglas Engelbart in 1963. T
+A URL (Uniform Resource Locator) is a web address that identifies a specific web page. T
+HTML (Hypertext Markup Language) is a programming language used to create web pages. F
+The first computer virus was called the Morris worm and infected tens of thousands of computers in 1988. T
+A compiler is a software program that translates high-level programming languages into machine code. T
+A byte is a unit of digital information that typically consists of eight bits. T
+Java is an example of a low-level programming language. F
+In computer graphics, RGB stands for Red, Green, and Blue. T
+Wi-Fi is an abbreviation for Wireless Fidelity. T
+The first computer programmer was a woman named Ada Lovelace. T
+The first electronic computer was invented in the 1940s. T
+C++ is an interpreted language. F
+The first computer mouse was made of wood. T
+A byte is made up of 8 bits. T
+The first computer virus was created in the 1970s. T
+Apple's first computer was called the Macintosh. F
+The first computer game was called Spacewar!. T
+Java was developed by Microsoft. F
+The first web browser was called WorldWideWeb. T
+The first personal computer was called the Altair 8800. T
+Google's search algorithm is called PageRank. T
+Linux was developed by Linus Torvalds. T
+The first computer hard disk drive had a storage capacity of 5 megabytes. T
+HTML stands for HyperText Markup Language. T
+The first computer with a graphical user interface was the Apple Lisa. T
+Facebook was founded in 2002. F
+Python was named after a British comedy group. T
+The first computer programmer was a man named Charles Babbage. T
+The acronym RAM stands for Random Access Memory. T
+The first electronic computer was called the ENIAC. T
+The first computer virus was created in the early 1980s. T
+The programming language COBOL was designed for business applications. T
+The Windows operating system was created by Apple. F
+The term “bug” in computer science was first used by Grace Hopper. T
+A “bit” is a binary digit that can have a value of either 0 or 1. T
+The programming language Python was named after a snake. T
+The first computer mouse was invented in the 1960s. T
+Apple’s first computer was called the Apple I. T
+A supercomputer is a computer that is specifically designed for high-speed operations. T
+The first successful search engine was called WebCrawler. F
+The acronym CPU stands for Central Processing Unit. T
+The first personal computer was introduced in 1975 by IBM. F
+The first computer game was called Spacewar!. T
+The operating system Linux was created by Microsoft. F
+An algorithm is a step-by-step procedure for solving a problem. T
+The first graphical web browser was called Mosaic. T
+Java is a programming language that was first released in the early 1990s. T
+The Internet was first developed by the United States government. T
+The World Wide Web was created by Tim Berners-Lee. T
+The term “debugging” was coined by Ada Lovelace. F
+The acronym HTML stands for Hypertext Markup Language. T
+The acronym SQL stands for Structured Query Language. T
+The first computer virus was created in 1971. F
+The programming language Python was named after the snake. T
+The first electronic computer was called the Colossus. F
+The concept of virtual memory was first introduced in the 1960s. T
+The first web browser was called WorldWideWeb. T
+The acronym CSS stands for Computer Style Sheets. F
+The first graphical user interface was created at Xerox PARC. T
+The programming language C++ was created by James Gosling. F
+The first Apple computer was called the Macintosh. F
+The acronym HTML stands for Hypertext Markup Language. T
+The programming language Ruby was created by Yukihiro Matsumoto. T
+The acronym FTP stands for File Transfer Protocol. T
+The first computer programmer was Ada Lovelace. T
+The programming language Swift was created by Google. F
+The first computer hard drive was created in the 1950s. T
+The acronym SMTP stands for Simple Mail Transfer Protocol. T
+The programming language JavaScript was originally called Mocha. T
+The acronym JPEG stands for Joint Photographic Experts Group. T
+The programming language Perl was created by Larry Wall. T
