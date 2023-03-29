@@ -26,12 +26,12 @@ pub fn check_if_move_is_valid
     command: (usize, usize, usize)
 ) -> bool
 {
-    return check_column_constraint(sudoku_board, command)
-        && check_row_constraint(sudoku_board, command)
+    return check_row_constraint(sudoku_board, command)
+        && check_column_constraint(sudoku_board, command)
         && check_region_constraint(sudoku_board, command);
 }
 
-fn check_column_constraint
+fn check_row_constraint
 (
     sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
     command: (usize, usize, usize)
@@ -43,14 +43,14 @@ fn check_column_constraint
             continue;
         }
         if sudoku_board[row][i] == value && value != 0 {
-            println!("Invalid move, a cell in the same column already has that value");
+            println!("Invalid move, a cell in the same row already has that value");
             return false;
         }
     }
     return true;
 }
 
-fn check_row_constraint
+fn check_column_constraint
 (
     sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
     command: (usize, usize, usize)
@@ -62,7 +62,7 @@ fn check_row_constraint
             continue;
         }
         if sudoku_board[i][column] == value && value != 0 {
-            println!("Invalid move, a cell in the same row already has that value");
+            println!("Invalid move, a cell in the same column already has that value");
             return false;
         }
     }
@@ -73,18 +73,25 @@ fn check_region_constraint(
     sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
     command: (usize, usize, usize)
 ) -> bool {
-    let (column, row, value) = command;
+    let (mut column, mut row, value) = command;
 
-    let sqrt_board_size = sudoku_board.len()/sudoku_board.len();
-    let region_row = (row / sqrt_board_size) * sqrt_board_size;
-    let region_col = (column / sqrt_board_size) * sqrt_board_size;
+    let sqrt_board_size = (sudoku_board.len() as f32).sqrt() as usize;
 
-    for r in region_row..region_row+sqrt_board_size {
-        for c in region_col..region_col+sqrt_board_size {
-            if r == row && c == column {
-                continue;
-            }
-            if sudoku_board[r][c] == value && value != 0 {
+    // Handle 0 indexing
+    column = column + 1;
+    row = row + 1;
+
+    let x_coord_top_left_of_region = column - ((column - 1) % sqrt_board_size) - 1;
+    let y_coord_top_left_of_region = row - ((row - 1) % sqrt_board_size) - 1;
+
+    for column_iter in x_coord_top_left_of_region..x_coord_top_left_of_region + sqrt_board_size
+    {
+        for row_iter in y_coord_top_left_of_region..y_coord_top_left_of_region + sqrt_board_size
+        {
+            let val_of_cell = sudoku_board[row_iter][column_iter];
+            println!("{}", val_of_cell);
+            if val_of_cell == value
+            {
                 println!("Invalid move, a cell in the same region already has that value");
                 return false;
             }
