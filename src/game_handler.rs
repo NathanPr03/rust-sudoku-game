@@ -1,5 +1,6 @@
 use crate::{BOARD_SIZE, BoardGenerator, get_trivia_input, pretty_print_board, take_user_input_for_cell, UndoHandler, UserInputCommand};
-use crate::user_input::{get_game_mode, get_users_move};
+use crate::hint_service::get_hint_command;
+use crate::user_input::{get_coordinates_for_hint, get_game_mode, get_users_move};
 use crate::Trivia;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -64,6 +65,7 @@ impl GameHandler
                 "c" => self.change_cell(&mut sudoku_board),
                 "u" => self.undo(&mut sudoku_board),
                 "r" => self.redo(&mut sudoku_board),
+                "h" => self.hint(&mut sudoku_board),
                 _ => {}
             }
         }
@@ -117,6 +119,18 @@ impl GameHandler
     {
         self.undo_handler.redo_last_command(sudoku_board);
         pretty_print_board(&sudoku_board);
+    }
+
+    fn hint(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
+    {
+        let (x, y) = get_coordinates_for_hint(sudoku_board.len());
+        let mut command = get_hint_command(sudoku_board, (x, y));
+        command.execute(sudoku_board);
+
+        self.undo_handler.push_command(command);
+        self.undo_handler.invalidate_redo_stack();
+
+        pretty_print_board(sudoku_board);
     }
 
     fn is_game_finished

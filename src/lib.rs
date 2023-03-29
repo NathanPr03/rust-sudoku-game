@@ -15,6 +15,7 @@ mod undo_handler;
 mod game_handler;
 mod trivia;
 mod game_mode_service;
+mod hint_service;
 
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;
@@ -34,6 +35,7 @@ pub use game_handler::GameDifficulty;
 pub use game_handler::GameHandler;
 pub use trivia::Trivia;
 pub use game_mode_service::determine_game_mode;
+pub use hint_service::get_hint_command;
 
 pub const BOARD_SIZE: u16 = 9;
 pub const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;
