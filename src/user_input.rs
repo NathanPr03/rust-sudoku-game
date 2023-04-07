@@ -22,17 +22,16 @@ pub fn get_save_game(number_of_save_games: usize) -> usize
 
 pub fn get_game_mode() -> String
 {
-    print!("Please enter which game mode you would like to play, easy, (e), medium (m), hard (h) or trivia (t). \
-    Alternatively if you want to load a previous game (l): ");
+    print!("Please enter which game mode you would like to play, easy, (e), medium (m), hard (h) or trivia (t): ");
 
     loop
     {
         let user_input = get_user_input_generic();
 
-        if user_input == "e" || user_input == "m" || user_input == "h" || user_input == "t" || user_input == "l" {
+        if user_input == "e" || user_input == "m" || user_input == "h" || user_input == "t" {
             return user_input;
         }
-        print!("Invalid input, please enter one of 'e', 'm', 'h', 't' or 'l': ");
+        print!("Invalid input, please enter one of 'e', 'm', 'h', or 't': ");
     }
 }
 
@@ -95,22 +94,42 @@ pub fn get_coordinates_for_hint(board_size: usize) -> (usize, usize)
     return (x, y);
 }
 
+pub fn get_users_start_game() -> String
+{
+    print!("Please enter whether you would like to: \
+    start a new game (n), \
+    load a previous game (l), \
+    replay a previous game (r), \
+    or get help (h): ");
+
+    let users_move = get_user_input_generic();
+
+    let viable_moves: [&str; 4] = ["n", "l", "r", "h"];
+
+    if !viable_moves.contains(&&*users_move) {
+        println!("Invalid move supplied. Please select one of (n), (l), (r), (h). Do not include the brackets in your input: ");
+        return "Invalid".to_string();
+    }
+
+    return users_move;
+}
+
 pub fn get_users_replay_move() -> String
 {
     print!("Please enter what move you would like to make: \
     change a cell (c), \
     undo last move (u), \
     redo last move (r), \
-    get a hint (h) \
-    save game (s) \
-    quit (q): ");
+    get a hint (h), \
+    save game (s), \
+    or quit (q): ");
 
     let users_move = get_user_input_generic();
 
     let viable_moves: [&str; 6] = ["c", "u", "r", "h", "s", "q"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("Invalid move supplied. Please select one of (c), (u), (r), (h). Do not include the brackets in your input: ");
+        println!("Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (q). Do not include the brackets in your input: ");
         return "Invalid".to_string();
     }
 
@@ -124,15 +143,15 @@ pub fn get_users_move() -> String
     undo last move (u), \
     redo last move (r), \
     get a hint (h) \
-    save game (s) \
-    quit (q): ");
+    save game (s), \
+    or quit (q): ");
 
     let users_move = get_user_input_generic();
 
     let viable_moves: [&str; 6] = ["c", "u", "r", "h", "s", "q"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("Invalid move supplied. Please select one of (c), (u), (r), (h). Do not include the brackets in your input: ");
+        println!("Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (q). Do not include the brackets in your input: ");
         return "Invalid".to_string();
     }
 
