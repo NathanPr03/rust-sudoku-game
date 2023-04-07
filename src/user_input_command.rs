@@ -1,6 +1,8 @@
 use crate::{BOARD_SIZE, check_if_move_is_valid};
+use serde_derive::Serialize;
+use serde_derive::Deserialize;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct UserInputCommand {
     x_coordinate: usize, // Column co-ordinate
     y_coordinate: usize, // Row co-ordinate

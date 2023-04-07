@@ -1,9 +1,12 @@
 use crate::{BOARD_SIZE, UserInputCommand};
+use serde_derive::Serialize;
+use serde_derive::Deserialize;
 
+#[derive(Serialize, Deserialize)]
 pub struct UndoHandler
 {
-    undo_stack: Vec<UserInputCommand>,
-    redo_stack: Vec<UserInputCommand>
+    pub undo_stack: Vec<UserInputCommand>,
+    pub redo_stack: Vec<UserInputCommand>
 }
 
 impl UndoHandler
