@@ -1,6 +1,7 @@
 use crate::{BOARD_SIZE, GameHandler, get_save_game, UserInputCommand};
 use std::fs::{create_dir, File, read_dir, read_to_string};
 use std::io::Write;
+use std::mem::zeroed;
 use chrono::{DateTime, Local};
 use chrono::Utc;
 
@@ -28,20 +29,37 @@ pub fn load() -> GameHandler
     println!("Save games to choose from: ");
     for directory in directories
     {
+        let unwrapped_dir = directory.unwrap();
+        if unwrapped_dir.file_name().to_str().unwrap() == ".gitkeep"
+        {
+            continue;
+        }
+
         counter += 1;
-        println!("{counter}: {}", directory.unwrap().path().display());
+        println!("{counter}: {}", unwrapped_dir.path().display());
     }
 
-    let save_game = get_save_game(counter);
+    let mut save_game = get_save_game(counter);
 
-    counter = 1;
+    counter = 0;
+    save_game -= 1; // Handle 0 indexing
 
     let mut directory_path = "".to_string();
     for directory in read_dir("./savegames").unwrap()
     {
-        if counter == save_game {
-            directory_path = directory.unwrap().path().to_str().unwrap().to_string() + "/savegame.json";
+        let unwrapped_dir = directory.unwrap();
+        let file_name = unwrapped_dir.file_name();
+        let file_name_two = file_name.to_str().unwrap();
+        if file_name_two == ".gitkeep"
+        {
+            continue;
         }
+
+        if counter == save_game {
+            directory_path = unwrapped_dir.path().to_str().unwrap().to_string() + "/savegame.json";
+            break;
+        }
+
         counter += 1;
     }
 

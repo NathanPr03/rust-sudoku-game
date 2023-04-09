@@ -1,3 +1,4 @@
+use std::collections::vec_deque::VecDeque;
 use crate::{BOARD_SIZE, UserInputCommand};
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
@@ -5,8 +6,8 @@ use serde_derive::Deserialize;
 #[derive(Serialize, Deserialize)]
 pub struct UndoHandler
 {
-    undo_stack: Vec<UserInputCommand>,
-    redo_stack: Vec<UserInputCommand>
+    undo_stack: VecDeque<UserInputCommand>,
+    redo_stack: VecDeque<UserInputCommand>
 }
 
 impl UndoHandler
@@ -15,14 +16,14 @@ impl UndoHandler
     {
         return UndoHandler
         {
-            undo_stack: Vec::new(),
-            redo_stack: Vec::new(),
+            undo_stack: VecDeque::new(),
+            redo_stack: VecDeque::new(),
         }
     }
 
     pub fn push_command(&mut self, command: UserInputCommand)
     {
-        self.undo_stack.push(command);
+        self.undo_stack.push_back(command);
     }
 
     pub fn undo_last_command
@@ -31,7 +32,7 @@ impl UndoHandler
         sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     )
     {
-        let command = self.undo_stack.pop();
+        let command = self.undo_stack.pop_back();
         if !command.is_some()
         {
             println!("There is no move to undo");
@@ -41,7 +42,7 @@ impl UndoHandler
         let unwrapped_command = command.unwrap();
         unwrapped_command.undo(sudoku_board);
 
-        self.redo_stack.push(unwrapped_command);
+        self.redo_stack.push_back(unwrapped_command);
     }
 
     pub fn redo_last_command
@@ -50,7 +51,7 @@ impl UndoHandler
         sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     )
     {
-        let command = self.redo_stack.pop();
+        let command = self.redo_stack.pop_back();
         if !command.is_some()
         {
             println!("There is no move to redo");
@@ -60,7 +61,7 @@ impl UndoHandler
         let mut unwrapped_command = command.unwrap();
         unwrapped_command.execute(sudoku_board);
 
-        self.undo_stack.push(unwrapped_command);
+        self.undo_stack.push_back(unwrapped_command);
     }
 
     // Used for replays
@@ -70,7 +71,7 @@ impl UndoHandler
         sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     )
     {
-        let command = self.undo_stack.pop();
+        let command = self.undo_stack.pop_back();
         if !command.is_some()
         {
             return;
@@ -81,13 +82,48 @@ impl UndoHandler
 
         self.invalidate_redo_stack();
     }
-    pub fn invalidate_redo_stack(&mut self)
+
+    // Also used for replays
+    pub fn redo_last_command_reverse
+    (
+        &mut self,
+        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    )
     {
-        self.redo_stack = Vec::new();
+        let command = self.undo_stack.pop_front();
+        if !command.is_some()
+        {
+            println!("No more moves were made, to continue playing interrupt the replay");
+            return;
+        }
+
+        let mut unwrapped_command = command.unwrap();
+        unwrapped_command.execute(sudoku_board);
+
+        self.redo_stack.push_back(unwrapped_command);
     }
 
-    pub fn get_redo_stack_length(&self) -> usize
+    pub fn undo_last_command_reverse
+    (
+        &mut self,
+        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    )
     {
-        return self.redo_stack.len();
+        let command = self.redo_stack.pop_back();
+        if !command.is_some()
+        {
+            println!("There is no move to undo");
+            return;
+        }
+
+        let unwrapped_command = command.unwrap();
+        unwrapped_command.undo(sudoku_board);
+
+        self.undo_stack.push_front(unwrapped_command);
+    }
+
+    pub fn invalidate_redo_stack(&mut self)
+    {
+        self.redo_stack = VecDeque::new();
     }
 }

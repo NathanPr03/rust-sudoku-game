@@ -1,6 +1,6 @@
 use crate::{BOARD_SIZE, BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
-use crate::user_input::{get_coordinates_for_hint, get_users_move};
+use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move};
 use crate::Trivia;
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
@@ -74,20 +74,7 @@ impl GameHandler
 
         self.initial_generated_board = sudoku_board.clone();
 
-        while !self.is_game_finished(&sudoku_board)
-        {
-            let users_move = get_users_move();
-
-            match users_move.as_str() {
-                "c" => self.change_cell(&mut sudoku_board),
-                "u" => self.undo(&mut sudoku_board),
-                "r" => self.redo(&mut sudoku_board, false),
-                "h" => self.hint(&mut sudoku_board),
-                "s" => self.save(),
-                "q" => return,
-                _ => {}
-            }
-        }
+        self.game_loop(&mut sudoku_board);
     }
 
     pub fn set_game_diff(&mut self, game_difficulty: GameDifficulty)
@@ -103,26 +90,32 @@ impl GameHandler
 
         pretty_print_board(&sudoku_board);
 
-        while !self.is_game_finished(&sudoku_board)
-        {
-            let users_move = get_users_move();
-
-            match users_move.as_str() {
-                "c" => self.change_cell(&mut sudoku_board),
-                "u" => self.undo(&mut sudoku_board),
-                "r" => self.redo(&mut sudoku_board, false),
-                "h" => self.hint(&mut sudoku_board),
-                "s" => self.save(),
-                "q" => return,
-                _ => {}
-            }
-        }
+        self.game_loop(&mut sudoku_board);
     }
 
     pub fn replay(&mut self)
     {
         let mut sudoku_board = self.initial_generated_board;
 
+        pretty_print_board(&sudoku_board);
+        self.undo_handler.invalidate_redo_stack();
+
+        while !self.is_game_finished(&sudoku_board)
+        {
+            let users_move = get_users_replay_move();
+
+            match users_move.as_str() {
+                "c" => self.undo_handler.redo_last_command_reverse(&mut sudoku_board),
+                "u" => self.undo_handler.undo_last_command_reverse(&mut sudoku_board),
+                "i" => self.game_loop(&mut sudoku_board),
+                _ => {}
+            }
+
+            pretty_print_board(&sudoku_board);
+        }
+    }
+
+    fn game_loop(&mut self, mut sudoku_board: &mut [[usize; 9]; 9]) {
         while !self.is_game_finished(&sudoku_board)
         {
             let users_move = get_users_move();
@@ -195,10 +188,17 @@ impl GameHandler
     fn hint(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
     {
         let (x, y) = get_coordinates_for_hint(sudoku_board.len());
-        let mut command = get_hint_command(sudoku_board, (x, y));
-        command.execute(sudoku_board);
+        let command = get_hint_command(sudoku_board, (x, y));
 
-        self.undo_handler.push_command(command);
+        if !command.is_some()
+        {
+            return;
+        }
+
+        let mut unwrapped_command = command.unwrap();
+        unwrapped_command.execute(sudoku_board);
+
+        self.undo_handler.push_command(unwrapped_command);
         self.undo_handler.invalidate_redo_stack();
 
         pretty_print_board(sudoku_board);
