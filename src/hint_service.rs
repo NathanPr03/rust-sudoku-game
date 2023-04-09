@@ -4,15 +4,20 @@ pub fn get_hint_command
 (
     sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
     coordinates: (usize, usize)
-)-> UserInputCommand
+)-> Option<UserInputCommand>
 {
     let (x, y) = coordinates;
 
     //Dont want to edit the real board
     let mut secondary_board = sudoku_board.clone();
-    find_solution(&mut secondary_board);
+    let is_possible = find_solution(&mut secondary_board);
 
+    if !is_possible {
+        println!("Can not get a hint as this bord isn't solvable. Have a look at your previous moves first ;)");
+
+        return None;
+    }
     let value = &secondary_board[y - 1][x - 1];
 
-    return UserInputCommand::new(x, y, *value);
+    return Some(UserInputCommand::new(x, y, *value));
 }
