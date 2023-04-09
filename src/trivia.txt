@@ -71,7 +71,7 @@ The acronym CPU stands for Central Processing Unit. T
 The first personal computer was introduced in 1975 by IBM. F
 The first computer game was called Spacewar!. T
 The operating system Linux was created by Microsoft. F
-An algorithm is a step-by-step procedure for solving a problem. T
+SOAP stands for Server oriented access protocol. F
 The first graphical web browser was called Mosaic. T
 Java is a programming language that was first released in the early 1990s. T
 The Internet was first developed by the United States government. T

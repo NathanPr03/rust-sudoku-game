@@ -1,4 +1,4 @@
-use crate::{GameHandler, get_users_start_game, load};
+use crate::{determine_game_mode, GameHandler, get_users_start_game, load};
 
 pub struct Universe {
     game_handler: GameHandler,
@@ -33,6 +33,8 @@ impl Universe {
 
     fn new_game(&mut self)
     {
+        let game_diff = determine_game_mode();
+        self.game_handler.set_game_diff(game_diff);
         self.game_handler.play();
 
         self.game_selected = true;
@@ -41,7 +43,7 @@ impl Universe {
     fn load_game(&mut self)
     {
         self.game_handler = load();
-        self.game_handler.play();
+        self.game_handler.load();
 
         self.game_selected = true;
     }

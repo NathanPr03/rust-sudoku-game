@@ -81,7 +81,36 @@ impl GameHandler
             match users_move.as_str() {
                 "c" => self.change_cell(&mut sudoku_board),
                 "u" => self.undo(&mut sudoku_board),
-                "r" => self.redo(&mut sudoku_board),
+                "r" => self.redo(&mut sudoku_board, false),
+                "h" => self.hint(&mut sudoku_board),
+                "s" => self.save(),
+                "q" => return,
+                _ => {}
+            }
+        }
+    }
+
+    pub fn set_game_diff(&mut self, game_difficulty: GameDifficulty)
+    {
+        self.game_difficulty = game_difficulty;
+    }
+
+    pub fn load(&mut self)
+    {
+        let mut sudoku_board = self.initial_generated_board;
+
+        self.undo_handler.re_execute_all_commands(&mut sudoku_board);
+
+        pretty_print_board(&sudoku_board);
+
+        while !self.is_game_finished(&sudoku_board)
+        {
+            let users_move = get_users_move();
+
+            match users_move.as_str() {
+                "c" => self.change_cell(&mut sudoku_board),
+                "u" => self.undo(&mut sudoku_board),
+                "r" => self.redo(&mut sudoku_board, false),
                 "h" => self.hint(&mut sudoku_board),
                 "s" => self.save(),
                 "q" => return,
@@ -101,7 +130,7 @@ impl GameHandler
             match users_move.as_str() {
                 "c" => self.change_cell(&mut sudoku_board),
                 "u" => self.undo(&mut sudoku_board),
-                "r" => self.redo(&mut sudoku_board),
+                "r" => self.redo(&mut sudoku_board, false),
                 "h" => self.hint(&mut sudoku_board),
                 "s" => self.save(),
                 "q" => return,
@@ -154,10 +183,13 @@ impl GameHandler
         pretty_print_board(&sudoku_board);
     }
 
-    fn redo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
+    fn redo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize], is_replay: bool)
     {
         self.undo_handler.redo_last_command(sudoku_board);
-        pretty_print_board(&sudoku_board);
+
+        if !is_replay {
+            pretty_print_board(&sudoku_board);
+        }
     }
 
     fn hint(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])

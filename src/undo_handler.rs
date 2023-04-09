@@ -5,8 +5,8 @@ use serde_derive::Deserialize;
 #[derive(Serialize, Deserialize)]
 pub struct UndoHandler
 {
-    pub undo_stack: Vec<UserInputCommand>,
-    pub redo_stack: Vec<UserInputCommand>
+    undo_stack: Vec<UserInputCommand>,
+    redo_stack: Vec<UserInputCommand>
 }
 
 impl UndoHandler
@@ -44,7 +44,8 @@ impl UndoHandler
         self.redo_stack.push(unwrapped_command);
     }
 
-    pub fn redo_last_command(
+    pub fn redo_last_command
+    (
         &mut self,
         sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     )
@@ -62,8 +63,31 @@ impl UndoHandler
         self.undo_stack.push(unwrapped_command);
     }
 
+    // Used for replays
+    pub fn re_execute_all_commands
+    (
+        &mut self,
+        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    )
+    {
+        let command = self.undo_stack.pop();
+        if !command.is_some()
+        {
+            return;
+        }
+
+        let mut unwrapped_command = command.unwrap();
+        unwrapped_command.execute(sudoku_board);
+
+        self.invalidate_redo_stack();
+    }
     pub fn invalidate_redo_stack(&mut self)
     {
         self.redo_stack = Vec::new();
+    }
+
+    pub fn get_redo_stack_length(&self) -> usize
+    {
+        return self.redo_stack.len();
     }
 }

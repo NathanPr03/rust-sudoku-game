@@ -1,4 +1,4 @@
-use rust_sudoku_game::{determine_game_mode, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, GameHandler, get_game_mode, load, Universe};
+use rust_sudoku_game::{determine_game_mode, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, GameDifficulty, GameHandler, get_game_mode, load, Universe};
 use std::thread::Builder;
 
 fn main() {
@@ -13,8 +13,7 @@ fn main() {
 
     let handler = builder
         .spawn(|| {
-            let game_diff = determine_game_mode();
-            let mut universe = Universe::new(GameHandler::new(game_diff, 9));
+            let mut universe = Universe::new(GameHandler::new(GameDifficulty::Medium, 9));
             universe.begin_game();
         }).unwrap();
 

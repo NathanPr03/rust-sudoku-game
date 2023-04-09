@@ -22,7 +22,7 @@ pub fn get_save_game(number_of_save_games: usize) -> usize
 
 pub fn get_game_mode() -> String
 {
-    print!("Please enter which game mode you would like to play, easy, (e), medium (m), hard (h) or trivia (t): ");
+    print!("Please enter which game mode you would like to play: easy, (e), medium (m), hard (h) or trivia (t): ");
 
     loop
     {
@@ -99,7 +99,7 @@ pub fn get_users_start_game() -> String
     print!("Please enter whether you would like to: \
     start a new game (n), \
     load a previous game (l), \
-    replay a previous game (r), \
+    replay a previous game (r) NOT YET IMPLEMENTED, \
     or get help (h): ");
 
     let users_move = get_user_input_generic();
