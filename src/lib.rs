@@ -16,6 +16,8 @@ mod game_handler;
 mod trivia;
 mod game_mode_service;
 mod hint_service;
+mod serialiser;
+mod universe;
 
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;
@@ -29,6 +31,9 @@ pub use util::pretty_print_board;
 pub use util::check_if_move_is_valid;
 pub use user_input::take_user_input_for_cell;
 pub use user_input::get_trivia_input;
+pub use user_input::get_save_game;
+pub use user_input::get_users_start_game;
+pub use user_input::get_game_mode;
 pub use user_input_command::UserInputCommand;
 pub use undo_handler::UndoHandler;
 pub use game_handler::GameDifficulty;
@@ -36,6 +41,9 @@ pub use game_handler::GameHandler;
 pub use trivia::Trivia;
 pub use game_mode_service::determine_game_mode;
 pub use hint_service::get_hint_command;
+pub use serialiser::save;
+pub use serialiser::load;
+pub use universe::Universe;
 
 pub const BOARD_SIZE: u16 = 9;
 pub const BOARD_SIZE_SQUARED: u16 = BOARD_SIZE * BOARD_SIZE;

@@ -1,6 +1,4 @@
-use std::io::{stdin, stdout, Write};
-use rust_sudoku_game::{UserInputCommand, BoardGenerator, EXACT_COVER_MATRIX_COLUMNS, find_solution, GameDifficulty, pretty_print_board, take_user_input_for_cell, GameHandler, Trivia, get_trivia_input, determine_game_mode};
-use rust_sudoku_game::EXACT_COVER_MATRIX_ROWS;
+use rust_sudoku_game::{determine_game_mode, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, GameDifficulty, GameHandler, get_game_mode, load, Universe};
 use std::thread::Builder;
 
 fn main() {
@@ -15,11 +13,8 @@ fn main() {
 
     let handler = builder
         .spawn(|| {
-            let game_mode = determine_game_mode();
-
-            let mut game_handler = GameHandler::new(game_mode, 9);
-
-            game_handler.play();
+            let mut universe = Universe::new(GameHandler::new(GameDifficulty::Medium, 9));
+            universe.begin_game();
         }).unwrap();
 
     handler.join().unwrap();

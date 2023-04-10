@@ -25,7 +25,7 @@ pub fn test_board_generation_is_random()
             ];
 
             let game_difficulty = GameDifficulty::Hard;
-            let board_generator = BoardGenerator::new(game_difficulty);
+            let board_generator = BoardGenerator::new(game_difficulty, 0);
 
             board_generator.generate_random_board(&mut sudoku_board);
             sudoku_boards.push(sudoku_board);
