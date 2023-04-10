@@ -2,6 +2,7 @@ use std::collections::vec_deque::VecDeque;
 use crate::{BOARD_SIZE, UserInputCommand};
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
+use colored::Colorize;
 
 #[derive(Serialize, Deserialize)]
 pub struct UndoHandler
@@ -35,7 +36,7 @@ impl UndoHandler
         let command = self.undo_stack.pop_back();
         if !command.is_some()
         {
-            println!("There is no move to undo");
+            println!("{}", "There is no move to undo".red());
             return;
         }
 
@@ -43,6 +44,9 @@ impl UndoHandler
         unwrapped_command.undo(sudoku_board);
 
         self.redo_stack.push_back(unwrapped_command);
+
+        let success_message = "Move successfully undone".green();
+        println!("{}", success_message);
     }
 
     pub fn redo_last_command
@@ -54,7 +58,7 @@ impl UndoHandler
         let command = self.redo_stack.pop_back();
         if !command.is_some()
         {
-            println!("There is no move to redo");
+            println!("{}", "There is no move to redo".red());
             return;
         }
 
@@ -62,6 +66,9 @@ impl UndoHandler
         unwrapped_command.execute(sudoku_board);
 
         self.undo_stack.push_back(unwrapped_command);
+
+        let success_message = "Move successfully redone".green();
+        println!("{}", success_message);
     }
 
     // Used for replays
@@ -93,7 +100,7 @@ impl UndoHandler
         let command = self.undo_stack.pop_front();
         if !command.is_some()
         {
-            println!("No more moves were made, to continue playing interrupt the replay");
+            println!("{}", "No more moves were made, to continue playing interrupt the replay".red());
             return;
         }
 
@@ -101,6 +108,9 @@ impl UndoHandler
         unwrapped_command.execute(sudoku_board);
 
         self.redo_stack.push_back(unwrapped_command);
+
+        let success_message = "Move successfully replayed".green();
+        println!("{}", success_message);
     }
 
     pub fn undo_last_command_reverse
@@ -112,7 +122,7 @@ impl UndoHandler
         let command = self.redo_stack.pop_back();
         if !command.is_some()
         {
-            println!("There is no move to undo");
+            println!("{}", "There is no move to un-replay".red());
             return;
         }
 
@@ -120,6 +130,9 @@ impl UndoHandler
         unwrapped_command.undo(sudoku_board);
 
         self.undo_stack.push_front(unwrapped_command);
+
+        let success_message = "Move successfully un-replayed".green();
+        println!("{}", success_message);
     }
 
     pub fn invalidate_redo_stack(&mut self)

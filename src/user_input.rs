@@ -1,6 +1,7 @@
 use std::io::{stdin, stdout, Write};
 use regex::Regex;
 use crate::user_input_command::UserInputCommand;
+use colored::Colorize;
 
 pub fn get_save_game(number_of_save_games: usize) -> usize
 {
@@ -16,7 +17,8 @@ pub fn get_save_game(number_of_save_games: usize) -> usize
             return user_input.parse::<i32>().unwrap() as usize;
         }
 
-        print!("Invalid input, please select a number between 1 and {number_of_save_games}: ");
+        let error_message = format!("Invalid input, please select a number between 1 and {number_of_save_games}: ").red();
+        println!("{error_message}");
     }
 }
 
@@ -31,7 +33,8 @@ pub fn get_game_mode() -> String
         if user_input == "e" || user_input == "m" || user_input == "h" || user_input == "t" {
             return user_input;
         }
-        print!("Invalid input, please enter one of 'e', 'm', 'h', or 't': ");
+        let error_message = "Invalid input, please enter one of 'e', 'm', 'h', or 't': ".red();
+        println!("{error_message}");
     }
 }
 
@@ -46,7 +49,8 @@ pub fn get_trivia_input(question: String) -> String
         if user_input == "T" || user_input == "F" {
             return user_input;
         }
-        print!("Invalid input, please enter either T or F: ");
+        let error_message = "Invalid input, please enter either T or F: ".red();
+        println!("{error_message}");
     }
 }
 
@@ -66,8 +70,9 @@ pub fn get_coordinates_for_hint(board_size: usize) -> (usize, usize)
         let valid_coordinates_regex = Regex::new(&*regex_string).unwrap();
         if !valid_coordinates_regex.is_match(&coordinates)
         {
-            println!("Invalid coordinates supplied, please make sure to enter them in format: number,number. \
-            Also make sure the number is between one and {board_size}");
+            let error_message = format!("Invalid coordinates supplied, please make sure to enter them in format: number,number. \
+            Also make sure the number is between one and {board_size}").red();
+            println!("{error_message}");
             valid = false;
             continue;
         }
@@ -78,14 +83,18 @@ pub fn get_coordinates_for_hint(board_size: usize) -> (usize, usize)
 
         if x < 1 || x > board_size
         {
-            println!("{} is not a valid x co-ordinate", x);
+            let error_message = format!("{x} is not a valid x co-ordinate").red();
+            println!("{error_message}");
+
             valid = false;
             continue;
         }
 
         if y < 1 || y > board_size
         {
-            println!("{} is not a valid y co-ordinate", y);
+            let error_message = format!("{y} is not a valid x co-ordinate").red();
+            println!("{error_message}");
+
             valid = false;
             continue;
         }
@@ -106,7 +115,7 @@ pub fn get_users_start_game() -> String
     let viable_moves: [&str; 4] = ["n", "l", "r", "h"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("Invalid move supplied. Please select one of (n), (l), (r), (h). Do not include the brackets in your input: ");
+        println!("{}", "Invalid move supplied. Please select one of (n), (l), (r), (h). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 
@@ -127,7 +136,7 @@ pub fn get_users_replay_move() -> String
     let viable_moves: [&str; 5] = ["c", "u", "i", "s", "q"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("Invalid move supplied. Please select one of (c), (u), (i), (s), (q). Do not include the brackets in your input: ");
+        println!("{}", "Invalid move supplied. Please select one of (c), (u), (i), (s), (q). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 
@@ -149,7 +158,7 @@ pub fn get_users_move() -> String
     let viable_moves: [&str; 6] = ["c", "u", "r", "h", "s", "q"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (q). Do not include the brackets in your input: ");
+        println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (q). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 
@@ -166,8 +175,10 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
     let valid_coordinates_regex = Regex::new(&*regex_string).unwrap();
     if !valid_coordinates_regex.is_match(&coordinates)
     {
-        println!("Invalid coordinates supplied, please make sure to enter them in format: number,number. \
-        Also make sure the number is between one and {board_size}");
+        let error_message = format!("Invalid coordinates supplied, please make sure to enter them in format: number,number. \
+        Also make sure the number is between one and {board_size}").red();
+        println!("{error_message}");
+
         return None;
     }
 
@@ -178,13 +189,17 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
     let mut valid = true;
     if x < 1 || x > board_size
     {
-        println!("{} is not a valid x co-ordinate", x);
+        let error_message = format!("{x} is not a valid x co-ordinate").red();
+        println!("{error_message}");
+
         valid = false
     }
 
     if y < 1 || y > board_size
     {
-        println!("{} is not a valid y co-ordinate", y);
+        let error_message = format!("{y} is not a valid y co-ordinate").red();
+        println!("{error_message}");
+
         valid = false
     }
 
@@ -200,7 +215,8 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
     let valid_value = Regex::new(&*regex_string_two).unwrap();
     if !valid_value.is_match(&string_value)
     {
-        println!("Invalid value supplied, please make sure to enter a value between 1 and {board_size}");
+        let error_message = format!("Invalid value supplied, please make sure to enter a value between 1 and {board_size}").red();
+        println!("{error_message}");
         return None;
     }
 

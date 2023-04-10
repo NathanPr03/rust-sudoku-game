@@ -1,4 +1,5 @@
 use crate::{BOARD_SIZE, find_solution, pretty_print_board, UserInputCommand};
+use colored::Colorize;
 
 pub fn get_hint_command
 (
@@ -13,7 +14,7 @@ pub fn get_hint_command
     let is_possible = find_solution(&mut secondary_board);
 
     if !is_possible {
-        println!("Can not get a hint as this bord isn't solvable. Have a look at your previous moves first ;)");
+        println!("{}", "Can not get a hint as this bord isn't solvable. Have a look at your previous moves first ;)".red());
 
         return None;
     }
