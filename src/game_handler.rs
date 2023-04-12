@@ -226,11 +226,11 @@ impl GameHandler
         pretty_print_board(&sudoku_board);
     }
 
-    fn redo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize], is_replay: bool)
+    fn redo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize], not_replay: bool)
     {
         self.undo_handler.redo_last_command(sudoku_board);
-        self.player.increment_redos();
-        if !is_replay {
+        if not_replay {
+            self.player.increment_redos(); 
             pretty_print_board(&sudoku_board);
         }
     }
