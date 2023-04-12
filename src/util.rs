@@ -1,6 +1,6 @@
 use crate::{BOARD_SIZE};
 
-pub fn pretty_print_board_two(sudoku_board: &[[usize; 9]; 9]) {
+pub fn pretty_print_board_two(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
     //TODO: Probably remove this and use one defined in lib.rs
     let sqrt_board_size = ((sudoku_board.len() as f32).sqrt()) as usize;
     println!("-------------------------");
@@ -20,15 +20,18 @@ pub fn pretty_print_board_two(sudoku_board: &[[usize; 9]; 9]) {
     println!("-------------------------");
 }
 
-pub fn pretty_print_board(sudoku_board: &[[usize; 9]; 9]) {
+pub fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
+    let board_size = sudoku_board.len();
+    let sqrt_board_size = (board_size as f32).sqrt() as usize;
+
     println!("╔═══════╦═══════╦═══════╗");
-    for i in 0..9 {
-        if i != 0 && i % 3 == 0 {
+    for i in 0..board_size {
+        if i != 0 && i % sqrt_board_size == 0 {
             println!("╠═══════╬═══════╬═══════╣");
         }
         print!("║ ");
-        for j in 0..9 {
-            if j != 0 && j % 3 == 0 {
+        for j in 0..board_size {
+            if j != 0 && j % sqrt_board_size == 0 {
                 print!("║ ");
             }
             print!("{} ", sudoku_board[i][j]);
