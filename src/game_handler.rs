@@ -4,6 +4,7 @@ use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_repl
 use crate::Trivia;
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
+use colored::Colorize;
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
@@ -108,6 +109,7 @@ impl GameHandler
                 "c" => self.undo_handler.redo_last_command_reverse(&mut sudoku_board),
                 "u" => self.undo_handler.undo_last_command_reverse(&mut sudoku_board),
                 "i" => self.game_loop(&mut sudoku_board),
+                "q" => return,
                 _ => {}
             }
 
@@ -144,10 +146,10 @@ impl GameHandler
             let users_answer = get_trivia_input(question);
 
             if answer.eq(&users_answer) {
-                println!("Correct");
+                println!("{}", "Correct answer!".green());
                 trivia.increment_correct_answers();
             } else{
-                println!("Incorrect, the answer was: {answer}, you entered: {users_answer}");
+                println!("{}", format!("Incorrect, the answer was: {answer}, you entered: {users_answer}").green());
             }
 
             println!("You have {} questions left. So far you have answered {} correctly", 9 - i, trivia.get_correct_answers());
@@ -167,6 +169,11 @@ impl GameHandler
         self.undo_handler.push_command(unwrapped_command);
         self.undo_handler.invalidate_redo_stack();
 
+        let x = unwrapped_command.get_x_coordinate();
+        let y = unwrapped_command.get_y_coordinate();
+
+        let success_message = format!("Successfully edited coordinates {x},{y}").green();
+        println!("{}", success_message);
         pretty_print_board(&sudoku_board);
     }
 
@@ -201,12 +208,19 @@ impl GameHandler
         self.undo_handler.push_command(unwrapped_command);
         self.undo_handler.invalidate_redo_stack();
 
+        let success_message = format!("Hint successfully applied to coordinates {x},{y}").green();
+        println!("{}", success_message);
+
         pretty_print_board(sudoku_board);
+
     }
 
     fn save(&self)
     {
         save(self);
+
+        let success_message = "Game saved successfully".green();
+        println!("{}", success_message);
     }
 
     fn is_game_finished
@@ -220,6 +234,9 @@ impl GameHandler
                 return false;
             }
         }
+
+        let winning_message = "CONGRATULATIONS! You have completed the sudoku, why not try a different game mode?".green();
+        println!("{}", winning_message);
 
         return true;
     }

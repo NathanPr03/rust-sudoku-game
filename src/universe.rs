@@ -29,6 +29,8 @@ impl Universe {
                 _ => {}
             }
         }
+
+        println!("Thanks for playing!");
     }
 
     fn new_game(&mut self)

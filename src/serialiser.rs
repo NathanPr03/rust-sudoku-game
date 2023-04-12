@@ -14,7 +14,7 @@ pub fn save(
     let now: DateTime<Local> = Local::now();
     let timestamp = now.to_rfc3339();
 
-    let directory_path = format!("./savegames/{timestamp}");
+    let directory_path = format!("./src/savegames/{timestamp}");
     create_dir(directory_path.clone()).expect("Directory cannot be created, save game failed");
 
     let mut file = File::create(format!("{}/savegame.json", directory_path.clone())).unwrap();
@@ -23,7 +23,7 @@ pub fn save(
 
 pub fn load() -> GameHandler
 {
-    let directories = read_dir("./savegames").unwrap();
+    let directories = read_dir("./src/savegames").unwrap();
 
     let mut counter = 0;
     println!("Save games to choose from: ");
@@ -45,7 +45,7 @@ pub fn load() -> GameHandler
     save_game -= 1; // Handle 0 indexing
 
     let mut directory_path = "".to_string();
-    for directory in read_dir("./savegames").unwrap()
+    for directory in read_dir("./src/savegames").unwrap()
     {
         let unwrapped_dir = directory.unwrap();
         let file_name = unwrapped_dir.file_name();
