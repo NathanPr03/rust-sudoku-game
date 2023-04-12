@@ -1,10 +1,11 @@
 use crate::{BOARD_SIZE, BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
-use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move};
+use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move, get_users_two_player_move};
 use crate::Trivia;
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
+use crate::player::Player;
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
@@ -15,9 +16,10 @@ pub enum GameDifficulty {
     Trivia = 31
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct GameHandler
 {
+    player: Player,
     game_difficulty: GameDifficulty,
     undo_handler: UndoHandler,
     initial_generated_board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
@@ -26,12 +28,18 @@ pub struct GameHandler
 
 impl GameHandler
 {
-    pub fn new(game_difficulty: GameDifficulty, board_size: usize) -> GameHandler
+    pub fn new
+    (
+        player: Player,
+        game_difficulty: GameDifficulty,
+        board_size: usize,
+    ) -> GameHandler
     {
         let undo_handler = UndoHandler::new();
 
         return GameHandler
         {
+            player,
             game_difficulty,
             undo_handler,
             initial_generated_board: [
@@ -49,19 +57,43 @@ impl GameHandler
         }
     }
 
+    pub fn multiple_player_setup(&mut self) -> [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    {
+        let mut sudoku_board = self.initial_generated_board;
+
+        let board_generator = BoardGenerator::new(self.game_difficulty, 0);
+        board_generator.generate_random_board(&mut sudoku_board);
+        pretty_print_board(&sudoku_board);
+
+        return sudoku_board;
+    }
+
+    pub fn multiple_player_play
+    (
+        &mut self,
+        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    ) -> bool
+    {
+        let player_name = self.player.get_name();
+        println!("It is {player_name}'s turn");
+
+        let users_move = get_users_two_player_move(player_name);
+
+        match users_move.as_str() {
+            "c" => self.change_cell(sudoku_board),
+            "u" => self.undo(sudoku_board),
+            "r" => self.redo(sudoku_board, false),
+            "h" => self.hint(sudoku_board),
+            "p" => return false,
+            _ => {}
+        }
+
+        return self.is_game_finished(sudoku_board);
+    }
+
     pub fn play(&mut self)
     {
-        let mut sudoku_board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ];
+        let mut sudoku_board = self.initial_generated_board;
 
         let mut trivia_addition = 0;
         if self.game_difficulty == GameDifficulty::Trivia
@@ -117,16 +149,20 @@ impl GameHandler
         }
     }
 
-    fn game_loop(&mut self, mut sudoku_board: &mut [[usize; 9]; 9]) {
+    fn game_loop
+    (
+        &mut self,
+        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    ) {
         while !self.is_game_finished(&sudoku_board)
         {
             let users_move = get_users_move();
 
             match users_move.as_str() {
-                "c" => self.change_cell(&mut sudoku_board),
-                "u" => self.undo(&mut sudoku_board),
-                "r" => self.redo(&mut sudoku_board, false),
-                "h" => self.hint(&mut sudoku_board),
+                "c" => self.change_cell(sudoku_board),
+                "u" => self.undo(sudoku_board),
+                "r" => self.redo(sudoku_board, false),
+                "h" => self.hint(sudoku_board),
                 "s" => self.save(),
                 "q" => return,
                 _ => {}
@@ -169,11 +205,6 @@ impl GameHandler
         self.undo_handler.push_command(unwrapped_command);
         self.undo_handler.invalidate_redo_stack();
 
-        let x = unwrapped_command.get_x_coordinate();
-        let y = unwrapped_command.get_y_coordinate();
-
-        let success_message = format!("Successfully edited coordinates {x},{y}").green();
-        println!("{}", success_message);
         pretty_print_board(&sudoku_board);
     }
 

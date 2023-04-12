@@ -4,7 +4,7 @@ use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct UndoHandler
 {
     undo_stack: VecDeque<UserInputCommand>,

@@ -1,15 +1,18 @@
-use crate::{determine_game_mode, GameHandler, get_users_start_game, load};
+use std::collections::HashMap;
+use crate::{BOARD_SIZE, determine_game_mode, game_handler, GameDifficulty, GameHandler, get_game_mode, get_users_start_game, load, player, pretty_print_board};
+use crate::player::Player;
+use crate::user_input::{get_multiple_players_name, get_single_players_name};
 
 pub struct Universe {
-    game_handler: GameHandler,
+    players: Vec<Player>,
     game_selected: bool
 }
 
 impl Universe {
-    pub fn new(game_handler: GameHandler) -> Universe
+    pub fn new() -> Universe
     {
         return Universe {
-            game_handler,
+            players: vec![],
             game_selected: false,
         }
     }
@@ -23,9 +26,7 @@ impl Universe {
                 "n" => self.new_game(),
                 "l" => self.load_game(),
                 "r" => self.replay_game(),
-                "h" => println!("New will create a brand new game, \
-                load will load the state of a previous game, \
-                replay will start the game from scratch with the same starting board."),
+                "m" => self.multiple_player_game(),
                 _ => {}
             }
         }
@@ -35,26 +36,77 @@ impl Universe {
 
     fn new_game(&mut self)
     {
+        let users_name = get_single_players_name();
+
+        let player = Player::new(users_name);
+
         let game_diff = determine_game_mode();
-        self.game_handler.set_game_diff(game_diff);
-        self.game_handler.play();
+        let mut game_handler = GameHandler::new
+        (
+            player,
+            game_diff,
+            9
+        );
+
+        game_handler.play();
 
         self.game_selected = true;
     }
 
     fn load_game(&mut self)
     {
-        self.game_handler = load();
-        self.game_handler.load();
+        let mut  game_handler = load();
+        game_handler.load();
 
         self.game_selected = true;
     }
 
     fn replay_game(&mut self)
     {
-        self.game_handler = load();
-        self.game_handler.replay();
+        let mut game_handler = load();
+        game_handler.replay();
 
         self.game_selected = true;
+    }
+
+    fn multiple_player_game(&mut self)
+    {
+        let num_of_players = 2;
+        let player_names = get_multiple_players_name(num_of_players);
+        let mut games: HashMap<usize, GameHandler> = HashMap::with_capacity(num_of_players);
+        let mut sudoku_boards: HashMap<usize, [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]> = HashMap::with_capacity(num_of_players);
+        let game_diff = determine_game_mode();
+        let mut both_games_finished = false;
+
+        for i in 0..num_of_players
+        {
+            let player = Player::new(player_names[i].clone());
+
+            let mut game = GameHandler::new(
+                player, game_diff, 9
+            );
+
+            let mut sudoku_board = game.multiple_player_setup();
+            game.multiple_player_play(&mut sudoku_board);
+
+            sudoku_boards.insert(i, sudoku_board);
+            games.insert(i, game);
+        }
+
+        while !both_games_finished
+        {
+            for i in 0..num_of_players {
+                let mut sudoku_board = sudoku_boards[&i];
+                let mut game = games[&i].clone();
+
+                pretty_print_board(&sudoku_board);
+                let game_finished = game.multiple_player_play(&mut sudoku_board);
+
+                games.insert(i, game);
+
+                sudoku_boards.insert(i, sudoku_board);
+                both_games_finished = game_finished; // TODO: This is wrong and will need to change
+            }
+        }
     }
 }
