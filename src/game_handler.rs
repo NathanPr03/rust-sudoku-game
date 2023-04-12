@@ -57,11 +57,37 @@ impl GameHandler
         }
     }
 
+    pub fn play(&mut self)
+    {
+        let mut sudoku_board = self.initial_generated_board;
+
+        if self.game_difficulty == GameDifficulty::Trivia
+        {
+            self.trivia();
+        }
+
+        let board_generator = BoardGenerator::new(
+            self.game_difficulty,
+            self.player.get_trivias_answered()
+        );
+        board_generator.generate_random_board(&mut sudoku_board);
+        pretty_print_board(&sudoku_board);
+
+        self.initial_generated_board = sudoku_board.clone();
+
+        self.game_loop(&mut sudoku_board);
+    }
+
     pub fn multiple_player_setup(&mut self) -> [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     {
         let mut sudoku_board = self.initial_generated_board;
 
-        let board_generator = BoardGenerator::new(self.game_difficulty, 0);
+        if self.game_difficulty == GameDifficulty::Trivia
+        {
+            self.trivia();
+        }
+
+        let board_generator = BoardGenerator::new(self.game_difficulty, self.player.get_trivias_answered());
         board_generator.generate_random_board(&mut sudoku_board);
         pretty_print_board(&sudoku_board);
 
@@ -89,27 +115,6 @@ impl GameHandler
         }
 
         return self.is_game_finished(sudoku_board);
-    }
-
-    pub fn play(&mut self)
-    {
-        let mut sudoku_board = self.initial_generated_board;
-
-        if self.game_difficulty == GameDifficulty::Trivia
-        {
-            self.trivia();
-        }
-
-        let board_generator = BoardGenerator::new(
-            self.game_difficulty,
-            self.player.get_trivias_answered()
-        );
-        board_generator.generate_random_board(&mut sudoku_board);
-        pretty_print_board(&sudoku_board);
-
-        self.initial_generated_board = sudoku_board.clone();
-
-        self.game_loop(&mut sudoku_board);
     }
 
     pub fn load(&mut self)

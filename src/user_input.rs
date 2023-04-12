@@ -44,6 +44,31 @@ pub fn get_save_game(number_of_save_games: usize) -> usize
     }
 }
 
+pub fn get_number_of_players() -> usize
+{
+    print!("Please enter the number of players you want (2-9): ");
+
+    let mut num_of_players = 0;
+    let mut valid = false;
+    while !valid
+    {
+        let string_value = get_user_input_generic();
+
+        let regex_string_two = format!(r"\b[2-9]\b");
+        let valid_value = Regex::new(&*regex_string_two).unwrap();
+        if !valid_value.is_match(&string_value)
+        {
+            let error_message = format!("Invalid value supplied, please make sure to enter a value between 2 and 9: ").red();
+            print!("{error_message}");
+        }else{
+            num_of_players = string_value.parse::<i32>().unwrap() as usize;
+            valid = true;
+        }
+    }
+
+    return num_of_players;
+}
+
 pub fn get_game_mode() -> String
 {
     print!("Please enter which game mode you would like to play: easy (e), medium (m), hard (h) or trivia (t): ");

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use colored::Colorize;
 use crate::player::Player;
 use crate::{BOARD_SIZE, determine_game_mode, GameDifficulty, GameHandler, get_users_start_game, load, pretty_print_board};
-use crate::user_input::{get_multiple_players_name, get_single_players_name};
+use crate::user_input::{get_multiple_players_name, get_number_of_players, get_single_players_name};
 use crate::util::calculate_players_score;
 
 pub struct Universe {
@@ -73,11 +73,12 @@ impl Universe {
 
     fn multiple_player_game(&mut self)
     {
-        let num_of_players = 2;
+        let num_of_players = get_number_of_players();
         let player_names = get_multiple_players_name(num_of_players);
+        let game_diff = determine_game_mode();
+
         let mut games: HashMap<usize, GameHandler> = HashMap::with_capacity(num_of_players);
         let mut sudoku_boards: HashMap<usize, [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]> = HashMap::with_capacity(num_of_players);
-        let game_diff = determine_game_mode();
 
         for i in 0..num_of_players
         {
@@ -121,7 +122,6 @@ impl Universe {
 
         self.calculate_winner();
         self.game_selected = true;
-
     }
 
     fn calculate_winner(&self) -> ()
