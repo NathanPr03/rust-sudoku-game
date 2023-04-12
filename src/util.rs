@@ -1,6 +1,6 @@
 use crate::{BOARD_SIZE};
 
-pub fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
+pub fn pretty_print_board_two(sudoku_board: &[[usize; 9]; 9]) {
     //TODO: Probably remove this and use one defined in lib.rs
     let sqrt_board_size = ((sudoku_board.len() as f32).sqrt()) as usize;
     println!("-------------------------");
@@ -18,6 +18,25 @@ pub fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SI
         println!("|");
     }
     println!("-------------------------");
+}
+
+pub fn pretty_print_board(sudoku_board: &[[usize; 9]; 9]) {
+    println!("╔═══════╦═══════╦═══════╗");
+    for i in 0..9 {
+        if i != 0 && i % 3 == 0 {
+            println!("╠═══════╬═══════╬═══════╣");
+        }
+        print!("║ ");
+        for j in 0..9 {
+            if j != 0 && j % 3 == 0 {
+                print!("║ ");
+            }
+            print!("{} ", sudoku_board[i][j]);
+        }
+        println!("║ {}", i + 1);
+    }
+    println!("╚═══════╩═══════╩═══════╝");
+    println!("  1 2 3   4 5 6   7 8 9");
 }
 
 pub fn check_if_move_is_valid
