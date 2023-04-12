@@ -1,3 +1,4 @@
+use colored::Colorize;
 use crate::{BOARD_SIZE, check_if_move_is_valid};
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
@@ -35,6 +36,9 @@ impl UserInputCommand {
         self.previous_value = sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset];
 
         sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset] = self.new_value;
+
+        let success_message = format!("Successfully edited coordinates {},{}", self.x_coordinate, self.y_coordinate).green();
+        println!("{}", success_message);
     }
 
     pub fn undo(
@@ -49,6 +53,9 @@ impl UserInputCommand {
 
         let zero_index_offset = 1;
         sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset] = self.previous_value;
+
+        let success_message = format!("Successfully edited coordinates {},{}", self.x_coordinate, self.y_coordinate).green();
+        println!("{}", success_message);
     }
 
     pub fn get_x_coordinate(&self) -> usize {

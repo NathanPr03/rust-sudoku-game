@@ -1,3 +1,4 @@
+use colored::Colorize;
 use crate::{BOARD_SIZE};
 
 pub fn pretty_print_board_two(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
@@ -65,7 +66,7 @@ fn check_row_constraint
             continue;
         }
         if sudoku_board[row][i] == value && value != 0 {
-            println!("Invalid move, a cell in the same row already has that value");
+            println!("{}", "Invalid move, a cell in the same row already has that value".red());
             return false;
         }
     }
@@ -84,7 +85,7 @@ fn check_column_constraint
             continue;
         }
         if sudoku_board[i][column] == value && value != 0 {
-            println!("Invalid move, a cell in the same column already has that value");
+            println!("{}", "Invalid move, a cell in the same column already has that value".red());
             return false;
         }
     }
@@ -112,7 +113,7 @@ fn check_region_constraint(
         {
             if sudoku_board[row_iter][column_iter] == value && value != 0
             {
-                println!("Invalid move, a cell in the same region already has that value");
+                println!("{}", "Invalid move, a cell in the same region already has that value".red());
                 return false;
             }
         }

@@ -3,6 +3,15 @@ use regex::Regex;
 use crate::user_input_command::UserInputCommand;
 use colored::Colorize;
 
+pub fn get_users_name() -> String
+{
+    print!("Please enter your name: ");
+
+    let users_name = get_user_input_generic();
+
+    return users_name;
+}
+
 pub fn get_save_game(number_of_save_games: usize) -> usize
 {
     print!("Please enter the number of the save game which you want to load, 1..{number_of_save_games}: ");
