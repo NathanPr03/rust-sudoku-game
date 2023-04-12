@@ -1,9 +1,12 @@
 use std::collections::HashMap;
+use colored::Colorize;
 use crate::player::Player;
-use crate::{BOARD_SIZE, determine_game_mode, GameHandler, get_users_start_game, load, pretty_print_board};
+use crate::{BOARD_SIZE, determine_game_mode, GameDifficulty, GameHandler, get_users_start_game, load, pretty_print_board};
 use crate::user_input::{get_multiple_players_name, get_single_players_name};
+use crate::util::calculate_players_score;
 
 pub struct Universe {
+    players: Vec<Player>,
     game_selected: bool
 }
 
@@ -11,11 +14,12 @@ impl Universe {
     pub fn new() -> Universe
     {
         return Universe {
+            players: Vec::new(),
             game_selected: false,
         }
     }
 
-    pub fn begin_game(&mut self)
+    pub fn big_bang(&mut self)
     {
         while self.game_selected == false {
             let users_action = get_users_start_game();
@@ -28,7 +32,6 @@ impl Universe {
                 _ => {}
             }
         }
-
         println!("Thanks for playing!");
     }
 
@@ -36,9 +39,10 @@ impl Universe {
     {
         let users_name = get_single_players_name();
 
-        let player = Player::new(users_name);
-
         let game_diff = determine_game_mode();
+        let player = Player::new(users_name, game_diff);
+        self.players.push(player.clone());
+
         let mut game_handler = GameHandler::new
         (
             player,
@@ -53,7 +57,7 @@ impl Universe {
 
     fn load_game(&mut self)
     {
-        let mut  game_handler = load();
+        let mut game_handler = load();
         game_handler.load();
 
         self.game_selected = true;
@@ -74,11 +78,10 @@ impl Universe {
         let mut games: HashMap<usize, GameHandler> = HashMap::with_capacity(num_of_players);
         let mut sudoku_boards: HashMap<usize, [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]> = HashMap::with_capacity(num_of_players);
         let game_diff = determine_game_mode();
-        let mut both_games_finished = false;
 
         for i in 0..num_of_players
         {
-            let player = Player::new(player_names[i].clone());
+            let player = Player::new(player_names[i].clone(), game_diff);
 
             let mut game = GameHandler::new(
                 player, game_diff, 9
@@ -91,7 +94,8 @@ impl Universe {
             games.insert(i, game);
         }
 
-        while !both_games_finished
+        let mut finished_count = 0;
+        while finished_count != num_of_players
         {
             for i in 0..num_of_players {
                 let mut sudoku_board = sudoku_boards[&i];
@@ -103,8 +107,55 @@ impl Universe {
                 games.insert(i, game);
 
                 sudoku_boards.insert(i, sudoku_board);
-                both_games_finished = game_finished; // TODO: This is wrong and will need to change
+                if game_finished
+                {
+                    finished_count += 1;
+                }
             }
         }
+
+        for game in games.values()
+        {
+            self.players.push(game.get_player());
+        }
+
+        self.calculate_winner();
+        self.game_selected = true;
+
+    }
+
+    fn calculate_winner(&self) -> ()
+    {
+        let mut scores: Vec<usize> = Vec::new();
+
+        for player in self.players.clone()
+        {
+            let score = calculate_players_score
+            (
+                0,
+                player.get_hints_used(),
+                player.get_undos_used(),
+                player.get_redos_used(),
+                player.game_difficulty,
+            player.get_trivias_answered()
+            );
+
+            scores.push(score);
+        }
+
+        let mut max_score = 0;
+        let mut index_of_max_score = 0;
+        for i in 0..scores.len()
+        {
+            let score = scores[i];
+            if score > max_score
+            {
+                max_score = score;
+                index_of_max_score = i;
+            }
+        }
+        let success_message =
+            format!("Congratulations {}, you had the highest score of {max_score}", self.players[index_of_max_score].get_name()).green();
+        println!("{success_message}");
     }
 }

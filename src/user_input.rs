@@ -46,7 +46,7 @@ pub fn get_save_game(number_of_save_games: usize) -> usize
 
 pub fn get_game_mode() -> String
 {
-    print!("Please enter which game mode you would like to play: easy, (e), medium (m), hard (h) or trivia (t): ");
+    print!("Please enter which game mode you would like to play: easy (e), medium (m), hard (h) or trivia (t): ");
 
     loop
     {

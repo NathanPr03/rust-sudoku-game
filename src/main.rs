@@ -14,7 +14,7 @@ fn main() {
     let handler = builder
         .spawn(|| {
             let mut universe = Universe::new();
-            universe.begin_game();
+            universe.big_bang();
         }).unwrap();
 
     handler.join().unwrap();

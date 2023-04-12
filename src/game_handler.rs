@@ -10,10 +10,10 @@ use crate::player::Player;
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
     //These values are the number of clues that should be present in a 9x9 board
-    Easy = 46,
+    Easy = 79,
     Medium = 32,
+    Trivia = 31,
     Hard = 20,
-    Trivia = 31
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -95,24 +95,21 @@ impl GameHandler
     {
         let mut sudoku_board = self.initial_generated_board;
 
-        let mut trivia_addition = 0;
         if self.game_difficulty == GameDifficulty::Trivia
         {
-            trivia_addition = self.trivia();
+            self.trivia();
         }
 
-        let board_generator = BoardGenerator::new(self.game_difficulty, trivia_addition);
+        let board_generator = BoardGenerator::new(
+            self.game_difficulty,
+            self.player.get_trivias_answered()
+        );
         board_generator.generate_random_board(&mut sudoku_board);
         pretty_print_board(&sudoku_board);
 
         self.initial_generated_board = sudoku_board.clone();
 
         self.game_loop(&mut sudoku_board);
-    }
-
-    pub fn set_game_diff(&mut self, game_difficulty: GameDifficulty)
-    {
-        self.game_difficulty = game_difficulty;
     }
 
     pub fn load(&mut self)
@@ -149,6 +146,16 @@ impl GameHandler
         }
     }
 
+    pub fn set_game_diff(&mut self, game_difficulty: GameDifficulty)
+    {
+        self.game_difficulty = game_difficulty;
+    }
+
+    pub fn get_player(&self) -> Player
+    {
+        return self.player.clone();
+    }
+
     fn game_loop
     (
         &mut self,
@@ -170,7 +177,7 @@ impl GameHandler
         }
     }
 
-    fn trivia(&self) -> usize
+    fn trivia(&mut self)
     {
         let mut trivia = Trivia::new();
 
@@ -183,15 +190,13 @@ impl GameHandler
 
             if answer.eq(&users_answer) {
                 println!("{}", "Correct answer!".green());
-                trivia.increment_correct_answers();
+                self.player.increment_trivias_answered();
             } else{
-                println!("{}", format!("Incorrect, the answer was: {answer}, you entered: {users_answer}").green());
+                println!("{}", format!("Incorrect, the answer was: {answer}, you entered: {users_answer}").red());
             }
 
-            println!("You have {} questions left. So far you have answered {} correctly", 9 - i, trivia.get_correct_answers());
+            println!("You have {} questions left. So far you have answered {} correctly", 9 - i, self.player.get_trivias_answered());
         }
-
-        return trivia.get_correct_answers();
     }
 
     fn change_cell(&mut self, mut sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
@@ -205,19 +210,21 @@ impl GameHandler
         self.undo_handler.push_command(unwrapped_command);
         self.undo_handler.invalidate_redo_stack();
 
+        self.player.increment_moves_made();
         pretty_print_board(&sudoku_board);
     }
 
     fn undo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
     {
         self.undo_handler.undo_last_command(sudoku_board);
+        self.player.increment_undos();
         pretty_print_board(&sudoku_board);
     }
 
     fn redo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize], is_replay: bool)
     {
         self.undo_handler.redo_last_command(sudoku_board);
-
+        self.player.increment_redos();
         if !is_replay {
             pretty_print_board(&sudoku_board);
         }
@@ -242,8 +249,8 @@ impl GameHandler
         let success_message = format!("Hint successfully applied to coordinates {x},{y}").green();
         println!("{}", success_message);
 
+        self.player.increment_hints();
         pretty_print_board(sudoku_board);
-
     }
 
     fn save(&self)
