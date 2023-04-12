@@ -1,10 +1,9 @@
 use std::collections::HashMap;
-use crate::{BOARD_SIZE, determine_game_mode, game_handler, GameDifficulty, GameHandler, get_game_mode, get_users_start_game, load, player, pretty_print_board};
 use crate::player::Player;
+use crate::{BOARD_SIZE, determine_game_mode, GameHandler, get_users_start_game, load, pretty_print_board};
 use crate::user_input::{get_multiple_players_name, get_single_players_name};
 
 pub struct Universe {
-    players: Vec<Player>,
     game_selected: bool
 }
 
@@ -12,7 +11,6 @@ impl Universe {
     pub fn new() -> Universe
     {
         return Universe {
-            players: vec![],
             game_selected: false,
         }
     }
