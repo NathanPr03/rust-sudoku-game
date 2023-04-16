@@ -40,8 +40,7 @@ impl NodeMatrix {
 
     pub fn arrange_matrix(
         &mut self,
-        cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-             EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &Vec<Vec<usize>>,
     ) -> () {
         let mut column_nodes: Vec<StrongNode> = Vec::new();
 
