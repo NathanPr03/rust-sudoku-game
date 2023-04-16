@@ -1,4 +1,4 @@
-use crate::{BOARD_SIZE, BOARD_SIZE_SQUARED, find_solution, pretty_print_board};
+use crate::{find_solution};
 use rand::Rng;
 use crate::game_handler::GameDifficulty;
 
@@ -23,6 +23,7 @@ impl BoardGenerator {
         sudoku_board: &mut Vec<Vec<usize>>,
     )
     {
+        let board_size = sudoku_board.len();
         // This code is extremely performant :)
         use std::time::Instant;
         let now = Instant::now();
@@ -31,9 +32,9 @@ impl BoardGenerator {
             loop {
                 let mut random_num_generator = rand::thread_rng();
 
-                let random_column: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_row: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_value: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
+                let random_column: usize = random_num_generator.gen_range(0..board_size) as usize;
+                let random_row: usize = random_num_generator.gen_range(0..board_size) as usize;
+                let random_value: usize = random_num_generator.gen_range(0..board_size) as usize;
 
                 //  If the cell has already been filled we dont want to fill it again, will fuck up the matrix
                 if sudoku_board[random_column][random_row] != 0
@@ -72,8 +73,8 @@ impl BoardGenerator {
             loop {
                 let mut random_num_generator = rand::thread_rng();
 
-                let random_column: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_row: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
+                let random_column: usize = random_num_generator.gen_range(0..board_size) as usize;
+                let random_row: usize = random_num_generator.gen_range(0..board_size) as usize;
 
                 if sudoku_board[random_column][random_row] == 0
                 {

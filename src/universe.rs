@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use colored::Colorize;
 use crate::player::Player;
-use crate::{BOARD_SIZE, determine_game_mode, GameDifficulty, GameHandler, get_users_start_game, load, pretty_print_board};
+use crate::{determine_game_mode, GameDifficulty, GameHandler, get_users_start_game, load, pretty_print_board};
 use crate::user_input::{get_multiple_players_name, get_number_of_players, get_single_players_name};
 use crate::util::calculate_players_score;
 

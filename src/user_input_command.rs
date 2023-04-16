@@ -1,5 +1,5 @@
 use colored::Colorize;
-use crate::{BOARD_SIZE, check_if_move_is_valid};
+use crate::{check_if_move_is_valid};
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
 

@@ -1,17 +1,16 @@
-use crate::{
-    BOARD_SIZE, BOARD_SIZE_SQUARED, CONSTRAINTS, EXACT_COVER_MATRIX_COLUMNS,
-    EXACT_COVER_MATRIX_ROWS, SQRT_BOARD_SIZE,
-};
-
 pub struct ArrayMatrix {
-
+    board_size: usize,
+    board_size_squared: usize,
 }
 
 impl ArrayMatrix {
     pub fn new(
-
+        board_size: usize
     ) -> ArrayMatrix {
-        return ArrayMatrix {  };
+        return ArrayMatrix {
+            board_size,
+            board_size_squared: board_size  * board_size
+        };
     }
 
     pub fn create_sparse_matrix(
@@ -39,20 +38,22 @@ impl ArrayMatrix {
         cover_matrix: &mut Vec<Vec<usize>>,
         sudoku_board: &Vec<Vec<usize>>,
     ) {
-        for row_index in 0..BOARD_SIZE {
-            for column_index in 0..BOARD_SIZE {
+        let exact_matrix_columns = cover_matrix[0].len();
+
+        for row_index in 0..self.board_size {
+            for column_index in 0..self.board_size {
                 let value_of_cell = sudoku_board[row_index as usize][column_index as usize];
                 if value_of_cell != 0 {
-                    for i in 0..BOARD_SIZE {
+                    for i in 0..self.board_size {
                         if value_of_cell - 1 != i as usize {
                             let mut hack = 0;
-                            if i == BOARD_SIZE {
+                            if i == self.board_size {
                                 hack = 1;
                             }
                             let matrix_row_index =
-                                (row_index * BOARD_SIZE_SQUARED) + column_index * BOARD_SIZE + i;
+                                (row_index * self.board_size_squared) + column_index * self.board_size + i;
 
-                            for column in 0..EXACT_COVER_MATRIX_COLUMNS {
+                            for column in 0..exact_matrix_columns {
                                 cover_matrix[matrix_row_index as usize][column as usize] = 0;
                             }
                         }
@@ -62,34 +63,17 @@ impl ArrayMatrix {
         }
     }
 
-    pub fn print_board(
-        cover_matrix: &Vec<Vec<usize>>,
-    ) -> () {
-        println!("---------------------------------------------------------------------");
-        for i in 0..cover_matrix.len() {
-            for j in 0..cover_matrix[1].len() {
-                if j % (BOARD_SIZE_SQUARED) as usize == 0 {
-                    print!("|");
-                }
-                print!("{}", cover_matrix[i][j]);
-            }
-            print!("|");
-            println!();
-            println!("---------------------------------------------------------------------")
-        }
-    }
-
     fn cell_constraint(
         &mut self,
         cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
-        let mut row_index: u16 = BOARD_SIZE;
+        let mut row_index = self.board_size;
 
-        for column in 0..BOARD_SIZE_SQUARED {
-            for row in row_index - BOARD_SIZE..row_index {
+        for column in 0..self.board_size_squared {
+            for row in row_index - self.board_size..row_index {
                 cover_matrix[row as usize][column as usize] = 1;
             }
-            row_index = row_index + BOARD_SIZE;
+            row_index = row_index + self.board_size;
         }
     }
 
@@ -97,16 +81,17 @@ impl ArrayMatrix {
         &mut self,
         cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
-        let mut pullback: u16 = BOARD_SIZE_SQUARED;
+        let cover_matrix_rows = cover_matrix.len();
+        let mut pullback = self.board_size_squared;
 
-        let mut column: u16 = BOARD_SIZE_SQUARED;
+        let mut column  = self.board_size_squared;
 
-        for row in 0..EXACT_COVER_MATRIX_ROWS {
-            if row % BOARD_SIZE_SQUARED == 0 && row > 1 {
-                pullback += BOARD_SIZE
+        for row in 0..cover_matrix_rows {
+            if row % self.board_size_squared == 0 && row > 1 {
+                pullback += self.board_size
             }
 
-            if column % BOARD_SIZE == 0 {
+            if column % self.board_size == 0 {
                 column = pullback
             }
 
@@ -119,11 +104,12 @@ impl ArrayMatrix {
         &mut self,
         cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
-        let board_size_squared_times_two: u16 = (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);
+        let cover_matrix_rows = cover_matrix.len();
+        let board_size_squared_times_two = (self.board_size_squared) + (self.board_size_squared);
 
-        let mut column: u16 = board_size_squared_times_two;
-        for row in 0..EXACT_COVER_MATRIX_ROWS {
-            if row % BOARD_SIZE_SQUARED == 0 && row > 1 {
+        let mut column = board_size_squared_times_two;
+        for row in 0..cover_matrix_rows {
+            if row % self.board_size_squared == 0 && row > 1 {
                 column = board_size_squared_times_two;
             }
 
@@ -137,23 +123,25 @@ impl ArrayMatrix {
         &mut self,
         cover_matrix: &mut Vec<Vec<usize>>,
     ) -> () {
-        let board_size_squared_times_three: u16 =
-            (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED) + (BOARD_SIZE_SQUARED);
-        let mut pullback: u16 = board_size_squared_times_three;
-        let mut column: u16 = board_size_squared_times_three;
+        let cover_matrix_rows = cover_matrix.len();
 
-        let sqrt_board_size: u16 = (BOARD_SIZE as f32).sqrt() as u16;
+        let board_size_squared_times_three =
+            (self.board_size_squared) + (self.board_size_squared) + (self.board_size_squared);
+        let mut pullback = board_size_squared_times_three;
+        let mut column = board_size_squared_times_three;
 
-        for row in 0..EXACT_COVER_MATRIX_ROWS {
-            if row % (BOARD_SIZE_SQUARED * sqrt_board_size) == 0 && row > 1 {
-                pullback += BOARD_SIZE;
-            } else if row % BOARD_SIZE_SQUARED == 0 && row > 1 {
-                pullback -= BOARD_SIZE * (sqrt_board_size - 1);
-            } else if row % (BOARD_SIZE * sqrt_board_size) == 0 && row > 1 {
-                pullback += BOARD_SIZE;
+        let sqrt_board_size = (self.board_size as f32).sqrt() as usize;
+
+        for row in 0..cover_matrix_rows {
+            if row % (self.board_size_squared * sqrt_board_size) == 0 && row > 1 {
+                pullback += self.board_size;
+            } else if row % self.board_size_squared == 0 && row > 1 {
+                pullback -= self.board_size * (sqrt_board_size - 1);
+            } else if row % (self.board_size * sqrt_board_size) == 0 && row > 1 {
+                pullback += self.board_size;
             }
 
-            if column % BOARD_SIZE == 0 {
+            if column % self.board_size == 0 {
                 column = pullback;
             }
 

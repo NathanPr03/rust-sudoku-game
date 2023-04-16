@@ -1,5 +1,4 @@
 use std::thread::Builder;
-use rust_sudoku_game::BOARD_SIZE;
 use rust_sudoku_game::find_solution;
 
 #[test]

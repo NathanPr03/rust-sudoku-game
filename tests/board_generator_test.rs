@@ -1,5 +1,5 @@
 use std::thread::Builder;
-use rust_sudoku_game::{BOARD_SIZE, BoardGenerator, GameDifficulty};
+use rust_sudoku_game::{BoardGenerator, GameDifficulty};
 
 #[test]
 pub fn test_board_generation_is_random()

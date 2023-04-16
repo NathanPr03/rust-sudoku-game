@@ -1,5 +1,5 @@
 use std::collections::vec_deque::VecDeque;
-use crate::{BOARD_SIZE, UserInputCommand};
+use crate::{UserInputCommand};
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;

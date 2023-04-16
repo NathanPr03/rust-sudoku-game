@@ -1,5 +1,5 @@
 use colored::Colorize;
-use crate::{BOARD_SIZE, GameDifficulty};
+use crate::{GameDifficulty};
 
 pub fn pretty_print_board_two(sudoku_board: &Vec<Vec<usize>>) {
     //TODO: Probably remove this and use one defined in lib.rs

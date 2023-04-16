@@ -1,5 +1,5 @@
 use std::ops::Deref;
-use crate::{BOARD_SIZE, BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
+use crate::{BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
 use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move, get_users_two_player_move};
 use crate::Trivia;
