@@ -173,7 +173,11 @@ impl GameHandler
             let time_left = duration.checked_sub(elapsed);
 
             if time_left.is_none() {
-                println!("{}", "GAME OVER, you have ran out of time".red());
+                println!("{}", "🚨🚨🚨 ERROR: Time's up! ⏰⏰⏰ \
+                Unfortunately, you were not able to complete the Sudoku game in time. 😞😞😞 \
+                Don't worry, there's always next time! 🤞🤞🤞 \
+                Keep practicing and you'll get better! 💪💪💪".red());
+
                 return;
             }
 
@@ -303,7 +307,10 @@ impl GameHandler
             }
         }
 
-        let winning_message = "CONGRATULATIONS! You have completed the sudoku, why not try a different game mode?".green();
+        let winning_message = "🎉🎊👏 Congratulations! 👏🎊🎉 \
+        You have successfully completed the Sudoku puzzle! 🧩🎉👍 \
+        👨‍💻👩‍💻 Your logic and problem-solving skills are on point! 🤓💪 \
+        👏👏👏 Well done! 👏👏👏".green();
         println!("{}", winning_message);
 
         return true;
