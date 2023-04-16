@@ -3,6 +3,28 @@ use regex::Regex;
 use crate::user_input_command::UserInputCommand;
 use colored::Colorize;
 
+pub fn get_single_players_name() -> String
+{
+    print!("Please enter your name: ");
+    let users_name = get_user_input_generic();
+
+    return users_name;
+}
+
+pub fn get_multiple_players_name(players: usize) -> Vec<String>
+{
+    let mut player_names = Vec::with_capacity(players);
+    for i in 1..players + 1
+    {
+        print!("Please enter player {i}'s name: ");
+        let player_name = get_user_input_generic();
+
+        player_names.push(player_name);
+    }
+
+    return player_names;
+}
+
 pub fn get_save_game(number_of_save_games: usize) -> usize
 {
     print!("Please enter the number of the save game which you want to load, 1..{number_of_save_games}: ");
@@ -22,9 +44,34 @@ pub fn get_save_game(number_of_save_games: usize) -> usize
     }
 }
 
+pub fn get_number_of_players() -> usize
+{
+    print!("Please enter the number of players you want (2-9): ");
+
+    let mut num_of_players = 0;
+    let mut valid = false;
+    while !valid
+    {
+        let string_value = get_user_input_generic();
+
+        let regex_string_two = format!(r"\b[2-9]\b");
+        let valid_value = Regex::new(&*regex_string_two).unwrap();
+        if !valid_value.is_match(&string_value)
+        {
+            let error_message = format!("Invalid value supplied, please make sure to enter a value between 2 and 9: ").red();
+            print!("{error_message}");
+        }else{
+            num_of_players = string_value.parse::<i32>().unwrap() as usize;
+            valid = true;
+        }
+    }
+
+    return num_of_players;
+}
+
 pub fn get_game_mode() -> String
 {
-    print!("Please enter which game mode you would like to play: easy, (e), medium (m), hard (h) or trivia (t): ");
+    print!("Please enter which game mode you would like to play: easy (e), medium (m), hard (h) or trivia (t): ");
 
     loop
     {
@@ -108,14 +155,15 @@ pub fn get_users_start_game() -> String
     print!("Please enter whether you would like to: \n
     Start a new game (n): A new game with a new randomly generated sudoku board; \n
     Load a previous game (l): Load a previous save game, the state of the board will be the same as when you saved it; \n
-    Replay a previous game (r): Replay a previous save game, you will be able to step through every move you made, interrupting whenever you wish to make a move: ");
+    Replay a previous game (r): Replay a previous save game, you will be able to step through every move you made, interrupting whenever you wish to make a move; \n
+    Multiplayer game (m): A competitive multiplayer game where each player competes for score!: ");
 
     let users_move = get_user_input_generic();
 
-    let viable_moves: [&str; 4] = ["n", "l", "r", "h"];
+    let viable_moves: [&str; 4] = ["n", "l", "r", "m"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("{}", "Invalid move supplied. Please select one of (n), (l), (r), (h). Do not include the brackets in your input: ".red());
+        println!("{}", "Invalid move supplied. Please select one of (n), (l), (r), (m). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 
@@ -140,6 +188,31 @@ pub fn get_users_replay_move() -> String
         return "Invalid".to_string();
     }
 
+    return users_move;
+}
+
+pub fn get_users_two_player_move(player_name: String) -> String
+{
+    let mut valid = false;
+    let mut users_move: String = "".to_string();
+    while !valid {
+        print!("{player_name} please enter what move you would like to make: \
+            change a cell (c), \
+            undo last move (u), \
+            redo last move (r), \
+            get a hint (h) \
+            or pass (p): ");
+
+        users_move = get_user_input_generic();
+
+        let viable_moves: [&str; 5] = ["c", "u", "r", "h", "p"];
+
+        if !viable_moves.contains(&&*users_move) {
+            println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (p). Do not include the brackets in your input: ".red());
+        }else{
+            valid = true;
+        }
+    }
     return users_move;
 }
 

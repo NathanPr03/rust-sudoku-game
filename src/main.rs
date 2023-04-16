@@ -13,8 +13,8 @@ fn main() {
 
     let handler = builder
         .spawn(|| {
-            let mut universe = Universe::new(GameHandler::new(GameDifficulty::Medium, 9));
-            universe.begin_game();
+            let mut universe = Universe::new();
+            universe.big_bang();
         }).unwrap();
 
     handler.join().unwrap();

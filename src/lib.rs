@@ -18,6 +18,7 @@ mod game_mode_service;
 mod hint_service;
 mod serialiser;
 mod universe;
+mod player;
 
 pub use array_matrix::ArrayMatrix;
 pub use fourbyfourcovermatrix::four_by_four_cover_matrix;

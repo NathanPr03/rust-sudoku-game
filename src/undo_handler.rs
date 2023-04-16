@@ -4,7 +4,7 @@ use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct UndoHandler
 {
     undo_stack: VecDeque<UserInputCommand>,
@@ -78,14 +78,16 @@ impl UndoHandler
         sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
     )
     {
-        let command = self.undo_stack.pop_back();
-        if !command.is_some()
-        {
-            return;
-        }
+        while self.undo_stack.len() > 0 {
+            let command = self.undo_stack.pop_back();
+            if !command.is_some()
+            {
+                continue;
+            }
 
-        let mut unwrapped_command = command.unwrap();
-        unwrapped_command.execute(sudoku_board);
+            let mut unwrapped_command = command.unwrap();
+            unwrapped_command.execute(sudoku_board);
+        }
 
         self.invalidate_redo_stack();
     }

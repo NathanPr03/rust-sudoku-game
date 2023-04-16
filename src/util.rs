@@ -1,4 +1,5 @@
-use crate::{BOARD_SIZE};
+use colored::Colorize;
+use crate::{BOARD_SIZE, GameDifficulty};
 
 pub fn pretty_print_board_two(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
     //TODO: Probably remove this and use one defined in lib.rs
@@ -42,6 +43,32 @@ pub fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SI
     println!("  1 2 3   4 5 6   7 8 9");
 }
 
+pub fn calculate_players_score
+(
+    moves_made: usize,
+    hints_used: usize,
+    undos_used: usize,
+    redos_used: usize,
+    game_difficulty: GameDifficulty,
+    trivias_answered: usize,
+) -> usize
+{
+    let neg_hint = hints_used * 4;
+    let neg_undo = undos_used * 2;
+    let neg_redo = redos_used * 2;
+
+    let game_diff_score = match game_difficulty {
+        GameDifficulty::Easy => 30,
+        GameDifficulty::Trivia => 40,
+        GameDifficulty::Medium => 50,
+        GameDifficulty::Hard => 90
+    };
+
+    let neg_moves = moves_made / 2;
+
+    return game_diff_score + trivias_answered - neg_hint - neg_undo - neg_redo - neg_moves;
+}
+
 pub fn check_if_move_is_valid
 (
     sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
@@ -65,7 +92,7 @@ fn check_row_constraint
             continue;
         }
         if sudoku_board[row][i] == value && value != 0 {
-            println!("Invalid move, a cell in the same row already has that value");
+            println!("{}", "Invalid move, a cell in the same row already has that value".red());
             return false;
         }
     }
@@ -84,7 +111,7 @@ fn check_column_constraint
             continue;
         }
         if sudoku_board[i][column] == value && value != 0 {
-            println!("Invalid move, a cell in the same column already has that value");
+            println!("{}", "Invalid move, a cell in the same column already has that value".red());
             return false;
         }
     }
@@ -112,7 +139,7 @@ fn check_region_constraint(
         {
             if sudoku_board[row_iter][column_iter] == value && value != 0
             {
-                println!("Invalid move, a cell in the same region already has that value");
+                println!("{}", "Invalid move, a cell in the same region already has that value".red());
                 return false;
             }
         }

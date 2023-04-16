@@ -7,7 +7,6 @@ use rand::Rng;
 
 pub struct Trivia {
     trivia_questions: HashMap<String, String>,
-    correct_answers: usize,
 }
 
 impl Trivia {
@@ -17,7 +16,6 @@ impl Trivia {
         return Trivia
         {
             trivia_questions,
-            correct_answers: 0,
         };
     }
 
@@ -41,22 +39,12 @@ impl Trivia {
 
         return (key_string.clone(), self.trivia_questions[&key_string].clone());
     }
-
-    pub fn get_correct_answers(&self) -> usize
-    {
-        return self.correct_answers;
-    }
-
-    pub fn increment_correct_answers(&mut self)
-    {
-        self.correct_answers += 1;
-    }
 }
 
 fn read_from_text_file() -> HashMap<String, String>
 {
     let mut trivia_questions = HashMap::with_capacity(100);
-    let lines = read_lines("./trivia.txt".to_string());
+    let lines = read_lines("./src/trivia.txt".to_string());
     for line in lines {
         let unwrapped_line = line.unwrap();
         let split: Vec<&str> = unwrapped_line.split(".").collect();
