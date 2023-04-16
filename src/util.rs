@@ -1,47 +1,47 @@
 use colored::Colorize;
 use crate::{GameDifficulty};
 
-pub fn pretty_print_board_two(sudoku_board: &Vec<Vec<usize>>) {
-    //TODO: Probably remove this and use one defined in lib.rs
-    let sqrt_board_size = ((sudoku_board.len() as f32).sqrt()) as usize;
-    println!("-------------------------");
-    for (i, row) in sudoku_board.iter().enumerate() {
-        if i % sqrt_board_size == 0 && i != 0 {
-            println!("|-----------------------|");
-        }
-
-        for (j, &num) in row.iter().enumerate() {
-            if j % sqrt_board_size == 0 {
-                print!("| ");
-            }
-            print!("{} ", num);
-        }
-        println!("|");
-    }
-    println!("-------------------------");
-}
-
 pub fn pretty_print_board(sudoku_board: &Vec<Vec<usize>>) {
     let board_size = sudoku_board.len();
     let sqrt_board_size = (board_size as f32).sqrt() as usize;
 
-    println!("╔═══════╦═══════╦═══════╗");
-    for i in 0..board_size {
-        if i != 0 && i % sqrt_board_size == 0 {
-            println!("╠═══════╬═══════╬═══════╣");
-        }
-        print!("║ ");
-        for j in 0..board_size {
-            if j != 0 && j % sqrt_board_size == 0 {
-                print!("║ ");
-            }
-            print!("{} ", sudoku_board[i][j]);
-        }
-        println!("║ {}", i + 1);
+    let border = "═".repeat(board_size * 3 + sqrt_board_size + sqrt_board_size - 1);
+    let mut row_separator = "╠".to_owned();
+
+    for _i in 0..sqrt_board_size-1 {
+        row_separator += "═".repeat(sqrt_board_size * 2 + sqrt_board_size + 1).as_str();
+        row_separator += "╬";
     }
-    println!("╚═══════╩═══════╩═══════╝");
-    println!("  1 2 3   4 5 6   7 8 9");
+    row_separator += "═".repeat(sqrt_board_size * 2 + sqrt_board_size + 1).as_str();
+    row_separator += "╣";
+
+    let mut column_labels = String::new();
+    for i in 1..=board_size {
+        column_labels += format!(" {:2}", i).as_str();
+        if i % sqrt_board_size == 0 && i != board_size {
+            column_labels += "  ";
+        }
+    }
+
+    println!("╔{}╗", border);
+    for i in 0..board_size {
+        if i % sqrt_board_size == 0 && i != 0 {
+            println!("{}", row_separator);
+        }
+        let mut row = "║".to_owned();
+        for j in 0..board_size {
+            if j % sqrt_board_size == 0 && j != 0 {
+                row += " ║";
+            }
+            row += format!(" {:2}", sudoku_board[i][j]).as_str();
+        }
+        row += format!(" ║{:2}", i + 1).as_str();
+        println!("{}", row);
+    }
+    println!("╚{}╝", border);
+    println!("  {}", column_labels);
 }
+
 
 pub fn calculate_players_score
 (
@@ -139,7 +139,7 @@ fn check_region_constraint(
     {
         for row_iter in y_coord_top_left_of_region..y_coord_top_left_of_region + sqrt_board_size
         {
-            if sudoku_board[row_iter][column_iter] == value && value != 0
+            if sudoku_board[row_iter][column_iter] == value && value != 0 && column-1 != column_iter && row-1 != row_iter
             {
                 println!("{}", "Invalid move, a cell in the same region already has that value".red());
                 return false;
