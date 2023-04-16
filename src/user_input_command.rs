@@ -37,7 +37,6 @@ impl UserInputCommand {
 
         sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset] = self.new_value;
 
-        //TODO: If a user chooses a hint for a cell which is already solved it will output an error then this success message, not good!
         let success_message = format!("Successfully edited coordinates {},{}", self.x_coordinate, self.y_coordinate).green();
         println!("{}", success_message);
     }
