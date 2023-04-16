@@ -14,7 +14,7 @@ fn main() {
             making sure that each row, column, and 3x3 sub-grid contains all the numbers from 1 to 9 without any repetition. \
             The game starts with some numbers already filled in, and your task is to fill in the remaining numbers to complete the grid.\
              With multiple levels of difficulty, SudoGenius is a great way to exercise your brain and improve your problem-solving skills.\
-              Good luck and have fun!".bright_red());
+              Good luck and have fun!".bright_magenta());
             let mut universe = Universe::new();
             universe.big_bang();
         }).unwrap();
