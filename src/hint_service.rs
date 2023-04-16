@@ -3,7 +3,7 @@ use colored::Colorize;
 
 pub fn get_hint_command
 (
-    sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+    sudoku_board: &mut Vec<Vec<usize>>,
     coordinates: (usize, usize)
 )-> Option<UserInputCommand>
 {

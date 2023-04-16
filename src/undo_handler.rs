@@ -30,7 +30,7 @@ impl UndoHandler
     pub fn undo_last_command
     (
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         let command = self.undo_stack.pop_back();
@@ -52,7 +52,7 @@ impl UndoHandler
     pub fn redo_last_command
     (
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         let command = self.redo_stack.pop_back();
@@ -75,7 +75,7 @@ impl UndoHandler
     pub fn re_execute_all_commands
     (
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         while self.undo_stack.len() > 0 {
@@ -96,7 +96,7 @@ impl UndoHandler
     pub fn redo_last_command_reverse
     (
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         let command = self.undo_stack.pop_front();
@@ -118,7 +118,7 @@ impl UndoHandler
     pub fn undo_last_command_reverse
     (
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         let command = self.redo_stack.pop_back();

@@ -1,7 +1,7 @@
 use crate::ninebyninecovermatrix::nine_by_nine_cover_matrix;
 use crate::{ArrayMatrix, NodeMatrix, StrongNode, BOARD_SIZE, BOARD_SIZE_SQUARED, EXACT_COVER_MATRIX_COLUMNS, EXACT_COVER_MATRIX_ROWS, pretty_print_board};
 
-pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])-> bool {
+pub fn find_solution(sudoku_board: &mut Vec<Vec<usize>>)-> bool {
     use std::time::Instant;
     let now = Instant::now();
 
@@ -42,7 +42,7 @@ pub fn find_solution(sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZ
 }
 
 fn convert_matrix_to_sudoku_grid(
-    sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+    sudoku_board: &mut Vec<Vec<usize>>,
     solution: Vec<StrongNode>,
 ) {
     for node in solution.clone() {

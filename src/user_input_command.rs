@@ -25,7 +25,7 @@ impl UserInputCommand {
 
     pub fn execute(
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         if !check_if_move_is_valid(sudoku_board, self.get_target_cell_and_value()) {
@@ -37,13 +37,14 @@ impl UserInputCommand {
 
         sudoku_board[self.y_coordinate - zero_index_offset][self.x_coordinate - zero_index_offset] = self.new_value;
 
+        //TODO: If a user chooses a hint for a cell which is already solved it will output an error then this success message, not good!
         let success_message = format!("Successfully edited coordinates {},{}", self.x_coordinate, self.y_coordinate).green();
         println!("{}", success_message);
     }
 
     pub fn undo(
         &self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         if !check_if_move_is_valid(sudoku_board, self.get_target_cell_and_undo_value())

@@ -1,7 +1,7 @@
 use colored::Colorize;
 use crate::{BOARD_SIZE, GameDifficulty};
 
-pub fn pretty_print_board_two(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
+pub fn pretty_print_board_two(sudoku_board: &Vec<Vec<usize>>) {
     //TODO: Probably remove this and use one defined in lib.rs
     let sqrt_board_size = ((sudoku_board.len() as f32).sqrt()) as usize;
     println!("-------------------------");
@@ -21,7 +21,7 @@ pub fn pretty_print_board_two(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOAR
     println!("-------------------------");
 }
 
-pub fn pretty_print_board(sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
+pub fn pretty_print_board(sudoku_board: &Vec<Vec<usize>>) {
     let board_size = sudoku_board.len();
     let sqrt_board_size = (board_size as f32).sqrt() as usize;
 
@@ -71,7 +71,7 @@ pub fn calculate_players_score
 
 pub fn check_if_move_is_valid
 (
-    sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+    sudoku_board: &Vec<Vec<usize>>,
     command: (usize, usize, usize)
 ) -> bool
 {
@@ -82,7 +82,7 @@ pub fn check_if_move_is_valid
 
 fn check_row_constraint
 (
-    sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+    sudoku_board: &Vec<Vec<usize>>,
     command: (usize, usize, usize)
 ) -> bool {
     let (column, row, value) = command;
@@ -101,7 +101,7 @@ fn check_row_constraint
 
 fn check_column_constraint
 (
-    sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+    sudoku_board: &Vec<Vec<usize>>,
     command: (usize, usize, usize)
 ) -> bool {
     let (column, row, value) = command;
@@ -119,7 +119,7 @@ fn check_column_constraint
 }
 
 fn check_region_constraint(
-    sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+    sudoku_board: &Vec<Vec<usize>>,
     command: (usize, usize, usize)
 ) -> bool {
     let (mut column, mut row, value) = command;

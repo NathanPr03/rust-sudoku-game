@@ -25,7 +25,7 @@ impl ArrayMatrix {
         &mut self,
         cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
                  EXACT_COVER_MATRIX_ROWS as usize],
-        sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+        sudoku_board: &Vec<Vec<usize>>,
     ) -> () {
         self.generate_array_matrix(cover_matrix);
 
@@ -47,7 +47,7 @@ impl ArrayMatrix {
         &mut self,
         cover_matrix: &mut [[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
                  EXACT_COVER_MATRIX_ROWS as usize],
-        sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+        sudoku_board: &Vec<Vec<usize>>,
     ) {
         for row_index in 0..BOARD_SIZE {
             for column_index in 0..BOARD_SIZE {

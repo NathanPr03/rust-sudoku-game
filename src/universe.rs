@@ -78,7 +78,7 @@ impl Universe {
         let game_diff = determine_game_mode();
 
         let mut games: HashMap<usize, GameHandler> = HashMap::with_capacity(num_of_players);
-        let mut sudoku_boards: HashMap<usize, [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]> = HashMap::with_capacity(num_of_players);
+        let mut sudoku_boards: HashMap<usize, Vec<Vec<usize>>> = HashMap::with_capacity(num_of_players);
 
         for i in 0..num_of_players
         {
@@ -99,7 +99,7 @@ impl Universe {
         while finished_count != num_of_players
         {
             for i in 0..num_of_players {
-                let mut sudoku_board = sudoku_boards[&i];
+                let mut sudoku_board = sudoku_boards[&i].clone();
                 let mut game = games[&i].clone();
 
                 pretty_print_board(&sudoku_board);

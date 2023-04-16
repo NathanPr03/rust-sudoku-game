@@ -20,7 +20,7 @@ impl BoardGenerator {
 
     pub fn generate_random_board(
         &self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+        sudoku_board: &mut Vec<Vec<usize>>,
     )
     {
         // This code is extremely performant :)
@@ -64,7 +64,7 @@ impl BoardGenerator {
         println!("Board generated in: {:.2?}", elapsed);
     }
 
-    fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
+    fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut Vec<Vec<usize>>)
     {
         let board_size = sudoku_board.len();
         let clues_to_remove = board_size * board_size - self.game_difficulty as usize - self.correct_trivia_answers;

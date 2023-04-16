@@ -9,19 +9,19 @@ pub fn test_board_generation_is_random()
         .stack_size(64 * 1024 * 1024); // 64MB of stack space
 
     let handler = builder.spawn(|| {
-        let mut sudoku_boards: Vec<[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]> = Vec::new();
+        let mut sudoku_boards: Vec<Vec<Vec<usize>>> = Vec::new();
 
         for _i in 0..10 {
-            let mut sudoku_board = [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            let mut sudoku_board = vec![
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
             ];
 
             let game_difficulty = GameDifficulty::Hard;
