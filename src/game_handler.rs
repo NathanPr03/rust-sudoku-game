@@ -10,10 +10,12 @@ use crate::player::Player;
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
     //These values are the number percentage of clues present in a board
+    VeryEasy = 56,
     Easy = 55,
     Medium = 40,
     Trivia = 39,
     Hard = 25,
+    VeryHard = 50
 }
 
 #[derive(Serialize, Deserialize, Clone)]

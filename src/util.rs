@@ -58,10 +58,12 @@ pub fn calculate_players_score
     let neg_redo = redos_used * 2;
 
     let game_diff_score = match game_difficulty {
+        GameDifficulty::VeryEasy => 10,
         GameDifficulty::Easy => 30,
         GameDifficulty::Trivia => 40,
         GameDifficulty::Medium => 50,
-        GameDifficulty::Hard => 90
+        GameDifficulty::Hard => 80,
+        GameDifficulty::VeryHard => 100
     };
 
     let neg_moves = moves_made / 2;

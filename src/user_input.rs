@@ -71,16 +71,22 @@ pub fn get_number_of_players() -> usize
 
 pub fn get_game_mode() -> String
 {
-    print!("Please enter which game mode you would like to play: easy (e), medium (m), hard (h) or trivia (t): ");
+    print!("Please enter which game mode you would like to play:\n
+     Very easy (ve): A 4x4 board; \n
+     Easy (e): A 9x9 board with more clues; \n
+     Medium (m): A 9x9 board with less clues; \n
+     Hard (h): A 9x9 board with even less clues; \n
+     Very hard (vh): A 16x6 board; \n
+     Trivia (t): A 9x9 board, extra clues are added for every correct trivia answer:");
 
     loop
     {
         let user_input = get_user_input_generic();
 
-        if user_input == "e" || user_input == "m" || user_input == "h" || user_input == "t" {
+        if user_input == "e" || user_input == "m" || user_input == "h" || user_input == "t" || user_input == "ve" || user_input == "vh" {
             return user_input;
         }
-        let error_message = "Invalid input, please enter one of 'e', 'm', 'h', or 't': ".red();
+        let error_message = "Invalid input, please enter one of 've', 'e', 'm', 'h', 'vh', or 't': ".red();
         println!("{error_message}");
     }
 }

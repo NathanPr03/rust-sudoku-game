@@ -43,11 +43,19 @@ impl Universe {
         let player = Player::new(users_name, game_diff);
         self.players.push(player.clone());
 
+        let mut board_size = 9;
+        if game_diff == GameDifficulty::VeryHard
+        {
+            board_size = 16;
+        }else if game_diff == GameDifficulty::VeryEasy {
+            board_size = 4;
+        }
+
         let mut game_handler = GameHandler::new
         (
             player,
             game_diff,
-            16
+            board_size
         );
 
         game_handler.play();
