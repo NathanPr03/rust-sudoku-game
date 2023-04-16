@@ -1,3 +1,4 @@
+use std::time::Instant;
 use std::collections::HashMap;
 use colored::Colorize;
 use crate::player::Player;
@@ -104,6 +105,7 @@ impl Universe {
         }
 
         let mut finished_count = 0;
+
         while finished_count != num_of_players
         {
             for i in 0..num_of_players {
@@ -111,6 +113,7 @@ impl Universe {
                 let mut game = games[&i].clone();
 
                 pretty_print_board(&sudoku_board);
+
                 let game_finished = game.multiple_player_play(&mut sudoku_board);
 
                 games.insert(i, game);

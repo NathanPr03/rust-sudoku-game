@@ -42,6 +42,18 @@ pub fn pretty_print_board(sudoku_board: &Vec<Vec<usize>>) {
     println!("  {}", column_labels);
 }
 
+pub fn calculate_timer(game_difficulty: GameDifficulty) -> usize
+{
+    // Time given to complete a game, units in seconds
+    return match game_difficulty {
+        GameDifficulty::VeryEasy => 2,
+        GameDifficulty::Easy => 1800,
+        GameDifficulty::Medium => 1200,
+        GameDifficulty::Hard => 600,
+        GameDifficulty::VeryHard => 3600,
+        GameDifficulty::Trivia => 1200,
+    }
+}
 
 pub fn calculate_players_score
 (
@@ -60,10 +72,10 @@ pub fn calculate_players_score
     let game_diff_score = match game_difficulty {
         GameDifficulty::VeryEasy => 10,
         GameDifficulty::Easy => 30,
-        GameDifficulty::Trivia => 40,
         GameDifficulty::Medium => 50,
         GameDifficulty::Hard => 80,
-        GameDifficulty::VeryHard => 100
+        GameDifficulty::VeryHard => 100,
+        GameDifficulty::Trivia => 40,
     };
 
     let neg_moves = moves_made / 2;
