@@ -46,7 +46,7 @@ pub fn calculate_timer(game_difficulty: GameDifficulty) -> usize
 {
     // Time given to complete a game, units in seconds
     return match game_difficulty {
-        GameDifficulty::VeryEasy => 2,
+        GameDifficulty::VeryEasy => 3600,
         GameDifficulty::Easy => 1800,
         GameDifficulty::Medium => 1200,
         GameDifficulty::Hard => 600,
