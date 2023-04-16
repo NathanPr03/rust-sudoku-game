@@ -47,7 +47,7 @@ impl Universe {
         (
             player,
             game_diff,
-            9
+            16
         );
 
         game_handler.play();

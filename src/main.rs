@@ -1,4 +1,4 @@
-use rust_sudoku_game::{Universe};
+use rust_sudoku_game::{GameDifficulty, GameHandler, Player, Universe};
 use std::thread::Builder;
 
 fn main() {
@@ -10,6 +10,10 @@ fn main() {
         .spawn(|| {
             let mut universe = Universe::new();
             universe.big_bang();
+            //
+            // let pl = Player::new("nat".to_string(), GameDifficulty::Medium);
+            // let mut gh = GameHandler::new(pl, GameDifficulty::Hard, 16);
+            // gh.play();
         }).unwrap();
 
     handler.join().unwrap();

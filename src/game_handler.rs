@@ -1,4 +1,3 @@
-use std::ops::Deref;
 use crate::{BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
 use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move, get_users_two_player_move};
@@ -10,11 +9,11 @@ use crate::player::Player;
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
-    //These values are the number of clues that should be present in a 9x9 board
-    Easy = 79,
-    Medium = 32,
-    Trivia = 31,
-    Hard = 20,
+    //These values are the number percentage of clues present in a board
+    Easy = 55,
+    Medium = 40,
+    Trivia = 39,
+    Hard = 25,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -43,17 +42,7 @@ impl GameHandler
             player,
             game_difficulty,
             undo_handler,
-            initial_generated_board: vec![
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
-            ],
+            initial_generated_board: Self::create_initial_board(board_size),
             board_size,
         }
     }
@@ -267,6 +256,19 @@ impl GameHandler
         println!("{}", success_message);
     }
 
+    fn create_initial_board(board_size: usize) -> Vec<Vec<usize>>
+    {
+        let mut board: Vec<Vec<usize>> = Vec::with_capacity(board_size);
+        for _i in 0..board_size {
+            let mut row_vec: Vec<usize> = Vec::with_capacity(board_size);
+            for _j in 0..board_size {
+                row_vec.push(0);
+            }
+            board.push(row_vec);
+        }
+
+        return board;
+    }
     fn is_game_finished
     (
         &self,

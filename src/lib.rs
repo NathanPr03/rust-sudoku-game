@@ -1,9 +1,10 @@
 extern crate core;
 
 mod array_matrix;
-pub mod fourbyfourcovermatrix;
+pub mod four_by_four_covermatrix;
+pub mod sixteen_by_sixteen_cover_matrix;
+pub mod nine_by_nine_covermatrix;
 mod iter;
-pub mod ninebyninecovermatrix;
 mod node;
 mod node_matrix;
 mod solution_handler;
@@ -21,7 +22,7 @@ mod universe;
 mod player;
 
 pub use array_matrix::ArrayMatrix;
-pub use fourbyfourcovermatrix::four_by_four_cover_matrix;
+pub use four_by_four_covermatrix::four_by_four_cover_matrix;
 pub use iter::ColumnIterator;
 pub use node::Node;
 pub use node::StrongNode;
@@ -45,3 +46,4 @@ pub use hint_service::get_hint_command;
 pub use serialiser::save;
 pub use serialiser::load;
 pub use universe::Universe;
+pub use player::Player;

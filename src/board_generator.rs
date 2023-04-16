@@ -68,7 +68,12 @@ impl BoardGenerator {
     fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut Vec<Vec<usize>>)
     {
         let board_size = sudoku_board.len();
-        let clues_to_remove = board_size * board_size - self.game_difficulty as usize - self.correct_trivia_answers;
+        let avoid_rounding = 1000;
+        let total_cells = board_size * board_size * avoid_rounding;
+
+        let clues_to_remove = (((total_cells / 100) * (100 - self.game_difficulty as usize)) - self.correct_trivia_answers) / avoid_rounding;
+        println!("Removing {clues_to_remove} clues");
+        // let clues_to_remove = board_size * board_size - self.game_difficulty as usize - self.correct_trivia_answers;
         for _clue in 0..clues_to_remove {
             loop {
                 let mut random_num_generator = rand::thread_rng();

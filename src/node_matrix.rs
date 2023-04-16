@@ -149,49 +149,13 @@ impl NodeMatrix {
                 self.eighty_recursion_times += 1;
             }
 
-            if self.eighty_recursion_times > 2
+            if self.eighty_recursion_times > 2 && cover_matrix_rows < 4000 // Dont want to do this for 16*16 boards as they take longer
             {
-                self.solution_found = true;
+                // self.solution_found = true;
             }
         }
 
         return;
-    }
-
-    fn print_matrix_at_given_point(&self) {
-        // let mut cover_matrix = [
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0]
-        // ];
-
-        let mut cover_matrix = four_by_four_cover_matrix();
-        let row_iterator = RowIterator::new(&Rc::downgrade(&self.root_node));
-
-        for column_node in row_iterator {
-            // dbg!(column_node.upgrade().unwrap());
-            let column_iterator = ColumnIterator::new(&column_node.upgrade().unwrap());
-            for node in column_iterator {
-                let upgraded_node = node.upgrade().unwrap();
-                let column = upgraded_node.borrow_mut().column_index.unwrap();
-                let row = upgraded_node.borrow_mut().get_row().unwrap();
-
-                cover_matrix[row][column] = 1;
-            }
-        }
-
-        for i in 0..cover_matrix.len() {
-            for j in 0..cover_matrix[1].len() {
-                print!("|{}", cover_matrix[i][j]);
-            }
-            print!("|");
-            println!();
-        }
-
-        println!("--------------");
     }
 
     pub fn choose_column(&mut self, cover_matrix_rows: usize) -> StrongNode {
