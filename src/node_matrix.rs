@@ -1,6 +1,6 @@
 use crate::iter::RowIterator;
 use crate::{
-    four_by_four_cover_matrix, ColumnIterator,
+    ColumnIterator,
 };
 use std::rc::Rc;
 

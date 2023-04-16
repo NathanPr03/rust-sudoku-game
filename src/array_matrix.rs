@@ -46,10 +46,6 @@ impl ArrayMatrix {
                 if value_of_cell != 0 {
                     for i in 0..self.board_size {
                         if value_of_cell - 1 != i as usize {
-                            let mut hack = 0;
-                            if i == self.board_size {
-                                hack = 1;
-                            }
                             let matrix_row_index =
                                 (row_index * self.board_size_squared) + column_index * self.board_size + i;
 

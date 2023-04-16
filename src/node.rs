@@ -180,7 +180,7 @@ impl Node {
 
 impl Drop for Node {
     fn drop(&mut self) {
-        let row = match self.extra {
+        let _row = match self.extra {
             NodeExtra::RowIndex(i) => i,
             _ => return,
         };

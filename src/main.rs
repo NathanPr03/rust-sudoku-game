@@ -1,4 +1,4 @@
-use rust_sudoku_game::{GameDifficulty, GameHandler, Player, Universe};
+use rust_sudoku_game::{Universe};
 use std::thread::Builder;
 use colored::Colorize;
 

@@ -1,4 +1,4 @@
-use crate::{find_solution, pretty_print_board, UserInputCommand};
+use crate::{find_solution, UserInputCommand};
 use colored::Colorize;
 
 pub fn get_hint_command
