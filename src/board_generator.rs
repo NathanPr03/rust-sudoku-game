@@ -72,8 +72,6 @@ impl BoardGenerator {
         let total_cells = board_size * board_size * avoid_rounding;
 
         let clues_to_remove = (((total_cells / 100) * (100 - self.game_difficulty as usize)) - self.correct_trivia_answers) / avoid_rounding;
-        println!("Removing {clues_to_remove} clues");
-        // let clues_to_remove = board_size * board_size - self.game_difficulty as usize - self.correct_trivia_answers;
         for _clue in 0..clues_to_remove {
             loop {
                 let mut random_num_generator = rand::thread_rng();
