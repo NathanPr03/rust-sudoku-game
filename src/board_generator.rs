@@ -13,7 +13,7 @@ impl BoardGenerator {
     {
         return BoardGenerator {
             game_difficulty,
-            number_of_random_nums_to_insert: 2, //This number seems low but it actually gives us 729 * 721 (525,609) potential boards
+            number_of_random_nums_to_insert: 2, //This number seems low but it actually gives us 729 * 705 (513,945) potential boards
             correct_trivia_answers,
         };
     }

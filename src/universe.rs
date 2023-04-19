@@ -59,8 +59,8 @@ impl Universe {
             board_size
         );
 
-        game_handler.play();
-
+        let score = game_handler.play();
+        println!("Your score was: {score}!");
         self.game_selected = true;
     }
 

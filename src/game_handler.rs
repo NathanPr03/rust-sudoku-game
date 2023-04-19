@@ -8,7 +8,7 @@ use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
 use crate::player::Player;
-use crate::util::calculate_timer;
+use crate::util::{calculate_players_score, calculate_timer};
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
@@ -54,7 +54,7 @@ impl GameHandler
         }
     }
 
-    pub fn play(&mut self)
+    pub fn play(&mut self) -> usize
     {
         let mut sudoku_board = self.initial_generated_board.clone();
 
@@ -73,6 +73,18 @@ impl GameHandler
         self.initial_generated_board = sudoku_board.clone();
 
         self.game_loop(&mut sudoku_board);
+
+        let score = calculate_players_score
+        (
+            0,
+            self.player.get_hints_used(),
+            self.player.get_undos_used(),
+            self.player.get_redos_used(),
+            self.player.game_difficulty,
+            self.player.get_trivias_answered()
+        );
+
+        return score;
     }
 
     pub fn multiple_player_setup(&mut self) -> Vec<Vec<usize>>
