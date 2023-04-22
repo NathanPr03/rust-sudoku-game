@@ -1,4 +1,4 @@
-pub fn completed_nine_by_nine_cover_matrix() -> Vec<Vec<usize>> {
+pub fn completed_nine_by_nine_cover_matrix() -> Vec<Vec<u8>> {
     let cover_matrix: Vec<Vec<u8>> = vec![
         vec![
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
