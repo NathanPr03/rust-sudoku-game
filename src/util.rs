@@ -83,6 +83,13 @@ pub fn calculate_players_score
     return game_diff_score + trivias_answered - neg_hint - neg_undo - neg_redo - neg_moves;
 }
 
+pub fn format_duration(duration: u64) -> String {
+    let minutes = duration / 60;
+    let seconds = duration % 60;
+
+    return format!("{} minutes and {:02} seconds", minutes, seconds)
+}
+
 pub fn check_if_move_is_valid
 (
     sudoku_board: &Vec<Vec<usize>>,

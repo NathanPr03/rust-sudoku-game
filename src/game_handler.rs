@@ -7,7 +7,7 @@ use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
 use crate::player::Player;
-use crate::util::{calculate_players_score, calculate_timer};
+use crate::util::{calculate_players_score, calculate_timer, format_duration};
 use compound_duration;
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
@@ -193,10 +193,9 @@ impl GameHandler
                 return;
             }
             let unwrapped_time = time_left.unwrap();
-            // let minutes = unwrapped_time.div(60);  // extract minutes from duration
-            // let seconds_left = minutes % 60;
+            let formatted_time = format_duration(unwrapped_time.as_secs());
 
-            let formatted_message = format!("Time left: {} minutes and {} seconds", "e", "a");
+            let formatted_message = format!("You have {formatted_time} left");
             println!("{}", formatted_message.purple());
 
             let users_move = get_users_move();
