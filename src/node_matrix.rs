@@ -149,7 +149,7 @@ impl NodeMatrix {
                 self.eighty_recursion_times += 1;
             }
 
-            if self.eighty_recursion_times > 2 && cover_matrix_rows < 4000 // Dont want to do this for 16*16 boards as they take longer
+            if self.eighty_recursion_times > 2 //&& cover_matrix_rows < 4000 // Dont want to do this for 16*16 boards as they take longer
             {
                 self.solution_found = true;
             }

@@ -93,16 +93,16 @@ pub fn get_game_mode() -> String
 
 pub fn get_trivia_input(question: String) -> String
 {
-    print!("Is the following trivia question true (T) or false (F): {question}: ");
+    print!("Is the following trivia question true (t) or false (f): {question}: ");
 
     loop
     {
         let user_input = get_user_input_generic();
 
-        if user_input == "T" || user_input == "F" {
+        if user_input == "t" || user_input == "f" {
             return user_input;
         }
-        let error_message = "Invalid input, please enter either T or F: ".red();
+        let error_message = "Invalid input, please enter either t or f: ".red();
         println!("{error_message}");
     }
 }

@@ -200,7 +200,7 @@ impl GameHandler
             match users_move.as_str() {
                 "c" => self.change_cell(sudoku_board),
                 "u" => self.undo(sudoku_board),
-                "r" => self.redo(sudoku_board, false),
+                "r" => self.redo(sudoku_board, true),
                 "h" => self.hint(sudoku_board),
                 "s" => self.save(),
                 "q" => return,
@@ -257,7 +257,7 @@ impl GameHandler
     {
         self.undo_handler.redo_last_command(sudoku_board);
         if not_replay {
-            self.player.increment_redos(); 
+            self.player.increment_redos();
             pretty_print_board(&sudoku_board);
         }
     }

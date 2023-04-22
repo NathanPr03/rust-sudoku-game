@@ -39,7 +39,7 @@ pub fn pretty_print_board(sudoku_board: &Vec<Vec<usize>>) {
         println!("{}", row);
     }
     println!("╚{}╝", border);
-    println!("  {}", column_labels);
+    println!(" {}", column_labels);
 }
 
 pub fn calculate_timer(game_difficulty: GameDifficulty) -> usize
