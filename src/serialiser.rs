@@ -1,9 +1,7 @@
-use crate::{BOARD_SIZE, GameHandler, get_save_game, UserInputCommand};
+use crate::{GameHandler, get_save_game};
 use std::fs::{create_dir, File, read_dir, read_to_string};
 use std::io::Write;
-use std::mem::zeroed;
 use chrono::{DateTime, Local};
-use chrono::Utc;
 
 pub fn save(
     game_handler: &GameHandler

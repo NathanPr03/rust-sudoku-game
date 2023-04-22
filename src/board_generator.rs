@@ -1,4 +1,4 @@
-use crate::{BOARD_SIZE, BOARD_SIZE_SQUARED, find_solution, pretty_print_board};
+use crate::{find_solution};
 use rand::Rng;
 use crate::game_handler::GameDifficulty;
 
@@ -20,9 +20,10 @@ impl BoardGenerator {
 
     pub fn generate_random_board(
         &self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+        sudoku_board: &mut Vec<Vec<usize>>,
     )
     {
+        let board_size = sudoku_board.len();
         // This code is extremely performant :)
         use std::time::Instant;
         let now = Instant::now();
@@ -31,9 +32,9 @@ impl BoardGenerator {
             loop {
                 let mut random_num_generator = rand::thread_rng();
 
-                let random_column: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_row: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_value: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
+                let random_column: usize = random_num_generator.gen_range(0..board_size) as usize;
+                let random_row: usize = random_num_generator.gen_range(0..board_size) as usize;
+                let random_value: usize = random_num_generator.gen_range(0..board_size) as usize;
 
                 //  If the cell has already been filled we dont want to fill it again, will fuck up the matrix
                 if sudoku_board[random_column][random_row] != 0
@@ -64,16 +65,19 @@ impl BoardGenerator {
         println!("Board generated in: {:.2?}", elapsed);
     }
 
-    fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
+    fn remove_given_numbers_from_sudoku(&self, sudoku_board: &mut Vec<Vec<usize>>)
     {
         let board_size = sudoku_board.len();
-        let clues_to_remove = board_size * board_size - self.game_difficulty as usize - self.correct_trivia_answers;
+        let avoid_rounding = 1000;
+        let total_cells = board_size * board_size * avoid_rounding;
+
+        let clues_to_remove = (((total_cells / 100) * (100 - self.game_difficulty as usize)) - self.correct_trivia_answers) / avoid_rounding;
         for _clue in 0..clues_to_remove {
             loop {
                 let mut random_num_generator = rand::thread_rng();
 
-                let random_column: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
-                let random_row: usize = random_num_generator.gen_range(0..BOARD_SIZE) as usize;
+                let random_column: usize = random_num_generator.gen_range(0..board_size) as usize;
+                let random_row: usize = random_num_generator.gen_range(0..board_size) as usize;
 
                 if sudoku_board[random_column][random_row] == 0
                 {

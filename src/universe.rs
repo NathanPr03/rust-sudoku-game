@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use colored::Colorize;
 use crate::player::Player;
-use crate::{BOARD_SIZE, determine_game_mode, GameDifficulty, GameHandler, get_users_start_game, load, pretty_print_board};
+use crate::{determine_game_mode, GameDifficulty, GameHandler, get_users_start_game, load, pretty_print_board};
 use crate::user_input::{get_multiple_players_name, get_number_of_players, get_single_players_name};
 use crate::util::calculate_players_score;
 
@@ -43,11 +43,19 @@ impl Universe {
         let player = Player::new(users_name, game_diff);
         self.players.push(player.clone());
 
+        let mut board_size = 9;
+        if game_diff == GameDifficulty::VeryHard
+        {
+            board_size = 16;
+        }else if game_diff == GameDifficulty::VeryEasy {
+            board_size = 4;
+        }
+
         let mut game_handler = GameHandler::new
         (
             player,
             game_diff,
-            9
+            board_size
         );
 
         game_handler.play();
@@ -78,7 +86,7 @@ impl Universe {
         let game_diff = determine_game_mode();
 
         let mut games: HashMap<usize, GameHandler> = HashMap::with_capacity(num_of_players);
-        let mut sudoku_boards: HashMap<usize, [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]> = HashMap::with_capacity(num_of_players);
+        let mut sudoku_boards: HashMap<usize, Vec<Vec<usize>>> = HashMap::with_capacity(num_of_players);
 
         for i in 0..num_of_players
         {
@@ -99,7 +107,7 @@ impl Universe {
         while finished_count != num_of_players
         {
             for i in 0..num_of_players {
-                let mut sudoku_board = sudoku_boards[&i];
+                let mut sudoku_board = sudoku_boards[&i].clone();
                 let mut game = games[&i].clone();
 
                 pretty_print_board(&sudoku_board);

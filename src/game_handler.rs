@@ -1,4 +1,4 @@
-use crate::{BOARD_SIZE, BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
+use crate::{BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
 use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move, get_users_two_player_move};
 use crate::Trivia;
@@ -9,11 +9,13 @@ use crate::player::Player;
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
-    //These values are the number of clues that should be present in a 9x9 board
-    Easy = 79,
-    Medium = 32,
-    Trivia = 31,
-    Hard = 20,
+    //These values are the number percentage of clues present in a board
+    VeryEasy = 56,
+    Easy = 55,
+    Medium = 40,
+    Trivia = 39,
+    Hard = 25,
+    VeryHard = 50
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -22,7 +24,7 @@ pub struct GameHandler
     player: Player,
     game_difficulty: GameDifficulty,
     undo_handler: UndoHandler,
-    initial_generated_board: [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+    initial_generated_board: Vec<Vec<usize>>,
     board_size: usize,
 }
 
@@ -42,24 +44,14 @@ impl GameHandler
             player,
             game_difficulty,
             undo_handler,
-            initial_generated_board: [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            ],
+            initial_generated_board: Self::create_initial_board(board_size),
             board_size,
         }
     }
 
     pub fn play(&mut self)
     {
-        let mut sudoku_board = self.initial_generated_board;
+        let mut sudoku_board = self.initial_generated_board.clone();
 
         if self.game_difficulty == GameDifficulty::Trivia
         {
@@ -78,9 +70,9 @@ impl GameHandler
         self.game_loop(&mut sudoku_board);
     }
 
-    pub fn multiple_player_setup(&mut self) -> [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+    pub fn multiple_player_setup(&mut self) -> Vec<Vec<usize>>
     {
-        let mut sudoku_board = self.initial_generated_board;
+        let mut sudoku_board = self.initial_generated_board.clone();
 
         if self.game_difficulty == GameDifficulty::Trivia
         {
@@ -97,7 +89,7 @@ impl GameHandler
     pub fn multiple_player_play
     (
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     ) -> bool
     {
         let player_name = self.player.get_name();
@@ -119,7 +111,7 @@ impl GameHandler
 
     pub fn load(&mut self)
     {
-        let mut sudoku_board = self.initial_generated_board;
+        let mut sudoku_board = self.initial_generated_board.clone();
 
         self.undo_handler.re_execute_all_commands(&mut sudoku_board);
 
@@ -130,7 +122,7 @@ impl GameHandler
 
     pub fn replay(&mut self)
     {
-        let mut sudoku_board = self.initial_generated_board;
+        let mut sudoku_board = self.initial_generated_board.clone();
 
         pretty_print_board(&sudoku_board);
         self.undo_handler.invalidate_redo_stack();
@@ -164,7 +156,7 @@ impl GameHandler
     fn game_loop
     (
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     ) {
         while !self.is_game_finished(&sudoku_board)
         {
@@ -204,7 +196,7 @@ impl GameHandler
         }
     }
 
-    fn change_cell(&mut self, mut sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]) {
+    fn change_cell(&mut self, mut sudoku_board: &mut Vec<Vec<usize>>) {
         let mut command: Option<UserInputCommand> = None;
         while !command.is_some() {
             command = take_user_input_for_cell(self.board_size);
@@ -219,14 +211,14 @@ impl GameHandler
         pretty_print_board(&sudoku_board);
     }
 
-    fn undo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
+    fn undo(&mut self, sudoku_board: &mut Vec<Vec<usize>>)
     {
         self.undo_handler.undo_last_command(sudoku_board);
         self.player.increment_undos();
         pretty_print_board(&sudoku_board);
     }
 
-    fn redo(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize], not_replay: bool)
+    fn redo(&mut self, sudoku_board: &mut Vec<Vec<usize>>, not_replay: bool)
     {
         self.undo_handler.redo_last_command(sudoku_board);
         if not_replay {
@@ -235,7 +227,7 @@ impl GameHandler
         }
     }
 
-    fn hint(&mut self, sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize])
+    fn hint(&mut self, sudoku_board: &mut Vec<Vec<usize>>)
     {
         let (x, y) = get_coordinates_for_hint(sudoku_board.len());
         let command = get_hint_command(sudoku_board, (x, y));
@@ -266,10 +258,23 @@ impl GameHandler
         println!("{}", success_message);
     }
 
+    fn create_initial_board(board_size: usize) -> Vec<Vec<usize>>
+    {
+        let mut board: Vec<Vec<usize>> = Vec::with_capacity(board_size);
+        for _i in 0..board_size {
+            let mut row_vec: Vec<usize> = Vec::with_capacity(board_size);
+            for _j in 0..board_size {
+                row_vec.push(0);
+            }
+            board.push(row_vec);
+        }
+
+        return board;
+    }
     fn is_game_finished
     (
         &self,
-        sudoku_board: &[[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize],
+        sudoku_board: &Vec<Vec<usize>>,
     )-> bool
     {
         for row in sudoku_board {

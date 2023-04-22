@@ -1,5 +1,5 @@
 use crate::complete_nine_by_nine_matrix::completed_nine_by_nine_cover_matrix;
-use rust_sudoku_game::{ColumnIterator, NodeMatrix, StrongNode, BOARD_SIZE_SQUARED};
+use rust_sudoku_game::{ColumnIterator, NodeMatrix, StrongNode};
 
 mod complete_nine_by_nine_matrix;
 
@@ -38,6 +38,7 @@ pub fn test_node_matrix_columns() {
 
 #[test]
 pub fn test_node_matrix_rows() {
+    let board_size_squared = 81;
     let completed_cover_matrix = completed_nine_by_nine_cover_matrix();
 
     let mut nodes_matrix = NodeMatrix::new();
@@ -62,7 +63,7 @@ pub fn test_node_matrix_rows() {
 
             // Since the list is circular, node pointers can 'wrap around' the list and point to nodes before the current one.
             // Nodes should only point to nodes behind them if the node behind them is in the first constraint (= to a board size squared)
-            if right_node_col_number < BOARD_SIZE_SQUARED as usize {
+            if right_node_col_number < board_size_squared {
                 assert!(current_node_col_number > right_node_col_number);
             } else {
                 assert!(right_node_col_number > current_node_col_number);

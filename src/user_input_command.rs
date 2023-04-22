@@ -1,5 +1,5 @@
 use colored::Colorize;
-use crate::{BOARD_SIZE, check_if_move_is_valid};
+use crate::{check_if_move_is_valid};
 use serde_derive::Serialize;
 use serde_derive::Deserialize;
 
@@ -25,7 +25,7 @@ impl UserInputCommand {
 
     pub fn execute(
         &mut self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         if !check_if_move_is_valid(sudoku_board, self.get_target_cell_and_value()) {
@@ -43,7 +43,7 @@ impl UserInputCommand {
 
     pub fn undo(
         &self,
-        sudoku_board: &mut [[usize; BOARD_SIZE as usize]; BOARD_SIZE as usize]
+        sudoku_board: &mut Vec<Vec<usize>>
     )
     {
         if !check_if_move_is_valid(sudoku_board, self.get_target_cell_and_undo_value())

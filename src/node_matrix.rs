@@ -1,7 +1,6 @@
 use crate::iter::RowIterator;
 use crate::{
-    four_by_four_cover_matrix, ninebyninecovermatrix, ColumnIterator, EXACT_COVER_MATRIX_COLUMNS,
-    EXACT_COVER_MATRIX_ROWS,
+    four_by_four_cover_matrix, ColumnIterator,
 };
 use std::rc::Rc;
 
@@ -40,12 +39,14 @@ impl NodeMatrix {
 
     pub fn arrange_matrix(
         &mut self,
-        cover_matrix: &[[u32; EXACT_COVER_MATRIX_COLUMNS as usize];
-             EXACT_COVER_MATRIX_ROWS as usize],
+        cover_matrix: &Vec<Vec<usize>>,
     ) -> () {
+        let cover_matrix_rows = cover_matrix.len();
+        let cover_matrix_columns = cover_matrix[0].len();
+
         let mut column_nodes: Vec<StrongNode> = Vec::new();
 
-        for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+        for column_index in 0..cover_matrix_columns {
             let column_header: StrongNode = Node::new_header(Some(column_index as usize));
             column_header.borrow_mut().link_left(&self.root_node);
             column_nodes.push(column_header);
@@ -53,9 +54,9 @@ impl NodeMatrix {
 
         let mut all_rows: Vec<Vec<StrongNode>> = Vec::new();
 
-        for row_index in 0..EXACT_COVER_MATRIX_ROWS {
+        for row_index in 0..cover_matrix_rows {
             let mut a_row: Vec<StrongNode> = Vec::new();
-            for column_index in 0..EXACT_COVER_MATRIX_COLUMNS {
+            for column_index in 0..cover_matrix_columns {
                 if cover_matrix[row_index as usize][column_index as usize] == 1 {
                     let header_node: &StrongNode = &(column_nodes[column_index as usize]);
 
@@ -87,7 +88,7 @@ impl NodeMatrix {
         self.column_nodes = column_nodes;
     }
 
-    pub fn search(&mut self, k: u32) {
+    pub fn search(&mut self, k: u32, cover_matrix_rows: usize) {
         if self.solution_found {
             return;
         }
@@ -102,7 +103,7 @@ impl NodeMatrix {
             }
         }
 
-        let column_node = self.choose_column();
+        let column_node = self.choose_column(cover_matrix_rows);
 
         NodeMatrix::cover(&column_node);
         let column_iterator = ColumnIterator::new(&column_node);
@@ -121,7 +122,7 @@ impl NodeMatrix {
                     .unwrap();
                 NodeMatrix::cover(&header);
             }
-            self.search(k + 1);
+            self.search(k + 1, cover_matrix_rows);
 
             self.potential_solution.pop();
 
@@ -148,7 +149,7 @@ impl NodeMatrix {
                 self.eighty_recursion_times += 1;
             }
 
-            if self.eighty_recursion_times > 2
+            if self.eighty_recursion_times > 2 && cover_matrix_rows < 4000 // Dont want to do this for 16*16 boards as they take longer
             {
                 self.solution_found = true;
             }
@@ -157,44 +158,9 @@ impl NodeMatrix {
         return;
     }
 
-    fn print_matrix_at_given_point(&self) {
-        // let mut cover_matrix = [
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0]
-        // ];
+    pub fn choose_column(&mut self, cover_matrix_rows: usize) -> StrongNode {
 
-        let mut cover_matrix = four_by_four_cover_matrix();
-        let row_iterator = RowIterator::new(&Rc::downgrade(&self.root_node));
-
-        for column_node in row_iterator {
-            // dbg!(column_node.upgrade().unwrap());
-            let column_iterator = ColumnIterator::new(&column_node.upgrade().unwrap());
-            for node in column_iterator {
-                let upgraded_node = node.upgrade().unwrap();
-                let column = upgraded_node.borrow_mut().column_index.unwrap();
-                let row = upgraded_node.borrow_mut().get_row().unwrap();
-
-                cover_matrix[row][column] = 1;
-            }
-        }
-
-        for i in 0..cover_matrix.len() {
-            for j in 0..cover_matrix[1].len() {
-                print!("|{}", cover_matrix[i][j]);
-            }
-            print!("|");
-            println!();
-        }
-
-        println!("--------------");
-    }
-
-    pub fn choose_column(&mut self) -> StrongNode {
-        let mut lowest_count = EXACT_COVER_MATRIX_ROWS as usize;
+        let mut lowest_count = cover_matrix_rows;
 
         let downgraded_root = Rc::downgrade(&self.root_node);
         let row_iterator = RowIterator::new(&downgraded_root);
