@@ -72,12 +72,12 @@ pub fn get_number_of_players() -> usize
 pub fn get_game_mode() -> String
 {
     print!("Please enter which game mode you would like to play:\n
-     Very easy (ve): A 4x4 board; \n
-     Easy (e): A 9x9 board with more clues; \n
-     Medium (m): A 9x9 board with less clues; \n
-     Hard (h): A 9x9 board with even less clues; \n
-     Very hard (vh): A 16x6 board; \n
-     Trivia (t): A 9x9 board, extra clues are added for every correct trivia answer:");
+     Very easy (ve): A 4x4 board, 60 minute timer; \n
+     Easy (e): A 9x9 board with more clues, 30 minute timer; \n
+     Medium (m): A 9x9 board with less clues, 20 minute timer; \n
+     Hard (h): A 9x9 board with even less clues, 10 minute timer; \n
+     Very hard (vh): A 16x6 board, 60 minute timer; \n
+     Trivia (t): A 9x9 board, extra clues are added for every correct trivia answer, 20 minute timer:");
 
     loop
     {
@@ -159,7 +159,7 @@ pub fn get_coordinates_for_hint(board_size: usize) -> (usize, usize)
 pub fn get_users_start_game() -> String
 {
     print!("Please enter whether you would like to: \n
-    Start a new game (n): A new game with a new randomly generated sudoku board; \n
+    Start a new game (n): A new single player game with a new randomly generated sudoku board; \n
     Load a previous game (l): Load a previous save game, the state of the board will be the same as when you saved it; \n
     Replay a previous game (r): Replay a previous save game, you will be able to step through every move you made, interrupting whenever you wish to make a move; \n
     Multiplayer game (m): A competitive multiplayer game where each player competes for score!: ");

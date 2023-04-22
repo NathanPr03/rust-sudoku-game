@@ -1,3 +1,5 @@
+use std::ops::Sub;
+use chrono::Duration;
 use crate::{BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
 use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move, get_users_two_player_move};
@@ -6,6 +8,7 @@ use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
 use crate::player::Player;
+use crate::util::calculate_timer;
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
@@ -26,6 +29,7 @@ pub struct GameHandler
     undo_handler: UndoHandler,
     initial_generated_board: Vec<Vec<usize>>,
     board_size: usize,
+    time_limit: usize
 }
 
 impl GameHandler
@@ -46,6 +50,7 @@ impl GameHandler
             undo_handler,
             initial_generated_board: Self::create_initial_board(board_size),
             board_size,
+            time_limit: calculate_timer(game_difficulty),
         }
     }
 
@@ -130,7 +135,6 @@ impl GameHandler
         while !self.is_game_finished(&sudoku_board)
         {
             let users_move = get_users_replay_move();
-
             match users_move.as_str() {
                 "c" => self.undo_handler.redo_last_command_reverse(&mut sudoku_board),
                 "u" => self.undo_handler.undo_last_command_reverse(&mut sudoku_board),
@@ -158,10 +162,25 @@ impl GameHandler
         &mut self,
         sudoku_board: &mut Vec<Vec<usize>>
     ) {
+        use std::time::Instant;
+        let now = Instant::now();
+
         while !self.is_game_finished(&sudoku_board)
         {
-            let users_move = get_users_move();
+            let elapsed = now.elapsed();
 
+            let duration = std::time::Duration::from_secs(self.time_limit as u64);
+            let time_left = duration.checked_sub(elapsed);
+
+            if time_left.is_none() {
+                println!("{}", "GAME OVER, you have ran out of time".red());
+                return;
+            }
+
+            let formatted_message = format!("Time left: {:.2?}", time_left.unwrap());
+            println!("{}", formatted_message.purple());
+
+            let users_move = get_users_move();
             match users_move.as_str() {
                 "c" => self.change_cell(sudoku_board),
                 "u" => self.undo(sudoku_board),
@@ -176,7 +195,7 @@ impl GameHandler
 
     fn trivia(&mut self)
     {
-        let mut trivia = Trivia::new();
+        let trivia = Trivia::new();
 
         println!("Welcome to the trivia mode! You will be given 10 true or false computer science questions, \
         for every one you answer correctly, you will get an extra clue in your sudoku board");
@@ -271,6 +290,7 @@ impl GameHandler
 
         return board;
     }
+
     fn is_game_finished
     (
         &self,

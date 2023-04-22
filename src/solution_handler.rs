@@ -19,7 +19,6 @@ pub fn find_solution(sudoku_board: &mut Vec<Vec<usize>>)-> bool {
 
     let mut array_matrix = ArrayMatrix::new(board_size);
     array_matrix.create_sparse_matrix(&mut cover_matrix, &sudoku_board);
-    // ArrayMatrix::print_board(&mut cover_matrix);
 
     check_matrix_formed_properly(&cover_matrix);
 
