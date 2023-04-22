@@ -39,7 +39,7 @@ impl NodeMatrix {
 
     pub fn arrange_matrix(
         &mut self,
-        cover_matrix: &Vec<Vec<usize>>,
+        cover_matrix: &Vec<Vec<u8>>,
     ) -> () {
         let cover_matrix_rows = cover_matrix.len();
         let cover_matrix_columns = cover_matrix[0].len();

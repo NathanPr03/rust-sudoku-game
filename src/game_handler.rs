@@ -1,5 +1,4 @@
-
-
+use std::ops::Div;
 use crate::{BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
 use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move, get_users_two_player_move};
@@ -9,11 +8,12 @@ use serde_derive::Deserialize;
 use colored::Colorize;
 use crate::player::Player;
 use crate::util::{calculate_players_score, calculate_timer};
+use compound_duration;
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
     //These values are the number percentage of clues present in a board
-    VeryEasy = 56,
+    VeryEasy = 85,
     Easy = 55,
     Medium = 40,
     Trivia = 39,
@@ -192,8 +192,11 @@ impl GameHandler
 
                 return;
             }
+            let unwrapped_time = time_left.unwrap();
+            // let minutes = unwrapped_time.div(60);  // extract minutes from duration
+            // let seconds_left = minutes % 60;
 
-            let formatted_message = format!("Time left: {:.2?}", time_left.unwrap());
+            let formatted_message = format!("Time left: {} minutes and {} seconds", "e", "a");
             println!("{}", formatted_message.purple());
 
             let users_move = get_users_move();

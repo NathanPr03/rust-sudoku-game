@@ -290,9 +290,11 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 
     let string_value = get_user_input_generic();
 
-    let regex_string_two = format!(r"\b[1-{board_size}]\b");
+    let regex_string_two = format!(r"[1-9]");
     let valid_value = Regex::new(&*regex_string_two).unwrap();
-    if !valid_value.is_match(&string_value)
+    let int_value: usize = string_value.parse().unwrap();
+
+    if !valid_value.is_match(&string_value) || int_value > board_size
     {
         let error_message = format!("Invalid value supplied, please make sure to enter a value between 1 and {board_size}").red();
         println!("{error_message}");
