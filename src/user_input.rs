@@ -183,14 +183,15 @@ pub fn get_users_replay_move() -> String
     undo last move (u), \
     interrupt replay and make a different move (i), \
     save game (s), \
+    show information about the board and completed cells (k), \
     or quit (q): ");
 
     let users_move = get_user_input_generic();
 
-    let viable_moves: [&str; 5] = ["c", "u", "i", "s", "q"];
+    let viable_moves: [&str; 6] = ["c", "u", "i", "s", "q", "k"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("{}", "Invalid move supplied. Please select one of (c), (u), (i), (s), (q). Do not include the brackets in your input: ".red());
+        println!("{}", "Invalid move supplied. Please select one of (c), (u), (i), (s), (k), (q). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 
@@ -207,14 +208,15 @@ pub fn get_users_two_player_move(player_name: String) -> String
             undo last move (u), \
             redo last move (r), \
             get a hint (h) \
+            show information about the board and completed cells (k), \
             or pass (p): ");
 
         users_move = get_user_input_generic();
 
-        let viable_moves: [&str; 5] = ["c", "u", "r", "h", "p"];
+        let viable_moves: [&str; 6] = ["c", "u", "r", "h", "p", "k"];
 
         if !viable_moves.contains(&&*users_move) {
-            println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (p). Do not include the brackets in your input: ".red());
+            println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (k), (p). Do not include the brackets in your input: ".red());
         }else{
             valid = true;
         }
@@ -230,14 +232,15 @@ pub fn get_users_move() -> String
     redo last move (r), \
     get a hint (h) \
     save game (s), \
+    show information about the board and completed cells (k), \
     or quit (q): ");
 
     let users_move = get_user_input_generic();
 
-    let viable_moves: [&str; 6] = ["c", "u", "r", "h", "s", "q"];
+    let viable_moves: [&str; 7] = ["c", "u", "r", "h", "s", "k", "q"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (q). Do not include the brackets in your input: ".red());
+        println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (k), (q). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 

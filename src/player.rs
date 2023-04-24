@@ -55,6 +55,11 @@ impl Player
         self.trivias_answered
     }
 
+    pub fn get_moves_made(&self) -> usize
+    {
+        return self.moves_made;
+    }
+
     pub fn increment_moves_made(&mut self)
     {
         self.moves_made += 1;

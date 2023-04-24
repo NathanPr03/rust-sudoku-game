@@ -7,7 +7,7 @@ use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
 use crate::player::Player;
-use crate::util::{calculate_players_score, calculate_timer, format_duration};
+use crate::util::{calculate_players_score, calculate_timer, format_duration, print_stats};
 
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
@@ -76,7 +76,7 @@ impl GameHandler
 
         let score = calculate_players_score
         (
-            0,
+            self.player.get_moves_made(),
             self.player.get_hints_used(),
             self.player.get_undos_used(),
             self.player.get_redos_used(),
@@ -119,6 +119,7 @@ impl GameHandler
             "u" => self.undo(sudoku_board),
             "r" => self.redo(sudoku_board, false),
             "h" => self.hint(sudoku_board),
+            "k" => print_stats(sudoku_board, self.player.clone()),
             "p" => return false,
             _ => {}
         }
@@ -150,6 +151,7 @@ impl GameHandler
             match users_move.as_str() {
                 "c" => self.undo_handler.redo_last_command_reverse(&mut sudoku_board),
                 "u" => self.undo_handler.undo_last_command_reverse(&mut sudoku_board),
+                "k" => print_stats(&sudoku_board, self.player.clone()),
                 "i" => self.game_loop(&mut sudoku_board),
                 "q" => return,
                 _ => {}
@@ -205,6 +207,7 @@ impl GameHandler
                 "r" => self.redo(sudoku_board, true),
                 "h" => self.hint(sudoku_board),
                 "s" => self.save(),
+                "k" => print_stats(sudoku_board, self.player.clone()),
                 "q" => return,
                 _ => {}
             }

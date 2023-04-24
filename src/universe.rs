@@ -143,7 +143,7 @@ impl Universe {
         {
             let score = calculate_players_score
             (
-                0,
+                player.get_moves_made(),
                 player.get_hints_used(),
                 player.get_undos_used(),
                 player.get_redos_used(),
