@@ -1,25 +1,31 @@
 use crate::{GameHandler, get_save_game};
-use std::fs::{create_dir, File, read_dir, read_to_string};
+use std::fs::{create_dir_all, File, read_dir, read_to_string};
 use std::io::Write;
-use chrono::{DateTime, Local};
+use std::path::Path;
+use std::time::SystemTime;
+use chrono::{DateTime, Local, NaiveDateTime};
 
 // This file handles the loading and saving of games
 
-pub fn save(
-    game_handler: &GameHandler
-)
-{
+pub fn save(game_handler: &GameHandler) {
     let json = serde_json::to_string(&game_handler).unwrap();
 
-    let now: DateTime<Local> = Local::now();
-    let timestamp = now.to_rfc3339();
+    let timestamp = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let formatted_timestamp = chrono::NaiveDateTime::from_timestamp_opt(timestamp as i64, 0)
+        .map(|dt| dt.format("%Y-%m-%d_%H-%M-%S").to_string())
+        .unwrap_or_default();
 
-    let directory_path = format!("./src/savegames/{timestamp}");
-    create_dir(directory_path.clone()).expect("Directory cannot be created, save game failed");
+    let dir_path = format!("./src/savegames/{}", formatted_timestamp);
+    create_dir_all(&dir_path).expect("Directory couldnt be created, savegame failed");
 
-    let mut file = File::create(format!("{}/savegame.json", directory_path.clone())).unwrap();
-    file.write_all(json.as_ref()).expect("Could not write undo stack");
+    let file_path = format!("{}/savegame.json", dir_path);
+    let mut file = File::create(&file_path).unwrap();
+    file.write_all(json.as_ref()).expect("Cannot write to json file, savegame failed");
 }
+
 
 pub fn load() -> GameHandler
 {
@@ -38,11 +44,15 @@ pub fn load() -> GameHandler
         }
 
         counter += 1;
-        let datetime = DateTime::parse_from_rfc3339(unwrapped_dir.file_name().to_str().unwrap()).unwrap();
-        let human_readable = datetime.format("%A, %B %d, %Y at %I:%M %p");
+        let file_path = unwrapped_dir.file_name();
+        let file_name = Path::new(file_path.to_str().unwrap()).file_name().unwrap().to_str().unwrap();
 
-        let human_readable_as_string = human_readable.to_string().replace("\"", "");
-        println!("{counter}: {}", human_readable_as_string);
+        let datetime = NaiveDateTime::parse_from_str(file_name, "%Y-%m-%d_%H-%M-%S").unwrap();
+        let local_datetime: DateTime<Local> = DateTime::from_utc(datetime, *Local::now().offset());
+        let formatted_datetime = local_datetime.format("%A, %B %e %Y at %I:%M %p");
+
+        println!("{counter}: {}", formatted_datetime);
+
     }
 
     let mut save_game = get_save_game(counter);

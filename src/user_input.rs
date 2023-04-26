@@ -318,5 +318,5 @@ fn get_user_input_generic() -> String
 
     stdin().read_line(&mut user_input).expect("failed to readline");
 
-    return user_input.to_string().replace("\n", "");
+    return user_input.trim().to_string();
 }
