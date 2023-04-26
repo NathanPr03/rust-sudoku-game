@@ -84,6 +84,14 @@ pub fn calculate_players_score
 }
 
 pub fn print_stats(sudoku_board: &Vec<Vec<usize>>, player: Player) {
+    println!("{} here are your stats", player.get_name());
+    println!("Number of empty spaces: {}", empty_spaces);
+    println!("Number with least amount filled: {}", least_filled);
+
+    if sudoku_board.len() != 9 {
+        return;
+    }
+    
     let mut empty_spaces = 0;
     let mut counts = [0; 10];
 
@@ -104,9 +112,6 @@ pub fn print_stats(sudoku_board: &Vec<Vec<usize>>, player: Player) {
         }
     }
 
-    println!("{} here are your stats", player.get_name());
-    println!("Number of empty spaces: {}", empty_spaces);
-    println!("Number with least amount filled: {}", least_filled);
     println!("Counts of each number (1-9): {:?}", &counts[1..]);
     println!("Moves made: {}", player.get_moves_made());
     println!("Hints used: {}", player.get_hints_used());

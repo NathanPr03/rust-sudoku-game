@@ -9,7 +9,7 @@ fn main() {
 
     let handler = builder
         .spawn(|| {
-            println!("{}", "Welcome to SudoGenius, a challenging and addictive sudoku game! \
+            println!("{}", "Welcome to Pseudoku, a challenging and addictive sudoku game! \
             The objective of the game is to fill a 9x9 grid with numbers from 1 to 9 (and if you fancy a challenge there are other board sizes and modes!), \
             making sure that each row, column, and 3x3 sub-grid contains all the numbers from 1 to 9 without any repetition. \
             The game starts with some numbers already filled in, and your task is to fill in the remaining numbers to complete the grid.\
