@@ -13,6 +13,7 @@ pub struct ColumnIteratorInclusive {
     next_down: StrongNode,
 }
 
+// Inspriration for this taken from https://github.com/masonium/exact-cover-rs/blob/master/src/iter.rs
 impl ColumnIterator {
     pub fn new(column_header: &StrongNode) -> ColumnIterator {
         ColumnIterator {
@@ -53,6 +54,7 @@ impl Iterator for ColumnIteratorInclusive {
         }
     }
 }
+
 #[derive(Debug)]
 pub struct RowIterator {
     next_left: StrongNode,
@@ -97,7 +99,6 @@ impl DoubleEndedIterator for RowIterator {
     }
 }
 
-// Dont know if we need this yet
 impl DoubleEndedIterator for ColumnIterator {
     fn next_back(&mut self) -> Option<WeakNode> {
         let ref weak_next: WeakNode = self.next_up.borrow().up.clone();

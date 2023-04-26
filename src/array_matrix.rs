@@ -3,6 +3,7 @@ pub struct ArrayMatrix {
     board_size_squared: usize,
 }
 
+// This implementation creates an exact cover matrix representation of the sudoku board stored as a vector of vector of numbers
 impl ArrayMatrix {
     pub fn new(
         board_size: usize

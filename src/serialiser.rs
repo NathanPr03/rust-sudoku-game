@@ -3,6 +3,8 @@ use std::fs::{create_dir, File, read_dir, read_to_string};
 use std::io::Write;
 use chrono::{DateTime, Local};
 
+// This file handles the loading and saving of games
+
 pub fn save(
     game_handler: &GameHandler
 )

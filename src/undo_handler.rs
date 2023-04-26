@@ -7,7 +7,7 @@ use colored::Colorize;
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UndoHandler
 {
-    undo_stack: VecDeque<UserInputCommand>,
+    undo_stack: VecDeque<UserInputCommand>, // Deques are used here as we need to pop and push to both ends of the vector
     redo_stack: VecDeque<UserInputCommand>
 }
 
@@ -137,6 +137,7 @@ impl UndoHandler
         println!("{}", success_message);
     }
 
+    // After another move has been made, redos no longer make sense so we should invalidate the stack
     pub fn invalidate_redo_stack(&mut self)
     {
         self.redo_stack = VecDeque::new();

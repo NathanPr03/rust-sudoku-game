@@ -14,6 +14,7 @@ pub struct Player
     pub game_difficulty: GameDifficulty
 }
 
+// This holds the state of the player
 impl Player
 {
     pub fn new(name: String, game_difficulty: GameDifficulty) -> Player

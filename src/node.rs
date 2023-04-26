@@ -4,18 +4,19 @@ use std::rc::{Rc, Weak};
 
 #[derive(Debug, PartialEq)]
 pub enum NodeExtra {
-    RowIndex(usize), // The node is an inner node, representing part of an action.
-    Count(usize),    // The node is a header for a constraints.
-    Root,            // Root node.
+    RowIndex(usize),
+    Count(usize),
+    Root,
 }
 
+// Inspiration for this data structure taken from https://github.com/masonium/exact-cover-rs/blob/master/src/node.rs
 #[derive(Debug)]
 pub struct Node {
     pub up: Weak<RefCell<Node>>,
     pub down: Weak<RefCell<Node>>,
     pub left: Weak<RefCell<Node>>,
     pub right: Weak<RefCell<Node>>,
-    pointer_to_self: Weak<RefCell<Node>>, //Probably dont need this
+    pointer_to_self: Weak<RefCell<Node>>,
 
     pub column_index: Option<usize>,
     pub header: Weak<RefCell<Node>>,
