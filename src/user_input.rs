@@ -93,16 +93,16 @@ pub fn get_game_mode() -> String
 
 pub fn get_trivia_input(question: String) -> String
 {
-    print!("Is the following trivia question true (T) or false (F): {question}: ");
+    print!("Is the following trivia question true (t) or false (f): {question}: ");
 
     loop
     {
         let user_input = get_user_input_generic();
 
-        if user_input == "T" || user_input == "F" {
+        if user_input == "t" || user_input == "f" {
             return user_input;
         }
-        let error_message = "Invalid input, please enter either T or F: ".red();
+        let error_message = "Invalid input, please enter either t or f: ".red();
         println!("{error_message}");
     }
 }
@@ -183,14 +183,15 @@ pub fn get_users_replay_move() -> String
     undo last move (u), \
     interrupt replay and make a different move (i), \
     save game (s), \
+    show information about the board and completed cells (k), \
     or quit (q): ");
 
     let users_move = get_user_input_generic();
 
-    let viable_moves: [&str; 5] = ["c", "u", "i", "s", "q"];
+    let viable_moves: [&str; 6] = ["c", "u", "i", "s", "q", "k"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("{}", "Invalid move supplied. Please select one of (c), (u), (i), (s), (q). Do not include the brackets in your input: ".red());
+        println!("{}", "Invalid move supplied. Please select one of (c), (u), (i), (s), (k), (q). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 
@@ -207,14 +208,15 @@ pub fn get_users_two_player_move(player_name: String) -> String
             undo last move (u), \
             redo last move (r), \
             get a hint (h) \
+            show information about the board and completed cells (k), \
             or pass (p): ");
 
         users_move = get_user_input_generic();
 
-        let viable_moves: [&str; 5] = ["c", "u", "r", "h", "p"];
+        let viable_moves: [&str; 6] = ["c", "u", "r", "h", "p", "k"];
 
         if !viable_moves.contains(&&*users_move) {
-            println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (p). Do not include the brackets in your input: ".red());
+            println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (k), (p). Do not include the brackets in your input: ".red());
         }else{
             valid = true;
         }
@@ -230,14 +232,15 @@ pub fn get_users_move() -> String
     redo last move (r), \
     get a hint (h) \
     save game (s), \
+    show information about the board and completed cells (k), \
     or quit (q): ");
 
     let users_move = get_user_input_generic();
 
-    let viable_moves: [&str; 6] = ["c", "u", "r", "h", "s", "q"];
+    let viable_moves: [&str; 7] = ["c", "u", "r", "h", "s", "k", "q"];
 
     if !viable_moves.contains(&&*users_move) {
-        println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (q). Do not include the brackets in your input: ".red());
+        println!("{}", "Invalid move supplied. Please select one of (c), (u), (r), (h), (s), (k), (q). Do not include the brackets in your input: ".red());
         return "Invalid".to_string();
     }
 
@@ -290,9 +293,11 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 
     let string_value = get_user_input_generic();
 
-    let regex_string_two = format!(r"\b[1-{board_size}]\b");
+    let regex_string_two = format!(r"[1-9]");
     let valid_value = Regex::new(&*regex_string_two).unwrap();
-    if !valid_value.is_match(&string_value)
+    let int_value: usize = string_value.parse().unwrap();
+
+    if !valid_value.is_match(&string_value) || int_value > board_size
     {
         let error_message = format!("Invalid value supplied, please make sure to enter a value between 1 and {board_size}").red();
         println!("{error_message}");

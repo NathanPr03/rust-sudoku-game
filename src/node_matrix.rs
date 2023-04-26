@@ -1,6 +1,6 @@
 use crate::iter::RowIterator;
 use crate::{
-    four_by_four_cover_matrix, ColumnIterator,
+    ColumnIterator,
 };
 use std::rc::Rc;
 
@@ -39,7 +39,7 @@ impl NodeMatrix {
 
     pub fn arrange_matrix(
         &mut self,
-        cover_matrix: &Vec<Vec<usize>>,
+        cover_matrix: &Vec<Vec<u8>>,
     ) -> () {
         let cover_matrix_rows = cover_matrix.len();
         let cover_matrix_columns = cover_matrix[0].len();
@@ -149,7 +149,7 @@ impl NodeMatrix {
                 self.eighty_recursion_times += 1;
             }
 
-            if self.eighty_recursion_times > 2 && cover_matrix_rows < 4000 // Dont want to do this for 16*16 boards as they take longer
+            if self.eighty_recursion_times > 2 //&& cover_matrix_rows < 4000 // Dont want to do this for 16*16 boards as they take longer
             {
                 self.solution_found = true;
             }

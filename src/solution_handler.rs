@@ -10,7 +10,7 @@ pub fn find_solution(sudoku_board: &mut Vec<Vec<usize>>)-> bool {
     let mut is_solution_found = false;
 
     // Due to the way arrays work in rust its accessed cover_matrix[row_index][column_index]!!
-    let mut cover_matrix: Vec<Vec<usize>> = nine_by_nine_cover_matrix();
+    let mut cover_matrix: Vec<Vec<u8>> = nine_by_nine_cover_matrix();
     if board_size == 4 {
         cover_matrix = four_by_four_cover_matrix();
     } else if board_size == 16 {
@@ -65,7 +65,7 @@ fn convert_matrix_to_sudoku_grid(
 }
 
 fn check_matrix_formed_properly(
-    cover_matrix: &Vec<Vec<usize>>,
+    cover_matrix: &Vec<Vec<u8>>,
 ) {
     let cover_matrix_columns = cover_matrix[0].len();
 

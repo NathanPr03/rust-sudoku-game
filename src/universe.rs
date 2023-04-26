@@ -1,4 +1,4 @@
-use std::time::Instant;
+
 use std::collections::HashMap;
 use colored::Colorize;
 use crate::player::Player;
@@ -59,8 +59,8 @@ impl Universe {
             board_size
         );
 
-        game_handler.play();
-
+        let score = game_handler.play();
+        println!("Your score was: {score}!");
         self.game_selected = true;
     }
 
@@ -143,7 +143,7 @@ impl Universe {
         {
             let score = calculate_players_score
             (
-                0,
+                player.get_moves_made(),
                 player.get_hints_used(),
                 player.get_undos_used(),
                 player.get_redos_used(),

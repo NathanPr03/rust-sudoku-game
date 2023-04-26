@@ -1,5 +1,5 @@
 use colored::Colorize;
-use crate::{GameDifficulty};
+use crate::{GameDifficulty, Player};
 
 pub fn pretty_print_board(sudoku_board: &Vec<Vec<usize>>) {
     let board_size = sudoku_board.len();
@@ -39,7 +39,7 @@ pub fn pretty_print_board(sudoku_board: &Vec<Vec<usize>>) {
         println!("{}", row);
     }
     println!("╚{}╝", border);
-    println!("  {}", column_labels);
+    println!(" {}", column_labels);
 }
 
 pub fn calculate_timer(game_difficulty: GameDifficulty) -> usize
@@ -70,17 +70,56 @@ pub fn calculate_players_score
     let neg_redo = redos_used * 2;
 
     let game_diff_score = match game_difficulty {
-        GameDifficulty::VeryEasy => 10,
-        GameDifficulty::Easy => 30,
-        GameDifficulty::Medium => 50,
-        GameDifficulty::Hard => 80,
-        GameDifficulty::VeryHard => 100,
-        GameDifficulty::Trivia => 40,
+        GameDifficulty::VeryEasy => 30,
+        GameDifficulty::Easy => 90,
+        GameDifficulty::Medium => 150,
+        GameDifficulty::Hard => 240,
+        GameDifficulty::VeryHard => 300,
+        GameDifficulty::Trivia => 120,
     };
 
     let neg_moves = moves_made / 2;
 
     return game_diff_score + trivias_answered - neg_hint - neg_undo - neg_redo - neg_moves;
+}
+
+pub fn print_stats(sudoku_board: &Vec<Vec<usize>>, player: Player) {
+    let mut empty_spaces = 0;
+    let mut counts = [0; 10];
+
+    for row in sudoku_board {
+        for &num in row {
+            if num == 0 {
+                empty_spaces += 1;
+            } else {
+                counts[num] += 1;
+            }
+        }
+    }
+
+    let mut least_filled = 1;
+    for i in 2..10 {
+        if counts[i] < counts[least_filled] {
+            least_filled = i;
+        }
+    }
+
+    println!("{} here are your stats", player.get_name());
+    println!("Number of empty spaces: {}", empty_spaces);
+    println!("Number with least amount filled: {}", least_filled);
+    println!("Counts of each number (1-9): {:?}", &counts[1..]);
+    println!("Moves made: {}", player.get_moves_made());
+    println!("Hints used: {}", player.get_hints_used());
+    println!("Undos used: {}", player.get_undos_used());
+    println!("Redos used: {}", player.get_redos_used());
+}
+
+
+pub fn format_duration(duration: u64) -> String {
+    let minutes = duration / 60;
+    let seconds = duration % 60;
+
+    return format!("{} minutes and {:02} seconds", minutes, seconds)
 }
 
 pub fn check_if_move_is_valid

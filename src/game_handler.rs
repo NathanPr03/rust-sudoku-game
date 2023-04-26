@@ -1,5 +1,4 @@
-use std::ops::Sub;
-use chrono::Duration;
+
 use crate::{BoardGenerator, get_trivia_input, pretty_print_board, save, take_user_input_for_cell, UndoHandler, UserInputCommand};
 use crate::hint_service::get_hint_command;
 use crate::user_input::{get_coordinates_for_hint, get_users_move, get_users_replay_move, get_users_two_player_move};
@@ -8,12 +7,13 @@ use serde_derive::Serialize;
 use serde_derive::Deserialize;
 use colored::Colorize;
 use crate::player::Player;
-use crate::util::calculate_timer;
+use crate::util::{calculate_players_score, calculate_timer, format_duration, print_stats};
+
 
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub enum GameDifficulty {
     //These values are the number percentage of clues present in a board
-    VeryEasy = 56,
+    VeryEasy = 85,
     Easy = 55,
     Medium = 40,
     Trivia = 39,
@@ -54,7 +54,7 @@ impl GameHandler
         }
     }
 
-    pub fn play(&mut self)
+    pub fn play(&mut self) -> usize
     {
         let mut sudoku_board = self.initial_generated_board.clone();
 
@@ -73,6 +73,18 @@ impl GameHandler
         self.initial_generated_board = sudoku_board.clone();
 
         self.game_loop(&mut sudoku_board);
+
+        let score = calculate_players_score
+        (
+            self.player.get_moves_made(),
+            self.player.get_hints_used(),
+            self.player.get_undos_used(),
+            self.player.get_redos_used(),
+            self.player.game_difficulty,
+            self.player.get_trivias_answered()
+        );
+
+        return score;
     }
 
     pub fn multiple_player_setup(&mut self) -> Vec<Vec<usize>>
@@ -107,6 +119,7 @@ impl GameHandler
             "u" => self.undo(sudoku_board),
             "r" => self.redo(sudoku_board, false),
             "h" => self.hint(sudoku_board),
+            "k" => print_stats(sudoku_board, self.player.clone()),
             "p" => return false,
             _ => {}
         }
@@ -138,6 +151,7 @@ impl GameHandler
             match users_move.as_str() {
                 "c" => self.undo_handler.redo_last_command_reverse(&mut sudoku_board),
                 "u" => self.undo_handler.undo_last_command_reverse(&mut sudoku_board),
+                "k" => print_stats(&sudoku_board, self.player.clone()),
                 "i" => self.game_loop(&mut sudoku_board),
                 "q" => return,
                 _ => {}
@@ -173,20 +187,27 @@ impl GameHandler
             let time_left = duration.checked_sub(elapsed);
 
             if time_left.is_none() {
-                println!("{}", "GAME OVER, you have ran out of time".red());
+                println!("{}", "🚨🚨🚨 ERROR: Time's up! ⏰⏰⏰ \
+                Unfortunately, you were not able to complete the Sudoku game in time. 😞😞😞 \
+                Don't worry, there's always next time! 🤞🤞🤞 \
+                Keep practicing and you'll get better! 💪💪💪".red());
+
                 return;
             }
+            let unwrapped_time = time_left.unwrap();
+            let formatted_time = format_duration(unwrapped_time.as_secs());
 
-            let formatted_message = format!("Time left: {:.2?}", time_left.unwrap());
+            let formatted_message = format!("You have {formatted_time} left");
             println!("{}", formatted_message.purple());
 
             let users_move = get_users_move();
             match users_move.as_str() {
                 "c" => self.change_cell(sudoku_board),
                 "u" => self.undo(sudoku_board),
-                "r" => self.redo(sudoku_board, false),
+                "r" => self.redo(sudoku_board, true),
                 "h" => self.hint(sudoku_board),
                 "s" => self.save(),
+                "k" => print_stats(sudoku_board, self.player.clone()),
                 "q" => return,
                 _ => {}
             }
@@ -241,7 +262,7 @@ impl GameHandler
     {
         self.undo_handler.redo_last_command(sudoku_board);
         if not_replay {
-            self.player.increment_redos(); 
+            self.player.increment_redos();
             pretty_print_board(&sudoku_board);
         }
     }
@@ -303,7 +324,10 @@ impl GameHandler
             }
         }
 
-        let winning_message = "CONGRATULATIONS! You have completed the sudoku, why not try a different game mode?".green();
+        let winning_message = "🎉🎊👏 Congratulations! 👏🎊🎉 \
+        You have successfully completed the Sudoku puzzle! 🧩🎉👍 \
+        👨‍💻👩‍💻 Your logic and problem-solving skills are on point! 🤓💪 \
+        👏👏👏 Well done! 👏👏👏".green();
         println!("{}", winning_message);
 
         return true;

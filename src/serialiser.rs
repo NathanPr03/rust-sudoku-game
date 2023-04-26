@@ -28,13 +28,19 @@ pub fn load() -> GameHandler
     for directory in directories
     {
         let unwrapped_dir = directory.unwrap();
-        if unwrapped_dir.file_name().to_str().unwrap() == ".gitkeep"
+
+        // TODO: Drunk rn but clean up these calls to `unwrapped_dir`
+        if unwrapped_dir.file_name().to_str().unwrap().clone() == ".gitkeep"
         {
             continue;
         }
 
         counter += 1;
-        println!("{counter}: {}", unwrapped_dir.path().display());
+        let datetime = DateTime::parse_from_rfc3339(unwrapped_dir.file_name().to_str().unwrap()).unwrap();
+        let human_readable = datetime.format("%A, %B %d, %Y at %I:%M %p");
+
+        let human_readable_as_string = human_readable.to_string().replace("\"", "");
+        println!("{counter}: {}", human_readable_as_string);
     }
 
     let mut save_game = get_save_game(counter);

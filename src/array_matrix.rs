@@ -15,7 +15,7 @@ impl ArrayMatrix {
 
     pub fn create_sparse_matrix(
         &mut self,
-        cover_matrix: &mut Vec<Vec<usize>>,
+        cover_matrix: &mut Vec<Vec<u8>>,
         sudoku_board: &Vec<Vec<usize>>,
     ) -> () {
         self.generate_array_matrix(cover_matrix);
@@ -25,7 +25,7 @@ impl ArrayMatrix {
 
     fn generate_array_matrix(
         &mut self,
-        cover_matrix: &mut Vec<Vec<usize>>,
+        cover_matrix: &mut Vec<Vec<u8>>,
     ) -> () {
         self.cell_constraint(cover_matrix);
         self.row_constraint(cover_matrix);
@@ -35,7 +35,7 @@ impl ArrayMatrix {
 
     fn remove_clues_from_matrix(
         &mut self,
-        cover_matrix: &mut Vec<Vec<usize>>,
+        cover_matrix: &mut Vec<Vec<u8>>,
         sudoku_board: &Vec<Vec<usize>>,
     ) {
         let exact_matrix_columns = cover_matrix[0].len();
@@ -46,10 +46,6 @@ impl ArrayMatrix {
                 if value_of_cell != 0 {
                     for i in 0..self.board_size {
                         if value_of_cell - 1 != i as usize {
-                            let mut hack = 0;
-                            if i == self.board_size {
-                                hack = 1;
-                            }
                             let matrix_row_index =
                                 (row_index * self.board_size_squared) + column_index * self.board_size + i;
 
@@ -65,7 +61,7 @@ impl ArrayMatrix {
 
     fn cell_constraint(
         &mut self,
-        cover_matrix: &mut Vec<Vec<usize>>,
+        cover_matrix: &mut Vec<Vec<u8>>,
     ) -> () {
         let mut row_index = self.board_size;
 
@@ -79,7 +75,7 @@ impl ArrayMatrix {
 
     fn row_constraint(
         &mut self,
-        cover_matrix: &mut Vec<Vec<usize>>,
+        cover_matrix: &mut Vec<Vec<u8>>,
     ) -> () {
         let cover_matrix_rows = cover_matrix.len();
         let mut pullback = self.board_size_squared;
@@ -102,7 +98,7 @@ impl ArrayMatrix {
 
     fn column_constraint(
         &mut self,
-        cover_matrix: &mut Vec<Vec<usize>>,
+        cover_matrix: &mut Vec<Vec<u8>>,
     ) -> () {
         let cover_matrix_rows = cover_matrix.len();
         let board_size_squared_times_two = (self.board_size_squared) + (self.board_size_squared);
@@ -121,7 +117,7 @@ impl ArrayMatrix {
 
     fn region_constraint(
         &mut self,
-        cover_matrix: &mut Vec<Vec<usize>>,
+        cover_matrix: &mut Vec<Vec<u8>>,
     ) -> () {
         let cover_matrix_rows = cover_matrix.len();
 
