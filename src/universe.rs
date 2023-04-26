@@ -11,6 +11,8 @@ pub struct Universe {
     game_selected: bool
 }
 
+// This implementation is the absolute top level that includes the whole game state.
+// It defers to `GameHandler` to handle the specific game implementation
 impl Universe {
     pub fn new() -> Universe
     {

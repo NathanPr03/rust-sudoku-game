@@ -16,6 +16,7 @@ pub struct NodeMatrix {
     eighty_recursion_times: usize,
 }
 
+// This implementation has all the dancing links logic encapsulated inside
 impl NodeMatrix {
     pub fn new() -> NodeMatrix {
         return NodeMatrix {
@@ -37,6 +38,7 @@ impl NodeMatrix {
         return &self.rows;
     }
 
+    // This takes a matrix as arrays and arranges it as nodes in order to do dancing links
     pub fn arrange_matrix(
         &mut self,
         cover_matrix: &Vec<Vec<u8>>,
@@ -88,6 +90,7 @@ impl NodeMatrix {
         self.column_nodes = column_nodes;
     }
 
+    // This function is what searches for the solution to the sudoku board
     pub fn search(&mut self, k: u32, cover_matrix_rows: usize) {
         if self.solution_found {
             return;
@@ -149,7 +152,7 @@ impl NodeMatrix {
                 self.eighty_recursion_times += 1;
             }
 
-            if self.eighty_recursion_times > 2 //&& cover_matrix_rows < 4000 // Dont want to do this for 16*16 boards as they take longer
+            if self.eighty_recursion_times > 2
             {
                 self.solution_found = true;
             }

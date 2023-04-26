@@ -11,6 +11,8 @@ pub struct UserInputCommand {
     previous_value: usize
 }
 
+// This is an implementation of the command pattern, this encapsulates a user request as an object.
+// This allows us to persist it
 impl UserInputCommand {
     pub fn new(x: usize, y: usize, value: usize) -> UserInputCommand
     {

@@ -32,6 +32,7 @@ pub struct GameHandler
     time_limit: usize
 }
 
+//This is the top level class that handles the actual playing of the sudoku game
 impl GameHandler
 {
     pub fn new
@@ -87,6 +88,7 @@ impl GameHandler
         return score;
     }
 
+    // When starting a multiplayer game this method should be called then followed up with `multiple_player_play`
     pub fn multiple_player_setup(&mut self) -> Vec<Vec<usize>>
     {
         let mut sudoku_board = self.initial_generated_board.clone();
@@ -171,6 +173,7 @@ impl GameHandler
         return self.player.clone();
     }
 
+    // This is the loop to keep requesting the users move until the game is complete
     fn game_loop
     (
         &mut self,

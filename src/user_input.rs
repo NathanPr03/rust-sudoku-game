@@ -3,6 +3,8 @@ use regex::Regex;
 use crate::user_input_command::UserInputCommand;
 use colored::Colorize;
 
+// This file handles getting all the user input
+
 pub fn get_single_players_name() -> String
 {
     print!("Please enter your name: ");
