@@ -78,6 +78,7 @@ impl UndoHandler
         sudoku_board: &mut Vec<Vec<usize>>
     )
     {
+        let undo_stack_preserver = self.undo_stack.clone();
         while self.undo_stack.len() > 0 {
             let command = self.undo_stack.pop_back();
             if !command.is_some()
@@ -89,6 +90,7 @@ impl UndoHandler
             unwrapped_command.execute(sudoku_board);
         }
 
+        self.undo_stack = undo_stack_preserver;
         self.invalidate_redo_stack();
     }
 

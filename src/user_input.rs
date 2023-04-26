@@ -297,15 +297,21 @@ pub fn take_user_input_for_cell(board_size: usize) -> Option<UserInputCommand>
 
     let regex_string_two = format!(r"[1-9]");
     let valid_value = Regex::new(&*regex_string_two).unwrap();
-    let int_value: usize = string_value.parse().unwrap();
 
-    if !valid_value.is_match(&string_value) || int_value > board_size
+    if !valid_value.is_match(&string_value)
     {
         let error_message = format!("Invalid value supplied, please make sure to enter a value between 1 and {board_size}").red();
         println!("{error_message}");
         return None;
     }
+    let int_value: usize = string_value.parse().unwrap();
 
+    if int_value > board_size
+    {
+        let error_message = format!("Invalid value supplied, please make sure to enter a value between 1 and {board_size}").red();
+        println!("{error_message}");
+        return None;
+    }
     let value = string_value.parse::<i32>().unwrap() as usize;
 
     return Some(UserInputCommand::new(x, y, value));
@@ -318,5 +324,5 @@ fn get_user_input_generic() -> String
 
     stdin().read_line(&mut user_input).expect("failed to readline");
 
-    return user_input.to_string().replace("\n", "");
+    return user_input.trim().to_string();
 }
