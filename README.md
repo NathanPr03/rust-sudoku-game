@@ -6,13 +6,13 @@ I use Donald Knuth's dancing links to solve a sudoku board
 
 ### Unix
 - Install `rustup` by executing `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
-- Clone this repository with the command `git clone https://github.com/NathanPr03/rust-sudoku-game.git`
+- Clone this repository with the command `git clone https://github.com/NathanPr03/rust-sudoku-game.git` or if you already have the zip skip this step
 - Open a terminal session and navigate to the base directory of this project
 - Run `cargo run`
 
 ### Windows
 - Install `rustup` from this link https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe
-- Clone this repository with the command `git clone https://github.com/NathanPr03/rust-sudoku-game.git`
+- Clone this repository with the command `git clone https://github.com/NathanPr03/rust-sudoku-game.git` or if you already have the zip skip this step
 - Open a cmd line session and navigate to the base directory of this project
 - Run `cargo run`
 
